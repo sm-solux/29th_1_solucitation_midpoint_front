@@ -2,14 +2,15 @@ import React from "react";
 import "../styles/global.css";
 import { Logo } from "../components/CommonComponents"; 
 
-const MainPage = () => {
+const MyPage = () => {
   return (
     <div>
       <div>
         <Logo />
+        <h1>MyPage</h1>
       </div>
     </div>
   );
 };
 
-export default MainPage;
+export default MyPage;
