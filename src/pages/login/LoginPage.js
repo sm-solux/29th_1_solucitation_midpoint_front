@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Logo, LoginTitle } from "../../components/CommonComponents";
 import { commonStyles, LoginText } from "../../styles/styles";
+import { useNavigate } from "react-router-dom";
 
 const LoginButton = styled.button`
   font-size: 1.25rem;
@@ -21,7 +22,11 @@ const LoginButton = styled.button`
 
 
 function LoginPage() {
-  
+  const navigate = useNavigate();
+
+  const onClick = () => {
+    navigate('/join')
+  }
   return (
     <div>
       <Logo />
@@ -34,7 +39,7 @@ function LoginPage() {
         <LoginButton style={{ backgroundColor: "#1B4345", color: "#FFFFFF" }} >
           미드포인트 로그인
         </LoginButton>
-        <LoginText>회원가입</LoginText>
+        <LoginText style={{marginTop: '6rem'}} onClick={onClick}>회원가입</LoginText>
       </div>
     </div>
   );

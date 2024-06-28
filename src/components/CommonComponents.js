@@ -50,13 +50,14 @@ const LoginForm = ({ onSubmit, inputs, buttonText, onClick }) => (
 );
 
 const handleDefaultProfileClick = () => {
-  // 기능 구현
+  // 기능 미구현 상태
 };
 
 const onProfilePictureChange = (event) => {
   const file = event.target.files[0];
 };
 
+// 회원가입 폼
 const JoinForm = ({
   inputs,
   buttonText,
@@ -97,7 +98,7 @@ const JoinForm = ({
         <LoginSubmitButton type="submit">{buttonText}</LoginSubmitButton>
       )}
       {showVerification && (
-        <form onSubmit={onVerificationSubmit}>
+        <form>
           <Verification>
             <VerificationLabel htmlFor="verificationCode">
               인증코드 입력
@@ -106,12 +107,57 @@ const JoinForm = ({
           </Verification>
           <JoinButton
             type="submit"
-            style={{ 
-              margin: '-2rem auto',
+            style={{
+              margin: "-2rem auto",
               marginBottom: "6rem",
             }}
+            onClick={onVerificationSubmit}
           >
             완료
+          </JoinButton>
+        </form>
+      )}
+    </LoginFormContainer>
+  );
+};
+
+// 비밀번호 찾기 폼
+const FindPasswordForm = ({
+  inputs,
+  buttonText,
+  onSubmit,
+  hideButton,
+  showVerification,
+  onVerificationSubmit,
+}) => {
+  return (
+    <LoginFormContainer onSubmit={onSubmit}>
+      {inputs.map(({ label, type, id, required }) => (
+        <LoginInputGroup key={id}>
+          <LoginInputLabel htmlFor={id}>{label}</LoginInputLabel>
+          <LoginInputField type={type} id={id} required={required} />
+        </LoginInputGroup>
+      ))}
+      {!hideButton && (
+        <LoginSubmitButton type="submit">{buttonText}</LoginSubmitButton>
+      )}
+      {showVerification && (
+        <form>
+          <LoginInputGroup>
+            <LoginInputLabel style={{ fontSize: "1.4rem" }}>
+              인증번호
+            </LoginInputLabel>
+            <LoginInputField type="text" id="verificationCode" required />
+          </LoginInputGroup>
+          <JoinButton
+            type="submit"
+            style={{
+              margin: "0rem auto",
+              marginTop: "4.2rem",
+            }}
+            onClick={onVerificationSubmit}
+          >
+            인증
           </JoinButton>
         </form>
       )}
@@ -127,4 +173,5 @@ export {
   JoinForm,
   handleDefaultProfileClick,
   onProfilePictureChange,
+  FindPasswordForm,
 };

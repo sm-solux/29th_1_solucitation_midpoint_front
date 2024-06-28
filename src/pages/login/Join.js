@@ -38,8 +38,7 @@ function Join() {
   };
 
   const handleVerificationSubmit = (event) => {
-    event.preventDefault();
-    navigate('/join-verification');
+    navigate('/login')
   };
 
 

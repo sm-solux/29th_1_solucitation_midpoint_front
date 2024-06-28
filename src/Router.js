@@ -5,7 +5,6 @@ import App from "./App";
 import LoginPage from "./pages/login/LoginPage";
 import DirectLoginPage from "./pages/login/DirectLoginPage";
 import FindPassword from "./pages/login/FindPassword";
-import FindPasswordVerification from "./pages/login/FindPasswordVerification";
 import Join from "./pages/login/Join";
 
 
@@ -17,7 +16,6 @@ const Router = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/directlogin" element={<DirectLoginPage />} />
         <Route path="/findpassword" element={<FindPassword />} />
-        <Route path="/findpassword-verification" element={<FindPasswordVerification />} />
         <Route path="/join" element={<Join />} />
       </Routes>
     </BrowserRouter>

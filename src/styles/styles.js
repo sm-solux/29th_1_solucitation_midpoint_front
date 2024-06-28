@@ -39,7 +39,7 @@ export const LoginFormContainer = styled.form`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: transparent;
+  background-color: transparent !important;
   margin-top: 4.9rem;
 `;
 
