@@ -1,15 +1,18 @@
 export const searchStyles = {
   container: {
-    height: '60px',
-    marginTop: '20px',
+    marginTop:'20px',
+    marginBottom: '20px',
+  },
+    inputContainer: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: '10px',
   },
   input: {
     padding: '10px',
     fontSize: '16px',
-    width: '500px',
+    width: '550px',
     border: 'none',
     outline: 'none',
     textAlign: 'center',
@@ -26,5 +29,25 @@ export const searchStyles = {
     border: 'none',
     borderRadius: '5px',
     marginRight:'20px'
+  },
+  tagContainer: {
+    marginTop: '15px',
+    justifyContent: 'center',
+  },
+  tagList: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    marginBottom: '10px',
+    
+    justifyContent: 'center',
+  },
+  tag: {
+    padding: '5px 10px',
+    fontSize: '14px',
+    backgroundColor: '#E0E0E0',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    marginRight: '10px',
+    marginBottom: '10px',
   },
 };
