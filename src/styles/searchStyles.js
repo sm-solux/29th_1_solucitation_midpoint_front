@@ -2,6 +2,10 @@ export const searchStyles = {
   container: {
     marginTop:'20px',
     marginBottom: '20px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    backgroundColor: 'transparent'
   },
     inputContainer: {
     display: 'flex',
@@ -38,16 +42,28 @@ export const searchStyles = {
     display: 'flex',
     flexWrap: 'wrap',
     marginBottom: '10px',
-    
     justifyContent: 'center',
   },
   tag: {
     padding: '5px 10px',
     fontSize: '14px',
-    backgroundColor: '#E0E0E0',
-    borderRadius: '5px',
+    textStyle:'bold',
+    backgroundColor: 'transparent',
+    border: '2px solid #1B4345',
+    Color: '#1B4345',
     cursor: 'pointer',
-    marginRight: '10px',
-    marginBottom: '10px',
+    margin: '5px',
+    transition: 'background-color 0.3s, color 0.3s',
+  },
+  writeButton: {
+    position: 'fixed',
+    bottom: '60px',
+    right: '100px',
+    padding: '10px 20px',
+    fontSize: '16px',
+    cursor: 'pointer',
+    color: '#FFFFFF',
+    backgroundColor: '#1B4345',
+    borderRadius: '5px',
   },
 };

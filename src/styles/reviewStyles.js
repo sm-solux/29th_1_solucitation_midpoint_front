@@ -1,4 +1,3 @@
-// reviewStyles.js
 export const reviewStyles = {
   card: {
     border: "1px solid #ccc",
@@ -9,8 +8,8 @@ export const reviewStyles = {
     border:'none'
   },
   photoContainer: {
-    width: "150",
-    height: "150",
+    width: "50",
+    height: "50",
     overflow: "hidden",
     display: "flex",
     justifyContent: "center",
@@ -25,10 +24,15 @@ export const reviewStyles = {
   details: {
     marginTop: "10px",
   },
+  tagsContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   tags: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "5px",
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '8px'
   },
   tag: {
     padding: "5px 10px",
@@ -36,9 +40,32 @@ export const reviewStyles = {
     backgroundColor: "#EC5640",
     fontSize: "14px",
   },
+  likeButtonActive: {
+    color: '#1B4345',
+    fontSize: '23px',
+    border: 'none',
+  },
+  likeButton: {
+    color: '#1B4345',
+    border: 'none',
+    fontSize: '20px',
+  },
+  like: {
+    marginLeft: 'auto',
+    fontSize: '1.5em',
+    color:'#1B4345',
+    cursor: 'pointer',
+  },
   placeName: {
+    marginTop: "10px",
     fontSize: "20px",
     fontWeight: "bold",
-    marginTop: "10px",
+    color:'#1B4345',
   },
+  content: {
+    marginTop: '5px',
+    marginBottom: '5px',
+    color:'#1B4345',
+    fontSize:'14px',
+  }
 };

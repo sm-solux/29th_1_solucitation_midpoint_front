@@ -5,6 +5,7 @@ import { searchStyles } from '../styles/searchStyles';
 export const SearchBox = () => {
   const [searchText, setSearchText] = useState("");
   const [isPlaceholderVisible, setIsPlaceholderVisible] = useState(true);
+  const [clickedTags, setClickedTags] = useState([]);
   const tags = ["식사", "카페", "공부","문화생활","쇼핑","자연","산책","친목","여럿이", "혼자"];
 
   const handleInputChange = (e) => {
@@ -21,13 +22,18 @@ export const SearchBox = () => {
     }
   };
 
-  const handleSearch = (tag) => {
-    setSearchText(tag);
+  const handleSearch = () => {
+    //검색어에 대한 출력
   };
 
-  const handleWrite = () => {
-    console.log("팝업 출력");
+  const handleTagClick = (tag) => {
+    if (clickedTags.includes(tag)) {
+      setClickedTags(clickedTags.filter(t => t !== tag));
+    } else if (clickedTags.length < 2) {
+      setClickedTags([...clickedTags, tag]);
+    }
   };
+
 
   return (
     <div style={searchStyles.container}>
@@ -41,24 +47,32 @@ export const SearchBox = () => {
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
         />
-        <button style={searchStyles.button} onClick={() => handleSearch(searchText)}>
+        <button style={searchStyles.button} onClick={handleSearch}>
           검색
         </button>
-        <button onClick={handleWrite} style={searchStyles.button}>
-          글쓰기
-        </button>
+
       </div>
-    <div style={searchStyles.tagContainer}>
-      <div style={searchStyles.tagList}>
-        {tags.map((tag, index) => (
-          <div key={index} style={searchStyles.tag} onClick={() => handleSearch(tag)}>
-            {tag}
-          </div>
-        ))}
+      <div style={searchStyles.tagContainer}>
+        <div style={searchStyles.tagList}>
+          {tags.map((tag, index) => (
+            <div 
+              key={index} 
+              style={{
+                ...searchStyles.tag, 
+                backgroundColor: clickedTags.includes(tag) ? '#1B4345' : 'transparent', 
+                color: clickedTags.includes(tag) ? '#fff' : '#1B4345',
+                borderColor: '#1B4345',
+              }} 
+              onClick={() => handleTagClick(tag)}
+            >
+              {tag}
+            </div>
+          ))}
+        </div>
       </div>
-      </div>
-          </div>
+    </div>
   );
 };
+
 
 export default SearchBox;
