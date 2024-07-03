@@ -1,11 +1,17 @@
 export const commonStyles = {
+  header: {
+    position: 'fixed',
+    top: 10,
+    left: 40,
+    width: '100%',
+    padding: '10px 0',
+  },
   logo_div: {
     width: "400px",
-    display: "inline-block",
-    marginTop: '30px',
-    marginLeft: '60px'
+    display: "inline",
+    margin: "0 auto",
   },
-    logo_img: {
+  logo_img: {
     display: 'inline-block',
     width: 29,
     marginRight: '10px',
@@ -21,7 +27,7 @@ export const commonStyles = {
     width: "600px",
     height: "40px",
     float: 'right',
-    marginTop: '46px',
+    marginTop: '10px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',

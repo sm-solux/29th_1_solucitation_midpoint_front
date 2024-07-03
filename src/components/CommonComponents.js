@@ -16,7 +16,7 @@ function Logo() {
     { name: 'logout', path: '', label: '로그아웃' }
   ];
     return (
-    <header>
+    <header style={commonStyles.header}>
     <div style={commonStyles.logo_div}>
       <img src="/img/logo.png" style={commonStyles.logo_img} alt="Logo" />
         <h1 style={commonStyles.logo}>MIDPOINT</h1>

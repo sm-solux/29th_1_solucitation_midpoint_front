@@ -7,7 +7,6 @@ const MyPage = () => {
     <div>
       <div>
         <Logo />
-        <h1>MyPage</h1>
       </div>
     </div>
   );
