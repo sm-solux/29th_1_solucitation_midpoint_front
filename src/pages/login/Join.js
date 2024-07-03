@@ -1,11 +1,10 @@
-import React, {useState} from "react";
-import { Logo, LoginTitle, JoinForm, JoinTitle } from "../../components/CommonComponents";
-import { commonStyles, LoginText, Verification, VerificationLabel } from "../../styles/styles";
+import React, { useState } from "react";
+import { Logo, JoinForm, JoinTitle } from "../../components/CommonComponents";
 import { useNavigate } from "react-router-dom";
 
 const inputs = [
   { label: "이름", type: "name", id: "name", required: true },
-  { label: "닉네임", type: "name", id: "nickname", required: true },
+  { label: "닉네임", type: "text", id: "nickname", required: true },
   { label: "이메일", type: "email", id: "email", required: true },
   { label: "비밀번호", type: "password", id: "password", required: true },
   {
@@ -18,7 +17,7 @@ const inputs = [
 
 function Join() {
   const [verificationVisible, setVerificationVisible] = useState(false);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -31,21 +30,21 @@ function Join() {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        document.getElementById('profileImage').src = e.target.result;
+        document.getElementById("profileImage").src = e.target.result;
       };
       reader.readAsDataURL(file);
     }
   };
 
   const handleVerificationSubmit = (event) => {
-    navigate('/login')
+    event.preventDefault();
+    navigate("/login");
   };
-
 
   return (
     <div>
       <Logo />
-      <JoinTitle text="회원가입" style={{marginTop: '-3rem'}} />
+      <JoinTitle text="회원가입" style={{ marginTop: "-3rem" }} />
       <JoinForm
         inputs={inputs}
         buttonText="인증요청"

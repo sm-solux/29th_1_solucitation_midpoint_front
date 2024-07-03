@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import {
   commonStyles,
   LoginFormContainer,
@@ -67,18 +67,82 @@ const JoinForm = ({
   showVerification,
   onVerificationSubmit,
 }) => {
-  const fileInputRef = React.useRef(null);
+  const fileInputRef = useRef(null);
+  const [errors, setErrors] = useState({});
+  const [values, setValues] = useState({});
 
   const handleDefaultProfileClick = () => {
     fileInputRef.current.click();
   };
 
+  const validateInputs = (id, value) => {
+    const newErrors = { ...errors };
+
+    if (id === "nickname") {
+      if (value.length < 2) {
+        newErrors.nickname = "닉네임은 두 글자 이상이어야 합니다.";
+      } else {
+        newErrors.nickname = "";
+      }
+    }
+
+    if (id === "password") {
+      if (value.length < 8 || value.length > 16) {
+        newErrors.password = "비밀번호는 8자 이상 16자 이하여야 합니다.";
+      } else {
+        newErrors.password ="";
+      }
+      if (
+        values.passwordVerification &&
+        value !== values.passwordVerification
+      ) {
+        newErrors.passwordVerification = "비밀번호가 일치하지 않습니다.";
+      } else {
+        newErrors.passwordVerification="";
+      }
+    }
+
+    if (id === "passwordVerification") {
+      if (value !== values.password) {
+        newErrors.passwordVerification = "비밀번호가 일치하지 않습니다.";
+      } else {
+        newErrors.passwordVerification="";
+      }
+    }
+
+    return newErrors;
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    const newValues = { ...values, [name]: value };
+    const newErrors = validateInputs(name, value);
+    setValues(newValues);
+    setErrors({ ...errors, ...newErrors });
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    onSubmit(event);
+  };
+
   return (
-    <LoginFormContainer onSubmit={onSubmit}>
+    <LoginFormContainer onSubmit={handleSubmit}>
       {inputs.map(({ label, type, id, required }) => (
         <JoinInputGroup key={id}>
           <JoinInputLabel htmlFor={id}>{label}</JoinInputLabel>
-          <LoginInputField type={type} id={id} required={required} />
+          <LoginInputField
+            type={type}
+            id={id}
+            name={id}
+            required={required}
+            onChange={handleChange}
+          />
+          {errors[id] && (
+            <p style={{ color: "red", marginBottom: "0rem", fontSize: "1rem" }}>
+              {errors[id]}
+            </p>
+          )}
         </JoinInputGroup>
       ))}
       <ProfilePictureLabel htmlFor="profilePicture">
@@ -98,7 +162,7 @@ const JoinForm = ({
         <LoginSubmitButton type="submit">{buttonText}</LoginSubmitButton>
       )}
       {showVerification && (
-        <form>
+        <div>
           <Verification>
             <VerificationLabel htmlFor="verificationCode">
               인증코드 입력
@@ -106,7 +170,7 @@ const JoinForm = ({
             <VerificationInput type="text" id="verificationCode" required />
           </Verification>
           <JoinButton
-            type="submit"
+            type="button"
             style={{
               margin: "-2rem auto",
               marginBottom: "6rem",
@@ -115,7 +179,7 @@ const JoinForm = ({
           >
             완료
           </JoinButton>
-        </form>
+        </div>
       )}
     </LoginFormContainer>
   );

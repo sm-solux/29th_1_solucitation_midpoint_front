@@ -27,6 +27,11 @@ function LoginPage() {
   const onClick = () => {
     navigate('/join')
   }
+
+  const toDirectLogin = () => {
+    navigate('/directlogin')
+  }
+
   return (
     <div>
       <Logo />
@@ -36,7 +41,7 @@ function LoginPage() {
           <img src="/img/kakao.png" style={{ width: 19, marginRight: 8 }} />
           카카오계정 로그인
         </LoginButton>
-        <LoginButton style={{ backgroundColor: "#1B4345", color: "#FFFFFF" }} >
+        <LoginButton style={{ backgroundColor: "#1B4345", color: "#FFFFFF"}} onClick={toDirectLogin}>
           미드포인트 로그인
         </LoginButton>
         <LoginText style={{marginTop: '6rem'}} onClick={onClick}>회원가입</LoginText>
