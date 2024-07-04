@@ -72,9 +72,9 @@ export const writeModalStyles = {
     backgroundColor: 'transparent',
     resize: 'none',
     '::placeholder': {
-      color: '#000', // 검은색으로 변경
-      fontStyle: 'italic', // 원하는 폰트 스타일
-      textDecoration: 'underline', // 밑줄 스타일
+      color: '#000',
+      fontStyle: 'italic',
+      textDecoration: 'underline',
     },
   },
   imgContainer: {
