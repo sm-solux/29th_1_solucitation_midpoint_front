@@ -1,9 +1,6 @@
 import React from "react";
-<<<<<<< HEAD
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-=======
->>>>>>> origin/feature/review
 import "../styles/global.css";
 import { Logo } from "../components/CommonComponents";
 

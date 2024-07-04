@@ -1,7 +1,6 @@
 import styled from "styled-components";
 
 export const commonStyles = {
-<<<<<<< HEAD
   logoImg: {
     display: "inline-block",
     width: "1.6rem",
@@ -196,66 +195,3 @@ export const VerificationInput = styled.input`
   outline: none;
 `
 
-=======
-  header: {
-    position: 'fixed',
-    top: 10,
-    left: 40,
-    width: '100%',
-    padding: '10px 0',
-  },
-  logo_div: {
-    width: "400px",
-    display: "inline",
-    margin: "0 auto",
-  },
-  logo_img: {
-    display: 'inline-block',
-    width: 29,
-    marginRight: '10px',
-    verticalAlign: 'middle'
-  },
-  logo: {
-    fontSize: '25px',
-    color: '#000000',
-    display: 'inline-block',
-    verticalAlign: 'middle'
-  },
-  move_div: {
-    width: "600px",
-    height: "40px",
-    float: 'right',
-    marginTop: '10px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  linkContainer: {
-    position: 'relative',
-    display: 'inline-block',
-    margin: '0 10px',
-    textAlign: 'center',
-  },
-  link: {
-    fontSize: '25px',
-    color: '#000',
-    height:"20px",
-    cursor: 'pointer',
-    textDecoration: 'none',
-    display: 'inline-block',
-    position: 'relative',
-    padding: '10px 20px',
-    marginBottom: '5px',
-  },
-  icon: {
-    position: 'absolute',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    bottom: '-10px',
-    width: '7px',
-    height: '7px',
-    borderRadius: '50%',
-    backgroundColor: 'black',
-  },
-};
->>>>>>> origin/feature/review
