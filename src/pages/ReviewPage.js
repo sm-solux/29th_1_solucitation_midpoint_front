@@ -16,7 +16,7 @@ const ReviewPage = () => {
     content: '아오 맛있어~아오 맛있어~아오 맛있어~너무 맛있어서 눈물이나요',
   },
   {
-    photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_5.jpg",
+    photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg",
     tags: ["카페", "분위기 좋은",],
     placeName: "편안한 카페",
     content: '아오 맛있어~2',
@@ -32,12 +32,6 @@ const ReviewPage = () => {
     tags: ["카페", "분위기 좋은",],
     placeName: "편안한 카페",
     content: '아오 맛있어~4',
-  },
-    {
-    photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg",
-    tags: ["카페", "분위기 좋은",],
-    placeName: "편안한 카페",
-    content: '아오 맛있어~5',
   },
 
   ];
