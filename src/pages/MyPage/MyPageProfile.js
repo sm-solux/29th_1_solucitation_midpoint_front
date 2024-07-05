@@ -8,7 +8,7 @@ const MyPageProfile = () => {
     nickname: '솔룩션짱짱최고',
     email: 'soluxion@sookmyung.ac.kr',
     password: '********',
-    profileImage: '../img/Rectangle.png',
+    profileImage: '../img/default-profile.png',
 
   };
   return (

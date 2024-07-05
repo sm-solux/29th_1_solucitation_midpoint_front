@@ -13,12 +13,6 @@ export const commonStyles = {
     display: "inline",
     margin: "0 auto",
   },
-  logo_img: {
-    display: 'inline-block',
-    width: 29,
-    marginRight: '10px',
-    verticalAlign: 'middle'
-  },
   logo: {
     fontSize: '25px',
     color: '#000000',

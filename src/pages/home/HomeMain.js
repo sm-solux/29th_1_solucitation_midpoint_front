@@ -20,12 +20,6 @@ const HomeMain = () => {
     <div style={commonStyles.container}>
       <header style={commonStyles.header}>
         <Logo />
-        <nav style={commonStyles.nav}>
-          <a href="/Review" style={commonStyles.link}>홈</a>
-          <a href="/Review" style={commonStyles.link}>게시판</a>
-          <a href="/MyPage" style={commonStyles.link}>마이페이지</a>
-          <a href="#" style={commonStyles.link}>로그아웃</a>
-        </nav>
       </header>
       <div style={commonStyles.content}>
         {addressInputs.map((input, index) => (

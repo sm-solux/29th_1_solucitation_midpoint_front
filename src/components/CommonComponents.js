@@ -1,29 +1,12 @@
 import React from "react";
 import { Link } from 'react-router-dom';
 
-import {
-  commonStyles,
-  LoginFormContainer,
-  LoginInputField,
-  LoginInputGroup,
-  LoginInputLabel,
-  LoginSubmitButton,
-  JoinInputGroup,
-  JoinInputLabel,
-  ProfilePictureInput,
-  ProfilePictureLabel,
-  DefaultProfileImage,
-  joinTitle,
-  JoinButton,
-  Verification,
-  VerificationLabel,
-  VerificationInput,
-} from "../styles/styles";
+import { commonStyles } from '../styles/styles'
 
 function Logo() {
 
   const links = [
-    { name: 'home', path: '/Review', label: '홈' },
+    { name: 'home', path: '/Home', label: '홈' },
     { name: 'review', path: '/Review', label: '게시판' },
     { name: 'mypage', path: '/MyPage', label: '마이페이지' },
     { name: 'logout', path: '', label: '로그아웃' }

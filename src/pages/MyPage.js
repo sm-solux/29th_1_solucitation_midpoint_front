@@ -18,7 +18,6 @@ import MyPagePosts from './MyPage/MyPagePosts';
 const MyPage = () => {
   const [currentPage, setCurrentPage] = useState('profile');
 
-
   const renderPage = () => {
     switch (currentPage) {
       case 'profile':
