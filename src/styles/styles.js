@@ -69,6 +69,133 @@ export const commonStyles = {
     flexDirection: "column",
     alignItems: "center",
   },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    padding: '1rem 2rem',
+    position: 'fixed',
+    top: 0,
+    zIndex: 1000,
+  },
+  nav: {
+    display: 'flex',
+    gap: '2rem',
+    marginRight: '3rem',
+  },
+  link: {
+    fontSize: '1rem',
+    fontWeight: 'bold',
+    color: '#333',
+    textDecoration: 'none',
+  },
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '2rem',
+    minHeight: '100vh',
+    backgroundColor: '#F2F2EF',
+  },
+  content: {
+    width: '100%',
+    maxWidth: '600px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '2rem',
+    borderRadius: '8px',
+  },
+  inputContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '1rem',
+    width: '100%',
+  },
+  profileContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginRight: '1rem',
+  },
+  profileImg: {
+    width: '50px',
+    height: '50px',
+    borderRadius: '50%',
+  },
+  profileName: {
+    fontSize: '0.8rem',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  inputGroup: {
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%',
+  },
+  inputField: {
+    flex: 1,
+    width: '500px', // 고정된 크기
+    padding: '0.7rem',
+    fontSize: '1rem',
+    border: '1px solid #FFF',
+    borderRadius: '4px',
+    marginRight: '0.5rem',
+    textAlign: 'center',
+  },
+  selectField: {
+    flex: 1,
+    padding: '0.7rem',
+    fontSize: '1rem',
+    border: '1px solid #FFF',
+    borderRadius: '4px',
+    textAlign: 'center',
+    backgroundImage: 'url("data:image/svg+xml;utf8,<svg viewBox=\'0 0 140 140\' xmlns=\'http://www.w3.org/2000/svg\'><polyline points=\'0,0 70,100 140,0\' style=\'fill:none;stroke:black;stroke-width:20\'/></svg>")',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'right 15px center',
+    backgroundSize: '12px',
+    appearance: 'none',
+    WebkitAppearance: 'none',
+    MozAppearance: 'none',
+  },
+  submitButton: {
+    padding: '0.5rem 1rem',
+    fontSize: '1rem',
+    backgroundColor: '#1B4345',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+  },
+  placeButton: {
+    padding: '0.5rem 1rem',
+    fontSize: '1rem',
+    backgroundColor: '#1B4345',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    marginTop: '3rem',
+  },
+  addButton: {
+    cursor: 'pointer',
+    marginBottom: '1rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '40px',
+    height: '40px',
+    backgroundImage: 'url("/img/plusbutton.png")', 
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  },
+  destination: {
+    display: 'flex',
+    width: '100%',
+    marginTop: '1rem',
+  },
 };
 
 export const LoginFormContainer = styled.form`
@@ -230,4 +357,25 @@ border: none;
 font-size: 1rem;
 background-color: transparent !important;
 outline: none;
-`
+`;
+
+export const StyledSelect = styled.select`
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #FFF;
+  border-radius: 4px;
+  text-align: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  background-color: #FFF;
+  appearance: none;
+  WebkitAppearance: none;
+  MozAppearance: none;
+  textAlignLast: center;
+`;
+
+export const StyledOption = styled.option`
+  padding: 1rem; 
+`;
+

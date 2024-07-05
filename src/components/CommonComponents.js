@@ -1,7 +1,24 @@
 import React from "react";
-import "../styles/global.css";
-import { commonStyles } from "../styles/styles"; 
 import { Link } from 'react-router-dom';
+
+import {
+  commonStyles,
+  LoginFormContainer,
+  LoginInputField,
+  LoginInputGroup,
+  LoginInputLabel,
+  LoginSubmitButton,
+  JoinInputGroup,
+  JoinInputLabel,
+  ProfilePictureInput,
+  ProfilePictureLabel,
+  DefaultProfileImage,
+  joinTitle,
+  JoinButton,
+  Verification,
+  VerificationLabel,
+  VerificationInput,
+} from "../styles/styles";
 
 function Logo() {
 
@@ -38,6 +55,6 @@ function Logo() {
         </div>
         </header>
   );
-}
+};
 
 export { Logo };

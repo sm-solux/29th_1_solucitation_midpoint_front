@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import ReviewPage from "./pages/ReviewPage";
-import MyPage from "./pages/MyPage";
+import MainPage from "./pages/MainPage";
 import App from "./App";
 import MainPage from "./pages/MainPage";
 import LoginPage from "./pages/login/LoginPage";
@@ -18,6 +17,7 @@ const Router = () => {
         <Route path="/directlogin" element={<DirectLoginPage />} />
         <Route path="/findpassword" element={<FindPassword />} />
         <Route path="/join" element={<Join />} />
+
         <Route path="/Review" element={<ReviewPage />} />
         <Route path="/Mypage" element={<MyPage />} />
       </Routes>
