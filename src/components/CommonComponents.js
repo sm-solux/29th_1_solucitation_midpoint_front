@@ -1,28 +1,12 @@
-import React, { useState, useRef } from "react";
-import {
-  commonStyles,
-  LoginFormContainer,
-  LoginInputField,
-  LoginInputGroup,
-  LoginInputLabel,
-  LoginSubmitButton,
-  JoinInputGroup,
-  JoinInputLabel,
-  ProfilePictureInput,
-  ProfilePictureLabel,
-  DefaultProfileImage,
-  joinTitle,
-  JoinButton,
-  Verification,
-  VerificationLabel,
-  VerificationInput,
-} from "../styles/styles";
+import React from "react";
 import { Link } from 'react-router-dom';
+
+import { commonStyles } from '../styles/styles'
 
 function Logo() {
 
   const links = [
-    { name: 'home', path: '/Review', label: '홈' },
+    { name: 'home', path: '/Home', label: '홈' },
     { name: 'review', path: '/Review', label: '게시판' },
     { name: 'mypage', path: '/MyPage', label: '마이페이지' },
     { name: 'logout', path: '', label: '로그아웃' }
@@ -30,7 +14,6 @@ function Logo() {
     return (
     <header style={commonStyles.header}>
     <div style={commonStyles.logo_div}>
-      <img src="/img/logo.png" style={commonStyles.logo_img} alt="Logo" />
         <h1 style={commonStyles.logo}>MIDPOINT</h1>
     </div>
     <div style={commonStyles.move_div}>
@@ -54,7 +37,6 @@ function Logo() {
       ))}
         </div>
         </header>
->>>>>>> 4a75e7140fc2ab23a8d7e6ba081f78d8a9966a74
   );
 };
 
