@@ -48,8 +48,8 @@ const MyPage = () => {
                 href="#"
                 style={{
                   ...myPageStyles.navLink,
-                  color: currentPage === link.name ? '#fff' : myPageStyles.navLink.color, // 선택된 페이지는 흰색, 아닌 페이지는 기존 색상
-                  textDecoration: currentPage === link.name ? myPageStyles.navLinkHover.textDecoration : 'none' // 선택된 페이지는 밑줄, 아닌 페이지는 없음
+                  color: currentPage === link.name ? '#fff' : myPageStyles.navLink.color, 
+                  textDecoration: currentPage === link.name ? myPageStyles.navLinkHover.textDecoration : 'none' 
                 }}
                 onClick={() => setCurrentPage(link.name)}
               >

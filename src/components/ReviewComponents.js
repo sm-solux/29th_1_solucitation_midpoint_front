@@ -34,7 +34,7 @@ export const ReviewCard = ({ review, onReviewClick }) => {
           </div>
           <button 
             onClick={(e) => { 
-              e.stopPropagation(); // 부모 div의 클릭 이벤트가 트리거되지 않도록 함
+              e.stopPropagation();
               toggleLike(); 
             }} 
             style={liked ? reviewStyles.likeButtonActive : reviewStyles.likeButton}

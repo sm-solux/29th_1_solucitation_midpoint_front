@@ -3,7 +3,7 @@ import { commonStyles } from "../styles/styles";
 import { Link } from 'react-router-dom';
 
 function Logo() {
-  const [activeIcon, setActiveIcon] = useState(''); // 현재 활성화된 아이콘 상태
+  const [activeIcon, setActiveIcon] = useState('');
 
   const handleClick = (iconName) => {
     setActiveIcon(iconName);
