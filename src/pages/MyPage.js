@@ -2,7 +2,7 @@ import React from "react";
 import "../styles/global.css";
 import { Logo } from "../components/CommonComponents"; 
 
-const MainPage = () => {
+const MyPage = () => {
   return (
     <div>
       <div>
@@ -12,4 +12,4 @@ const MainPage = () => {
   );
 };
 
-export default MainPage;
+export default MyPage;
