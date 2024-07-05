@@ -1,4 +1,5 @@
 import React from "react";
+import "../styles/global.css";
 import { commonStyles } from "../styles/styles"; 
 import { Link } from 'react-router-dom';
 
@@ -13,7 +14,6 @@ function Logo() {
     return (
     <header style={commonStyles.header}>
     <div style={commonStyles.logo_div}>
-      <img src="/img/logo.png" style={commonStyles.logo_img} alt="Logo" />
         <h1 style={commonStyles.logo}>MIDPOINT</h1>
     </div>
     <div style={commonStyles.move_div}>

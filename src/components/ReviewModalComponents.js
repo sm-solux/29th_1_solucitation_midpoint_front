@@ -23,7 +23,7 @@ const ReviewModal = ({ isOpen, review, closeModal }) => {
         X
       </button>
       <div style={reviewModalStyles.profileContainer}>
-        <img src='/img/Rectangle.png' alt="popup image" style={reviewModalStyles.profileImg} />
+        <img src='/img/default-profile.png' alt="profile image" style={reviewModalStyles.profileImg} />
         <span style={reviewModalStyles.profileName}>솔룩션짱짱최고</span>
         <span style={reviewModalStyles.date}>YYYY.MM.DD. HH:MM </span>
       </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { myPageStyles } from '../styles/myPageStyles';
+import { myPageStyles } from '../../styles/myPageStyles';
 
 const MyPageProfile = () => {
   // 예시 데이터임, 수정해야함
