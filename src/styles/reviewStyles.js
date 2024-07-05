@@ -3,9 +3,8 @@ export const reviewStyles = {
     border: "1px solid #ccc",
     borderRadius: "8px",
     padding: "10px",
-    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+    boxShadow: "0 4px 8px rgba(0,0,0,0.1)", //빼니까 구분이 잘 안돼서 구현은 해둠
     backgroundColor: "transparent",
-    border:'none'
   },
   photoContainer: {
     width: "50",

@@ -65,9 +65,11 @@ const [selectedReview, setSelectedReview] = useState(null);
 };
 
   return (
-    <div style={pageContainer}>
+    <div>
       <Logo />
-      <SearchBox />
+      <div style={{ marginTop: '100px' }}>
+        <SearchBox />
+      </div>
       <div style={reviewContainer}>
         {reviews.map((review, index) => (
           <ReviewCard key={index} review={review} onReviewClick={openReviewModal} />
@@ -78,18 +80,14 @@ const [selectedReview, setSelectedReview] = useState(null);
       </button>
       <ReviewModal isOpen={reviewModalIsOpen} review={selectedReview} closeModal={closeReviewModal} />
       <WriteModal isOpen={writeModalIsOpen} closeModal={closeWriteModal} addReview={addReview} />
-    </div>
+    </div >
   );
-};
-
-const pageContainer = {
-  padding: "20px",
-  boxSizing: "border-box", 
 };
 
 const reviewContainer = {
   display: "grid",
   gridTemplateColumns: "repeat(4, 1fr)",
+  overflowY: "auto",
   gap: "20px",
   padding: "20px",
   margin: "0 auto", 

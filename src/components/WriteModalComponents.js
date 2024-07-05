@@ -117,19 +117,19 @@ const WriteModal = ({ isOpen, closeModal, addReview, }) => {
             </button>
           ))}
         </div>
-        {selectedTag && (
-          <div style={writeModalStyles.subTagContainer}>
-            {predefinedTags[selectedTag].map((subTag) => (
-              <button
-                type="button"
-                key={subTag}
-                onClick={() => handleTagClick(subTag)}
-                style={writeModalStyles.tagButton}
-              >
-                {subTag}
-              </button>
-            ))}
-          </div>
+        {selectedTag && predefinedTags[selectedTag] && (
+        <div style={writeModalStyles.subTagContainer}>
+          {predefinedTags[selectedTag].map((subTag) => (
+          <button
+            type="button"
+            key={subTag}
+            onClick={() => handleTagClick(subTag)}
+            style={writeModalStyles.tagButton}
+          >
+            {subTag}
+          </button>
+          ))}
+        </div>
         )}
         <button type="submit" style={writeModalStyles.button}>게시</button>
       </form>
