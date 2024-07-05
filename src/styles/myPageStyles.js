@@ -3,6 +3,7 @@ export const myPageStyles = {
     maxWidth: '800px',
     margin: '0 auto',
     backgroundColor: '#000',
+    marginTop: '110px'
   },
   nav: {
     listStyleType: 'none',
