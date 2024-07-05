@@ -12,8 +12,8 @@ const WriteModal = ({ isOpen, closeModal, addReview, }) => {
   const [selectedTag, setSelectedTag] = useState(null);
 
   const predefinedTags = {
-    '#태그1': ['태그1-1', '태그1-2', '태그1-3'],
-    '#태그2': ['태그2-1', '태그2-2', '태그2-3'],
+    '#태그1': ['태그3', '태그4', '태그5'],
+    '#태그2': ['태그3', '태그4', '태그5'],
   };
 
   const handleIconClick = (index) => {
