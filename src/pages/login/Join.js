@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Logo, JoinForm, JoinTitle } from "../../components/CommonComponents";
+import React, { useState, useRef } from "react";
+import { Logo } from "../../components/CommonComponents";
+import { JoinForm, JoinTitle } from "../../components/LoginComponents";
 import { useNavigate } from "react-router-dom";
 
 const inputs = [
@@ -25,15 +26,7 @@ function Join() {
   };
 
   const handleProfileChange = (event) => {
-    console.log("Profile picture changed:", event.target.files[0]);
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        document.getElementById("profileImage").src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
+    console.log(event.target.files[0]);
   };
 
   const handleVerificationSubmit = (event) => {

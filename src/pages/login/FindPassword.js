@@ -1,9 +1,6 @@
 import { React, useState } from "react";
-import {
-  Logo,
-  LoginTitle,
-  FindPasswordForm,
-} from "../../components/CommonComponents";
+import { Logo } from "../../components/CommonComponents";
+import { LoginTitle, FindPasswordForm } from "../../components/LoginComponents";
 import { commonStyles, LoginText } from "../../styles/styles";
 import { useNavigate } from "react-router-dom";
 
@@ -22,9 +19,9 @@ function FindPassword() {
   };
 
   const handleVerificationSubmit = () => {
-    navigate('/login');
-    console.log('finished')
-  }
+    navigate("/login");
+    console.log("finished");
+  };
   return (
     <div>
       <Logo />
