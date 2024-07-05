@@ -1,13 +1,8 @@
-import React, {useState} from "react";
+import React from "react";
 import { commonStyles } from "../styles/styles"; 
 import { Link } from 'react-router-dom';
 
 function Logo() {
-  const [activeIcon, setActiveIcon] = useState(''); // 현재 활성화된 아이콘 상태
-
-  const handleClick = (iconName) => {
-    setActiveIcon(iconName);
-  };
 
   const links = [
     { name: 'home', path: '/Review', label: '홈' },
@@ -27,19 +22,15 @@ function Logo() {
           {link.name === 'logout' ? (
             <span
               style={commonStyles.link}
-              onClick={() => handleClick(link.name)}
             >
               {link.label}
-              {activeIcon === link.name && <span style={commonStyles.icon}></span>}
             </span>
           ) : (
             <Link
               to={link.path}
               style={commonStyles.link}
-              onClick={() => handleClick(link.name)}
             >
               {link.label}
-              {activeIcon === link.name && <span style={commonStyles.icon}></span>}
             </Link>
           )}
         </div>

@@ -49,14 +49,4 @@ export const commonStyles = {
     padding: '10px 20px',
     marginBottom: '5px',
   },
-  icon: {
-    position: 'absolute',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    bottom: '-10px',
-    width: '7px',
-    height: '7px',
-    borderRadius: '50%',
-    backgroundColor: 'black',
-  },
 };
