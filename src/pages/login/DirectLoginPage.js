@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { Logo, LoginTitle, LoginForm } from "../../components/CommonComponents";
+import {Logo} from "../../components/CommonComponents"
+import { LoginTitle, LoginForm } from "../../components/LoginComponents";
 import { commonStyles, LoginText } from "../../styles/styles";
 import { Navigate, useNavigate } from "react-router-dom";
 

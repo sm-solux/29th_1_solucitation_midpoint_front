@@ -50,7 +50,12 @@
 @font-face {
   font-family: 'Freesentation';
   src: url('../assets/fonts/Freesentation-9Black.ttf') format('truetype');
-  font-weight: 900; /* Black */
+  font-weight: 900; 
+}
+
+@font-face {
+  font-family: 'AkiraExpanded';
+  src: url('../assets/fonts/AkiraExpanded.ttf') format('truetype');
 }
 
 body {
