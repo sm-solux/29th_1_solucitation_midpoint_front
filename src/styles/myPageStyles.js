@@ -37,7 +37,7 @@ export const myPageStyles = {
     display: 'flex',
     flexDirection: 'column',
     marginTop:'55px',
-    marginLeft:'500px',
+    marginLeft:'700px',
   },
 
   profileItem: {
@@ -47,36 +47,85 @@ export const myPageStyles = {
 
   profileLabel: {
     width: '100px',
-    fontWeight: 'bold',
-    marginRight: '5px',
-    marginBottom:'30px',
     display: 'inline-block',
+    marginRight: '5px',
+    marginBottom: '30px',
     color: '#1B4345',
+    textSize: '25px',
+    fontWeight: 'bold',
   },
 
   profileText: {
+    width:'300px',
+    display: 'inline-block',
+    paddingBottom: '6px',
+    borderBottom: '3px solid black',
     color: '#1B4345',
+    textSize:'25px',
     fontWeight: 'bold',
   },
+
   profileButtonContainer: {
     alignItems: 'center',
     marginTop:'40px',
   },
 
   profileButtonEdit: {
-    width:'75px',
+    width: '100px',
+    height:'35px',
     color: '#ffffff',
     backgroundColor: '#1B4345',
     marginLeft: '100px',
-    border:'none',
+    border: 'none',
+    fontSize:'17px',
   },
   
   profileButtonQuit: {
-    width:'75px',
+    width: '100px',
+    height:'35px',
     color: '#fff',
     backgroundColor:'#D00303',
     marginLeft: '50px',
-    border:'none',
+    border: 'none',
+    fontSize:'17px',
+  },
+
+  favoritesContainer: {
+    display: 'flex',
+    flexDirection: 'row', 
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    gap: '100px',
+    marginTop: '50px',
+  },
+
+  favoritesLocateContainer: {
+    width: '200px',
+    height: '150px',
+    backgroundColor: 'white',
+    borderRadius: "8px",
+    padding: '10px',
+  },
+
+  favoritesFriendsContainer: {
+    width: '300px',
+    height: '500px',
+    backgroundColor: 'white',
+    borderRadius: "8px",
+    padding: '10px',
+  },
+
+  locateontainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',  // 아이콘과 텍스트 사이의 간격 조정
+  },
+  icon: {
+    width: '22px',
+    height: '22px',
+  },
+  text: {
+    marginRight: 'auto',  // 텍스트를 왼쪽으로 정렬
   },
 
 };

@@ -1,4 +1,5 @@
 import React from 'react';
+import "../../styles/global.css";
 import { myPageStyles } from '../../styles/myPageStyles';
 
 const MyPageProfile = () => {
@@ -15,7 +16,7 @@ const MyPageProfile = () => {
     <div style={myPageStyles.profileContainer}>
       <div style={myPageStyles.profileItem}>
         <span style={myPageStyles.profileLabel}>이름</span>
-        <span style={myPageStyles.profileText}> {profileData.name}</span>
+        <div style={myPageStyles.profileText}> {profileData.name}</div>
       </div>
       <div style={myPageStyles.profileItem}>
         <span style={myPageStyles.profileLabel}>닉네임</span>

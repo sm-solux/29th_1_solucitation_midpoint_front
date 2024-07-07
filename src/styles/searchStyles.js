@@ -56,14 +56,13 @@ export const searchStyles = {
     transition: 'background-color 0.3s, color 0.3s',
   },
   writeButton: {
+    width: '100px',
+    height:'100px',
     position: 'fixed',
     bottom: '60px',
     right: '100px',
-    padding: '10px 20px',
-    fontSize: '16px',
     cursor: 'pointer',
-    color: '#FFFFFF',
+    borderRadius:'50%',
     backgroundColor: '#1B4345',
-    borderRadius: '5px',
   },
 };

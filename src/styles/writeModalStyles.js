@@ -57,11 +57,6 @@ export const writeModalStyles = {
     fontSize: '20px',
     fontWeight: 'bold',
     textDecoration:'underline',
-    ':: placeholder': {
-      color: '#000',
-      textStyle: 'bold',
-      textDecoration:'underline',
-    },
   },
   textarea: {
     width: '100%',

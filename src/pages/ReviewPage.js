@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 import React, {useState} from "react";
 import "../styles/global.css";
 import { Logo } from "../components/CommonComponents";
@@ -76,7 +77,7 @@ const [selectedReview, setSelectedReview] = useState(null);
         ))}
       </div>
       <button onClick={openWriteModal} style={searchStyles.writeButton}>
-        글쓰기
+        <img src='/img/WriteButtonIcon.png' />
       </button>
       <ReviewModal isOpen={reviewModalIsOpen} review={selectedReview} closeModal={closeReviewModal} />
       <WriteModal isOpen={writeModalIsOpen} closeModal={closeWriteModal} addReview={addReview} />
