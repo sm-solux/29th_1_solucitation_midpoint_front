@@ -1,31 +1,47 @@
-import React, { useState } from 'react';
-import { commonStyles } from '../../styles/styles';
-import { Logo } from '../../components/CommonComponents';
+import React, { useState } from "react";
+import { commonStyles } from "../../styles/styles";
+import { Logo } from "../../components/CommonComponents";
 
 const HomeMain = () => {
-  const [addressInputs, setAddressInputs] = useState([{ profile: '/img/default-profile.png', name: '솔룩션짱짱최고' }]);
-  const [selectedPurpose, setSelectedPurpose] = useState('');
+  const [addressInputs, setAddressInputs] = useState([
+    { profile: "/img/default-profile.png", name: "솔룩션짱짱최고" },
+  ]);
+  const [selectedPurpose, setSelectedPurpose] = useState("");
 
   const handleAddInput = () => {
-    setAddressInputs([...addressInputs, { profile: '/img/default-profile.png', name: '@솔룩스' }]);
+    setAddressInputs([
+      ...addressInputs,
+      { profile: "/img/default-profile.png", name: "@솔룩스" },
+    ]);
   };
 
   const handlePurposeChange = (event) => {
     setSelectedPurpose(event.target.value);
   };
 
-  const purposes = ["목적 추천 TEST", "맛집", "카페", "산책/등산", "공부", "문화생활", "핫플", "친목"];
+  const purposes = [
+    "목적 추천 TEST",
+    "맛집",
+    "카페",
+    "산책/등산",
+    "공부",
+    "문화생활",
+    "핫플",
+    "친목",
+  ];
 
   return (
     <div style={commonStyles.container}>
-      <header style={commonStyles.header}>
-        <Logo />
-      </header>
+      <Logo />
       <div style={commonStyles.content}>
         {addressInputs.map((input, index) => (
           <div key={index} style={commonStyles.inputContainer}>
             <div style={commonStyles.profileContainer}>
-              <img src={input.profile} alt="프로필 이미지" style={commonStyles.profileImg} />
+              <img
+                src={input.profile}
+                alt="프로필 이미지"
+                style={commonStyles.profileImg}
+              />
               <span style={commonStyles.profileName}>{input.name}</span>
             </div>
             <div style={commonStyles.inputGroup}>
@@ -47,9 +63,13 @@ const HomeMain = () => {
             onChange={handlePurposeChange}
             style={commonStyles.selectField}
           >
-            <option value="" disabled hidden>목적을 선택하세요</option>
+            <option value="" disabled hidden>
+              목적을 선택하세요
+            </option>
             {purposes.map((purpose, index) => (
-              <option key={index} value={purpose}>{purpose}</option>
+              <option key={index} value={purpose}>
+                {purpose}
+              </option>
             ))}
           </select>
         </div>

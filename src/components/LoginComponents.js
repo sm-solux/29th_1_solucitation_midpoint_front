@@ -120,7 +120,7 @@ const JoinForm = ({
   };
 
   return (
-    <LoginFormContainer onSubmit={handleSubmit}>
+    <LoginFormContainer onSubmit={handleSubmit} style={{marginTop: '4.5rem'}}>
       {inputs.map(({ label, type, id, required }) => (
         <JoinInputGroup key={id}>
           <JoinInputLabel htmlFor={id}>{label}</JoinInputLabel>
