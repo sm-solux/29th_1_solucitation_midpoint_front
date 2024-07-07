@@ -8,10 +8,10 @@ import MyPageSearchHistory from './MyPage/MyPageSearchHistory';
 import MyPagePosts from './MyPage/MyPagePosts';
 
   const links = [
-    { name: 'profile', label: '회원 정보' , icon: '/img/MyPageProfileIcon.png' },
-    { name: 'favorites', label: '즐겨찾기', icon: '/img/MyPageFavoriteIcon.png' },
-    { name: 'history', label: '검색 기록', icon: '/img/MyPageSearchHistoryIcon.png' },
-    { name: 'posts', label: '내가 쓴 글', icon: '/img/MyPagePostsIcon.png' }
+    { name: 'profile', label: '회원 정보' , activeIcon: '/img/MyPageProfileIcon.png', icon: '/img/MyPageNullProfile.png'},
+    { name: 'favorites', label: '즐겨찾기', activeIcon: '/img/MyPageFavoriteIcon.png', icon: '/img/MyPageNullHeart.png' },
+    { name: 'history', label: '검색 기록', activeIcon: '/img/MyPageSearchHistoryIcon.png', icon: '/img/MyPageNullChart.png' },
+    { name: 'posts', label: '내가 쓴 글', activeIcon: '/img/MyPagePostsIcon.png', icon: '/img/MyPageNullPosts.png' }
 ];
   
 
@@ -45,15 +45,23 @@ const MyPage = () => {
             <li key={link.name} style={myPageStyles.navItem}>
               <a
                 href="#"
-                style={{
-                  ...myPageStyles.navLink,
-                  color: currentPage === link.name ? '#fff' : myPageStyles.navLink.color, 
-                  textDecoration: currentPage === link.name ? myPageStyles.navLinkHover.textDecoration : 'none' 
-                }}
+                style={myPageStyles.navLink}
                 onClick={() => setCurrentPage(link.name)}
               >
-              <img src={link.icon} alt={link.label} width="15" height="15" style={{ marginRight: '5px' }} />
-              <span style={myPageStyles.navLinkText}>{link.label}</span>
+              <img  src={currentPage === link.name ? link.activeIcon : link.icon}
+                alt={link.label}
+                width="15"
+                height="15"
+                style={{ marginRight: '5px' }}
+              />
+              <span
+                style={{
+                  ...myPageStyles.navLinkText,
+                  color: currentPage === link.name ? '#fff' : '#888',
+                }}
+              >
+                {link.label}
+              </span>
               </a>
             </li>
           ))}

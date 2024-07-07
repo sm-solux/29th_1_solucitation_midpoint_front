@@ -1,6 +1,7 @@
 export const myPageStyles = {
   container: {
-    maxWidth: '800px',
+    maxWidth: '1170px',
+    height:'50px',
     margin: '0 auto',
     backgroundColor: '#000',
     marginTop: '110px'
@@ -12,11 +13,11 @@ export const myPageStyles = {
     justifyContent: 'center',
   },
   navItem: {
-    color:'#000',
-    margin: '0 55px',
-    padding: '4px',
     display: 'flex',
+    margin: '0 55px',
+    padding: '10px',
     alignItems: 'center', 
+    color:'#000',
 
   },
   navLink: {
@@ -24,6 +25,7 @@ export const myPageStyles = {
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
+    fontSize:'25px'
   },
   navLinkText: {
     marginLeft: '5px',
