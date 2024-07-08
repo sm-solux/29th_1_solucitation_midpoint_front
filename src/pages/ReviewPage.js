@@ -6,7 +6,6 @@ import SearchBox from "../components/SearchComponents";
 import ReviewCard from "../components/ReviewComponents";
 import WriteModal from "../components/WriteModalComponents";
 import ReviewModal from '../components/ReviewModalComponents';
-import { searchStyles } from '../styles/searchStyles';
 import { reviewStyles } from '../styles/reviewStyles';
 
 const ReviewPage = () => {

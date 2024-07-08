@@ -126,4 +126,58 @@ profileContainer: {
     cursor: 'pointer',
   },
 
+  overlay: {
+    backgroundColor: 'rgba(1, 1, 1, 0.5)',
+  },
+  modal: {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '800px',
+    height:'350px',
+    backgroundColor: '#F2F2EF',
+    padding: "20px",
+    border:'3px solid #000',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+    zIndex: '1000',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
+  closeButton: {
+    backgroundColor: 'transparent',
+    border: 'none',
+    color: '#1B4345',
+    position: 'absolute',
+    fontSize: '30px',
+    fontWeight: 'bold',
+    top: '30px',
+    right: '30px',
+    zIndex: '1000',
+  },
+
+  addImg: {
+    width: '60px',
+    display: 'block',
+  margin: '0 auto',
+  },
+  input: {
+    width:'400px',
+    height: '40px',
+    border: 'none',
+    borderRadius: '5px',
+    textAlign:'center',
+  },
+  addFriendModalButton: {
+    width: '100px',
+    height:'35px',
+    color: '#ffffff',
+    backgroundColor: '#1B4345',
+    border: 'none',
+    fontSize: '15px',
+    marginTop:'30px'
+  },
 };

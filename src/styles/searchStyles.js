@@ -55,14 +55,4 @@ export const searchStyles = {
     margin: '5px',
     transition: 'background-color 0.3s, color 0.3s',
   },
-  writeButton: {
-    width: '100px',
-    height:'100px',
-    position: 'fixed',
-    bottom: '60px',
-    right: '100px',
-    cursor: 'pointer',
-    borderRadius:'50%',
-    backgroundColor: '#1B4345',
-  },
 };

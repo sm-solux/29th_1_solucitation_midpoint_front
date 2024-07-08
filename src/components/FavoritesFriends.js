@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { myPageStyles } from '../styles/myPageStyles.js';
-import Modal from 'react-modal';
+import { AddFriendModal } from '../components/AddFriendModal.js';
 
 const FavoritesFriends = () => {
   const [isAddFriendModalOpen, setIsAddFriendModalOpen] = useState(false);
   const [friends, setFriends] = useState([]);
-  const [newFriendName, setNewFriendName] = useState('');
+
   const mockFriends = [
   { id: 1, name: '김규희', profileImage: '/img/default-profile.png' },
   { id: 2, name: '김소영', profileImage: '/img/default-profile.png' },
@@ -24,7 +24,6 @@ const FavoritesFriends = () => {
   const closeAddFriendModal = () => {
     setIsAddFriendModalOpen(false);
   };
-
   useEffect(() => {
     /* 친구 목록을 가져옵니다
     fetch('/api/friends')
@@ -33,30 +32,20 @@ const FavoritesFriends = () => {
       .catch(error => console.error('오류 발생:', error));
   }, []);*/
     //그냥 출력해보려고 쓴 코드
-    setTimeout(() => {
-      setFriends(mockFriends);
-    }, 1000);
+    setFriends(mockFriends);
+
   }, []);
 
-  const handleAddFriend = () => {
-    const newFriend = {
-      id: friends.length + 1,
-      name: '새 친구',
-      profileImage: '/img/default-profile.png',
-    };
+  const handleAddFriend = (newFriend) => {
     setFriends([...friends, newFriend]);
     closeAddFriendModal();
   };
 
-
-
   return (
     <div style={myPageStyles.favoritesFriendsContainer}>
-      <h3 style={{
-        padding:'10px',
-        textDecoration: 'underline',
-        textAlign: 'center',
-      }}>즐겨찾는 친구</h3>
+      <h3 style={{ padding: '10px', textDecoration: 'underline', textAlign: 'center' }}>
+        즐겨찾는 친구
+      </h3>
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
         {friends.map(friend => (
           <div key={friend.id} style={{ width: 'calc(33.33% - 20px)', margin: '10px', textAlign: 'center' }}>
@@ -72,18 +61,7 @@ const FavoritesFriends = () => {
           </button>
         </div>
       </div>
-
-      <Modal isOpen={isAddFriendModalOpen} onRequestClose={closeAddFriendModal}>
-        <h2>새 친구 추가</h2>
-        <input
-          type="text"
-          value={newFriendName}
-          onChange={(e) => setNewFriendName(e.target.value)}
-          placeholder="친구 이름"
-        />
-        <button onClick={handleAddFriend}>추가</button>
-        <button onClick={closeAddFriendModal}>취소</button>
-      </Modal>
+      <AddFriendModal isOpen={isAddFriendModalOpen} closeModal={closeAddFriendModal} addFriend={handleAddFriend} />
     </div>
   );
 };
