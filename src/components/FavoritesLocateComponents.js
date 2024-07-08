@@ -10,15 +10,15 @@ const FavoritesLocateComponents = () => {
         textAlign: 'center',
       }}>즐겨찾는 장소</h3>
       <div style={myPageStyles.locateontainer}>
-        <img src='/img/homeIcon.png' width="22" height="22" style={myPageStyles.icon} alt="home" />
-          집
-          {'>'}
+        <img src='/img/homeIcon.png' width="22" height="22" alt="home" />
+        집
+        {'                              >'}
       </div>
-      <div>
+      <div style={myPageStyles.locateontainer}>
         <img src='/img/schoolIcon.png' width="22" height="22" alt="school"/>
         직장/학교
       
-        {'>'}
+        {'                >'}
       </div>
     </div>
   );

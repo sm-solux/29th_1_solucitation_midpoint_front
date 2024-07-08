@@ -1,6 +1,6 @@
 export const myPageStyles = {
   container: {
-    maxWidth: '1170px',
+    maxWidth: '1000px',
     height:'40px',
     margin: '125px auto 60px auto',
     backgroundColor: '#000',
@@ -25,7 +25,7 @@ export const myPageStyles = {
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
-    fontSize:'20px'
+    fontSize:'17px'
   },
   navLinkText: {
     marginLeft: '5px',
@@ -103,7 +103,7 @@ profileContainer: {
   },
 
   favoritesFriendsContainer: {
-    width: '300px',
+    width: '350px',
     height: '500px',
     backgroundColor: 'white',
     borderRadius: "8px",
@@ -113,14 +113,17 @@ profileContainer: {
   locateontainer: {
     display: 'flex',
     alignItems: 'center',
-    gap: '10px',  // 아이콘과 텍스트 사이의 간격 조정
+    gap: '15px',
+    marginLeft: '20px',
+    whiteSpace: 'pre-wrap',
+    paddingBottom:'15px'
   },
-  icon: {
-    width: '22px',
-    height: '22px',
-  },
-  text: {
-    marginRight: 'auto',  // 텍스트를 왼쪽으로 정렬
+
+  addFriendButton: {
+    border: 'none',
+    backgroundColor: 'transparent',
+    display: 'inline-block',
+    cursor: 'pointer',
   },
 
 };
