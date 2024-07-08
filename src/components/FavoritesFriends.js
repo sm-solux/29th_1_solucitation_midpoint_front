@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { myPageStyles } from '../styles/myPageStyles.js';
+import Modal from 'react-modal';
 
 const FavoritesFriends = () => {
+  const [isAddFriendModalOpen, setIsAddFriendModalOpen] = useState(false);
   const [friends, setFriends] = useState([]);
-
+  const [newFriendName, setNewFriendName] = useState('');
   const mockFriends = [
   { id: 1, name: '김규희', profileImage: '/img/default-profile.png' },
   { id: 2, name: '김소영', profileImage: '/img/default-profile.png' },
@@ -13,7 +15,16 @@ const FavoritesFriends = () => {
   { id: 6, name: '이혜지', profileImage: '/img/default-profile.png' },
   { id: 7, name: '최연재', profileImage: '/img/default-profile.png' },
 
-];
+  ];
+  
+  const openAddFriendModal = () => {
+    setIsAddFriendModalOpen(true);
+  };
+
+  const closeAddFriendModal = () => {
+    setIsAddFriendModalOpen(false);
+  };
+
   useEffect(() => {
     /* 친구 목록을 가져옵니다
     fetch('/api/friends')
@@ -34,6 +45,7 @@ const FavoritesFriends = () => {
       profileImage: '/img/default-profile.png',
     };
     setFriends([...friends, newFriend]);
+    closeAddFriendModal();
   };
 
 
@@ -55,11 +67,23 @@ const FavoritesFriends = () => {
           </div>
         ))}
         <div style={{ width: 'calc(33.33% - 20px)', margin: '10px', textAlign: 'center' }}>
-          <button onClick={handleAddFriend} style={myPageStyles.addFriendButton}>
+          <button onClick={openAddFriendModal} style={myPageStyles.addFriendButton}>
             <img src="/img/PlusFriend.png" alt="Add" style={{ width: '50px', height: '50px', cursor: 'pointer' }} />
           </button>
         </div>
       </div>
+
+      <Modal isOpen={isAddFriendModalOpen} onRequestClose={closeAddFriendModal}>
+        <h2>새 친구 추가</h2>
+        <input
+          type="text"
+          value={newFriendName}
+          onChange={(e) => setNewFriendName(e.target.value)}
+          placeholder="친구 이름"
+        />
+        <button onClick={handleAddFriend}>추가</button>
+        <button onClick={closeAddFriendModal}>취소</button>
+      </Modal>
     </div>
   );
 };

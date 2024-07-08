@@ -7,6 +7,7 @@ import ReviewCard from "../components/ReviewComponents";
 import WriteModal from "../components/WriteModalComponents";
 import ReviewModal from '../components/ReviewModalComponents';
 import { searchStyles } from '../styles/searchStyles';
+import { reviewStyles } from '../styles/reviewStyles';
 
 const ReviewPage = () => {
   const initialReviews = [
@@ -71,29 +72,18 @@ const [selectedReview, setSelectedReview] = useState(null);
       <div style={{ marginTop: '100px' }}>
         <SearchBox />
       </div>
-      <div style={reviewContainer}>
+      <div style={reviewStyles.reviewContainer}>
         {reviews.map((review, index) => (
           <ReviewCard key={index} review={review} onReviewClick={openReviewModal} />
         ))}
       </div>
-      <button onClick={openWriteModal} style={searchStyles.writeButton}>
+      <button onClick={openWriteModal} style={reviewStyles.writeButton}>
         <img src='/img/WriteButtonIcon.png' />
       </button>
       <ReviewModal isOpen={reviewModalIsOpen} review={selectedReview} closeModal={closeReviewModal} />
       <WriteModal isOpen={writeModalIsOpen} closeModal={closeWriteModal} addReview={addReview} />
     </div >
   );
-};
-
-const reviewContainer = {
-  display: "grid",
-  gridTemplateColumns: "repeat(4, 1fr)",
-  overflowY: "auto",
-  gap: "20px",
-  padding: "20px",
-  margin: "0 auto", 
-  maxWidth: "1200px",
-  backgroundColor: "transparent",
 };
 
 export default ReviewPage;
