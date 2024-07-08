@@ -50,8 +50,8 @@ const MyPage = () => {
               >
               <img  src={currentPage === link.name ? link.activeIcon : link.icon}
                 alt={link.label}
-                width="15"
-                height="15"
+                width="20"
+                height="20"
                 style={{ marginRight: '5px' }}
               />
               <span

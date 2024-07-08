@@ -36,10 +36,8 @@ const MyPageProfile = () => {
           <img src={profileData.profileImage} alt="프로필 사진" style={{ maxWidth: '200px', borderRadius: '50%' }} />
         </div>
       </div>
-      <span style={myPageStyles.profileButtonContainer} >
         <button style={myPageStyles.profileButtonEdit}>편집</button>
         <button style={myPageStyles.profileButtonQuit}>탈퇴</button>
-      </span>
     </div>
   );
 };

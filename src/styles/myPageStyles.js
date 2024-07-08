@@ -1,8 +1,8 @@
 export const myPageStyles = {
   container: {
     maxWidth: '1170px',
-    height:'50px',
-    margin: '0 auto',
+    height:'40px',
+    margin: '125px auto 60px auto',
     backgroundColor: '#000',
     marginTop: '110px'
   },
@@ -25,7 +25,7 @@ export const myPageStyles = {
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
-    fontSize:'25px'
+    fontSize:'20px'
   },
   navLinkText: {
     marginLeft: '5px',
@@ -35,12 +35,11 @@ export const myPageStyles = {
     textDecoration: 'underline',
   },
 
-  profileContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    marginTop:'55px',
-    marginLeft:'700px',
-  },
+profileContainer: {
+  flexDirection: 'column',
+  width: 'fit-content',
+  margin: '0 auto',
+},
 
   profileItem: {
     marginBottom: '10px',
@@ -48,28 +47,22 @@ export const myPageStyles = {
   },
 
   profileLabel: {
-    width: '100px',
+    width: '150px',
     display: 'inline-block',
-    marginRight: '5px',
-    marginBottom: '30px',
+    marginBottom: '40px',
     color: '#1B4345',
-    textSize: '25px',
+    fontSize: '18px',
     fontWeight: 'bold',
   },
 
   profileText: {
-    width:'300px',
+    width:'400px',
     display: 'inline-block',
     paddingBottom: '6px',
     borderBottom: '3px solid black',
     color: '#1B4345',
-    textSize:'25px',
+    fontSize: '18px',
     fontWeight: 'bold',
-  },
-
-  profileButtonContainer: {
-    alignItems: 'center',
-    marginTop:'40px',
   },
 
   profileButtonEdit: {
@@ -77,9 +70,9 @@ export const myPageStyles = {
     height:'35px',
     color: '#ffffff',
     backgroundColor: '#1B4345',
-    marginLeft: '100px',
     border: 'none',
-    fontSize:'17px',
+    fontSize: '17px',
+    margin:'40px auto 0 150px'
   },
   
   profileButtonQuit: {
@@ -87,9 +80,9 @@ export const myPageStyles = {
     height:'35px',
     color: '#fff',
     backgroundColor:'#D00303',
-    marginLeft: '50px',
     border: 'none',
-    fontSize:'17px',
+    fontSize: '17px',
+    marginLeft:'75px'
   },
 
   favoritesContainer: {
