@@ -37,7 +37,7 @@ function Join() {
   return (
     <div>
       <Logo />
-      <JoinTitle text="회원가입" style={{ marginTop: "-3rem" }} />
+      <JoinTitle text="회원가입" />
       <JoinForm
         inputs={inputs}
         buttonText="인증요청"

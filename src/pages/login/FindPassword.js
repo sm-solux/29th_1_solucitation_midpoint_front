@@ -25,15 +25,17 @@ function FindPassword() {
   return (
     <div>
       <Logo />
-      <LoginTitle text="비밀번호 찾기" />
-      <FindPasswordForm
-        inputs={inputs}
-        buttonText="인증번호 받기"
-        onSubmit={handleSubmit}
-        hideButton={verificationVisible}
-        showVerification={verificationVisible}
-        onVerificationSubmit={handleVerificationSubmit}
-      />
+      <div style={commonStyles.centerContainer}>
+        <LoginTitle text="비밀번호 찾기" />
+        <FindPasswordForm
+          inputs={inputs}
+          buttonText="인증번호 받기"
+          onSubmit={handleSubmit}
+          hideButton={verificationVisible}
+          showVerification={verificationVisible}
+          onVerificationSubmit={handleVerificationSubmit}
+        />
+      </div>
     </div>
   );
 }

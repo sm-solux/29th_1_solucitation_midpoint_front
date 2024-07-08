@@ -12,7 +12,7 @@ const LoginButton = styled.button`
   width: 28rem;
   height: 4rem;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 0.4rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25,10 +25,10 @@ function LoginPage() {
   // 회원가입 및 자체로그인 navigate
   const navigate = useNavigate();
   const onClick = () => {
-    navigate("/join");
+    navigate("/login/join");
   };
   const toDirectLogin = () => {
-    navigate("/directlogin");
+    navigate("/login/direct");
   };
 
   // 카카오로그인 구현
@@ -43,8 +43,8 @@ function LoginPage() {
   return (
     <div>
       <Logo />
-      <LoginTitle text="로그인" />
       <div style={commonStyles.centerContainer}>
+        <LoginTitle text="로그인" />
         <LoginButton style={{ backgroundColor: "#F7E04B", color: "#21201E" }}>
           <img
             src="/img/kakao.png"

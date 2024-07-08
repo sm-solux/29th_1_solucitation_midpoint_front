@@ -1,7 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
-import "../styles/global.css";
 import { Logo } from "../components/CommonComponents";
 import { commonStyles } from "../styles/styles";
 
@@ -10,8 +8,8 @@ const Intro = styled.h1`
   font-size: 10rem;
   font-weight: 900;
   color: #1b4345;
-  margin-top: 17%;
   margin-bottom: 0.5rem;
+  margin-top: 12%;
 `;
 
 const SubIntro = styled.h5`
@@ -25,6 +23,7 @@ const SubIntro = styled.h5`
 const MainPage = () => {
   return (
     <div>
+      <Logo exist={false} />
       <div style={commonStyles.centerContainer}>
         <Intro>MIDPOINT</Intro>
         <SubIntro>WHERE TO MEET</SubIntro>
