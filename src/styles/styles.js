@@ -160,6 +160,43 @@ export const commonStyles = {
     width: '100%',
     marginTop: '1rem',
   },
+  testContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    maxWidth: '600px',
+    margin: '0 auto',
+    padding: '2rem',
+    borderRadius: '8px',
+    backgroundColor: '#F2F2EF',
+  },
+  testTitle: {
+    fontSize: '2rem',
+    fontWeight: '700',
+    marginBottom: '1.5rem',
+  },
+  testOptions: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    width: '100%',
+  },
+  option: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    cursor: 'pointer',
+  },
+  optionImg: {
+    width: '100px',
+    height: '100px',
+    marginBottom: '0.5rem',
+  },
+  optionText: {
+    fontSize: '1.2rem',
+    fontWeight: '600',
+  },
 };
 
 export const LoginFormContainer = styled.form`
@@ -342,3 +379,73 @@ export const StyledSelect = styled.select`
 export const StyledOption = styled.option`
   padding: 1rem; 
 `;
+
+export const TestFormContainer = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent !important;
+  margin-top: 4.9rem;
+`;
+
+export const ButtonContainer = styled.button`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 150px;
+  border: none;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  margin: 0 1rem;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  img {
+    width: 80px;
+    height: auto;
+  }
+
+  span {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #1b4345;
+  }
+`;
+
+
+export const ProgressBarContainer = styled.div`
+  width: 100%;
+  height: 10px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  margin-bottom: 2rem;
+  position: relative;
+`;
+
+export const ProgressBar = styled.div`
+  height: 100%;
+  background-color: #000; /* 색상을 검은색으로 변경 */
+  border-radius: 5px;
+  position: relative;
+  transition: width 0.3s ease;
+`;
+
+export const ProgressIndicator = styled.div`
+  width: 20px;
+  height: 20px;
+  background-color: #000; /* 색상을 검은색으로 변경 */
+  border-radius: 50%;
+  position: absolute;
+  top: -5px;
+  right: 0; /* 인디케이터를 진행 바의 맨 오른쪽에 위치하게 설정 */
+  transform: translateX(50%);
+`;
+
