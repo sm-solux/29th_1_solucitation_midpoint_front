@@ -143,6 +143,15 @@ export const commonStyles = {
     cursor: 'pointer',
     marginTop: '3rem',
   },
+  retryButton: {
+    padding: '0.5rem 1rem',
+    fontSize: '1rem',
+    backgroundColor: '#1B4345',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+  },
   addButton: {
     cursor: 'pointer',
     marginBottom: '1rem',
