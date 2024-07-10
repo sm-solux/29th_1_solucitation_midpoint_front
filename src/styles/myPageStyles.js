@@ -116,7 +116,8 @@ profileContainer: {
     gap: '15px',
     marginLeft: '20px',
     whiteSpace: 'pre-wrap',
-    paddingBottom:'15px'
+    paddingBottom: '15px',
+    cursor:'pointer',
   },
 
   addFriendButton: {
@@ -129,16 +130,17 @@ profileContainer: {
   overlay: {
     backgroundColor: 'rgba(1, 1, 1, 0.5)',
   },
+  
   modal: {
     position: 'fixed',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: '800px',
-    height:'350px',
+    height: '350px',
     backgroundColor: '#F2F2EF',
     padding: "20px",
-    border:'3px solid #000',
+    border: '3px solid #000',
     boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
     zIndex: '1000',
     display: 'flex',
@@ -158,26 +160,59 @@ profileContainer: {
     right: '30px',
     zIndex: '1000',
   },
-
+  modalContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
   addImg: {
     width: '60px',
     display: 'block',
-  margin: '0 auto',
+    margin: '0 auto',
   },
-  input: {
-    width:'400px',
+  inputName: {
+    width: '400px',
+    height: '40px',
+    border: 'none',
+    textAlign: 'center',
+    color: '#000',
+    fontSize: '15px',
+    backgroundColor: 'transparent',
+    outline: 'none',
+  },
+  inputLocate: {
+    width: '400px',
     height: '40px',
     border: 'none',
     borderRadius: '5px',
-    textAlign:'center',
+    textAlign: 'center',
+    outline: 'none',
   },
   addFriendModalButton: {
     width: '100px',
-    height:'35px',
+    height: '35px',
     color: '#ffffff',
     backgroundColor: '#1B4345',
     border: 'none',
     fontSize: '15px',
-    marginTop:'30px'
+    marginTop: '30px',
+  },
+  favoriteButtonEdit: {
+    width: '80px',
+    height: '35px',
+    color: '#ffffff',
+    backgroundColor: '#1B4345',
+    border: 'none',
+    fontSize: '15px',
+    marginTop: '50px',
+  },
+  favoriteButtonQuit: {
+    width: '80px',
+    height: '35px',
+    color: '#fff',
+    backgroundColor: '#D00303',
+    border: 'none',
+    fontSize: '15px',
+    marginLeft: '55px',
   },
 };
