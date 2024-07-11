@@ -429,7 +429,6 @@ export const ButtonContainer = styled.button`
   }
 `;
 
-
 export const ProgressBarContainer = styled.div`
   width: 100%;
   height: 10px;
@@ -458,3 +457,136 @@ export const ProgressIndicator = styled.div`
   transform: translateX(50%);
 `;
 
+export const PlaceContainer = styled.div`
+  display: flex;
+  width: 100%;
+`;
+
+export const Left = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center; /* WhiteBox를 가운데로 정렬 */
+  padding: 1rem;
+`;
+
+export const PlacesList = styled.ul`
+  list-style: none;
+  padding: 0;
+`;
+
+export const PlaceItem = styled.div`
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  img {
+    width: 50px;
+    height: 50px;
+    margin-right: 1rem;
+    border-radius: 8px;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    background-color: #000; /* 배경색을 검은색으로 변경 */
+    border-radius: 8px;
+    padding: 0.5rem;
+    flex: 1;
+
+    h3, p {
+      color: #fff; /* 글자색을 흰색으로 변경 */
+    }
+
+    h3 {
+      font-size: 1rem;
+      margin: 0;
+      margin-bottom: 0.3rem;
+    }
+
+    p {
+      font-size: 0.8rem;
+      margin: 0;
+    }
+  }
+`;
+
+export const BottomSection = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2rem;
+`;
+
+export const WeatherInfo = styled.div`
+  display: flex;
+  align-items: center;
+
+  img {
+    width: 24px;
+    height: 24px;
+    margin-right: 0.5rem;
+  }
+
+  span {
+    font-size: 1rem;
+    color: #666;
+  }
+`;
+
+export const Right = styled.div`
+  flex: 1;
+  padding: 1rem;
+`;
+
+export const MapContainer = styled.div`
+  h2 {
+    margin-bottom: 1rem;
+  }
+
+  iframe {
+    border: 0;
+    width: 100%;
+    height: 400px;
+  }
+`;
+
+export const WhiteBox = styled.div`
+  background-color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  width: 100%; /* Left 컨테이너 내에서의 크기를 설정 */
+  max-width: 90%; /* 최대 너비 설정 */
+`;
+
+export const ShareButton = styled.button`
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background-color: #FFF;
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  span {
+    font-weight: 800; /* 글씨 굵기를 설정 */
+  }
+
+  img {
+    margin-left: 0.5rem;
+  }
+`;
