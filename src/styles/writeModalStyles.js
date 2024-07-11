@@ -75,12 +75,12 @@ export const writeModalStyles = {
     marginBottom: '20px',
   },
   addImg: {
+    display: 'flex',
     width: '200px',
     height: '200px',
-    backgroundColor: '#e0e0e0',
-    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#e0e0e0',
     cursor: 'pointer',
   },
   tagContainer: {
@@ -91,10 +91,11 @@ export const writeModalStyles = {
     marginBottom: '20px',
   },
   tagButton: {
-    border:'2px solid #000000',
     padding: '5px 10px',
-    cursor: 'pointer',
+    border:'2px solid #000000',
     backgroundColor: 'transparent',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s, color 0.3s',
   },
   selectedTagButton: {
     backgroundColor: '#000000',

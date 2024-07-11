@@ -27,18 +27,18 @@ const ReviewModal = ({ isOpen, review, closeModal, currentUser }) => {
       </button>
       <div style={reviewModalStyles.profileContainer}>
         <img src='/img/default-profile.png' alt='profile image' style={reviewModalStyles.profileImg} />
-        <div>
+        <div style={reviewModalStyles.profileInfo}>
           <div style={reviewModalStyles.profileName}>{review.author}</div>
           <div style={reviewModalStyles.date}>YYYY.MM.DD. HH:MM</div>
         </div>
       </div>
-      <div>
+      <div style={reviewModalStyles.contentContainer}>
         <div style={reviewModalStyles.placeName}>{review.placeName}</div>
         <p style={reviewModalStyles.content}>{review.content}</p>
         {review.photo && <img src={review.photo} alt='사진' style={reviewModalStyles.photo} />}
       </div>
       <div style={reviewModalStyles.footer}>
-        <div>
+        <div style={reviewModalStyles.likeSection}>
           <button onClick={toggleLike} style={liked ? reviewModalStyles.likeButtonActive : reviewModalStyles.likeButton}>
             {liked ? '♥' : '♡'}
           </button>
@@ -52,7 +52,7 @@ const ReviewModal = ({ isOpen, review, closeModal, currentUser }) => {
           ))}
         </div>
         {isCurrentUser && (
-          <div>
+          <div style={reviewModalStyles.editSection}>
             <button style={reviewModalStyles.editButton}>
               <img src='/img/ReviewEditIcon.png' alt='edit button' />
             </button>
