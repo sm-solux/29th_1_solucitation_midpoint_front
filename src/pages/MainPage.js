@@ -2,6 +2,29 @@ import React from "react";
 import styled from "styled-components";
 import { Logo } from "../components/CommonComponents";
 import { commonStyles } from "../styles/styles";
+import { useNavigate } from "react-router-dom";
+
+const BackgroundContainer = styled.div`
+  background-image: url("img/main_background.png");
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+`;
+
+const IntroDiv = styled.div`
+  &:hover h1,
+  &:hover h5 {
+    color: #ec5640;
+  }
+  cursor: pointer;
+`;
 
 const Intro = styled.h1`
   font-family: "AkiraExpanded";
@@ -21,14 +44,22 @@ const SubIntro = styled.h5`
 `;
 
 const MainPage = () => {
+  const navigate = useNavigate();
+
+  const onClick = () => {
+    navigate("/home")
+  };
+
   return (
-    <div>
-      <Logo exist={false} />
+    <BackgroundContainer>
+      <Logo exist={false}/>
       <div style={commonStyles.centerContainer}>
-        <Intro>MIDPOINT</Intro>
-        <SubIntro>WHERE TO MEET</SubIntro>
+        <IntroDiv onClick={onClick}>
+          <Intro>MIDPOINT</Intro>
+          <SubIntro>WHERE TO MEET</SubIntro>
+        </IntroDiv>
       </div>
-    </div>
+    </BackgroundContainer>
   );
 };
 

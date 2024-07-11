@@ -29,7 +29,7 @@ function FindPassword() {
         <LoginTitle text="비밀번호 찾기" />
         <FindPasswordForm
           inputs={inputs}
-          buttonText="인증번호 받기"
+          buttonText="임시 비밀번호 받기"
           onSubmit={handleSubmit}
           hideButton={verificationVisible}
           showVerification={verificationVisible}

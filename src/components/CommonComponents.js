@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { commonStyles } from "../styles/styles";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -73,4 +73,48 @@ function Logo({ exist = true }) {
   );
 }
 
-export { Logo };
+// 4분 타이머
+const Timer = ({ isActive, resetTimer }) => {
+  const [seconds, setSeconds] = useState(240);
+
+  useEffect(() => {
+    let interval = null;
+    if (isActive) {
+      interval = setInterval(() => {
+        setSeconds((seconds) => {
+          if (seconds > 0) {
+            return seconds - 1;
+          } else {
+            clearInterval(interval);
+            alert("입력시간을 초과했습니다.");
+            return 0;
+          }
+        });
+      }, 1000);
+    } else {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [isActive]);
+
+  useEffect(() => {
+    if (resetTimer) {
+      setSeconds(240);
+    }
+  }, [resetTimer]);
+
+  // 초를 분과 초로 변환하는 함수
+  const formatTime = (timeInSeconds) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
+    return `${minutes < 10 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+  };
+
+  return (
+    <div>
+      <h5 style={{ color: '#EC5640', marginRight: '0.5rem', marginLeft: '0.5rem' }}>{formatTime(seconds)}</h5>
+    </div>
+  );
+};
+
+export { Logo, Timer };

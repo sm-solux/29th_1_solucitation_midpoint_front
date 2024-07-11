@@ -40,16 +40,17 @@ export const commonStyles = {
     textAlign: "center",
   },
   link: {
-    fontSize: "1.3rem",
+    fontSize: "1.5rem",
     color: "#000000",
     height: "20px",
     cursor: "pointer",
     textDecoration: "none",
     display: "inline-block",
     // padding: '10px 16px',
-    paddingLeft: "32px",
-    marginBottom: "5px",
+    paddingLeft: "52px",
+    marginBottom: "12px",
     fontWeight: "bold",
+    marginRight: "-15px",
   },
   loginTitle: {
     fontSize: "3.4rem",
@@ -61,7 +62,7 @@ export const commonStyles = {
     fontSize: "3.05rem",
     textAlign: "center",
     fontWeight: "700",
-    marginTop: "6.9rem",
+    marginTop: "7.15rem",
   },
   centerContainer: {
     display: "flex",
@@ -189,10 +190,11 @@ export const commonStyles = {
 };
 
 export const LoginFormContainer = styled.form`
+  width: 44rem; 
+  margin: 0 auto; 
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start; /* 내부 내용물을 왼쪽으로 정렬 */
   background-color: transparent !important;
   margin-top: 2.6rem;
 `;
@@ -239,7 +241,7 @@ export const LoginSubmitButton = styled.button`
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: center; 
 `;
 
 export const LoginText = styled.p`
@@ -263,7 +265,7 @@ export const LoginText = styled.p`
 export const JoinInputGroup = styled.div`
   display: flex;
   align-items: center;
-  width: 44rem;
+  width: 100%;
   margin-top: -2.45rem;
   margin-bottom: 5.1rem;
   padding-bottom: 0.5rem;
@@ -285,7 +287,6 @@ export const ProfilePictureLabel = styled.label`
   font-size: 1.25rem;
   font-weight: 700;
   align-self: flex-start;
-  margin-left: 31.3rem;
 `;
 
 export const DefaultProfileImage = styled.img`
@@ -294,7 +295,6 @@ export const DefaultProfileImage = styled.img`
   margin-top: -0.3rem;
   cursor: pointer;
   align-self: flex-start;
-  margin-left: 31.3rem;
 `;
 
 export const ProfilePictureInput = styled.input.attrs({
@@ -324,30 +324,52 @@ export const JoinButton = styled.button`
 
 export const Verification = styled.div`
   display: flex;
+  flex-direction: row; 
   align-items: center;
-  width: 44rem;
+  width: 29rem;
+  height: 2.5rem;
   margin-top: 3.8rem;
   margin-bottom: 5.1rem;
   padding-bottom: 0.5rem;
   border-bottom: 0.25rem solid #1b4345;
   font-size: 1.25rem;
   font-weight: 700;
+  margin-right: 0.8rem;
 `;
 
 export const VerificationLabel = styled.label`
-  width: 6rem;
+  width: 7rem;
   color: #1b4345;
   font-size: 1.25rem;
   font-weight: 700;
 `;
 
 export const VerificationInput = styled.input`
+  width: 65%;
   padding: 10px;
   border: none;
   font-size: 1rem;
   background-color: transparent !important;
   outline: none;
 `;
+
+export const VerificationButton = styled.button`
+  width: 16%;
+  height: 2.7rem;
+  padding: 1rem;
+  margin-top: 4.1rem;
+  margin-right: 0.3rem;
+  border: 0.2rem solid #1b4345;
+  border-radius: 0.2rem;
+  background-color: transparent;
+  color: #1b4345;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
 
 export const StyledSelect = styled.select`
   flex: 1;
