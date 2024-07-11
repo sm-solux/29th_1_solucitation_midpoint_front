@@ -4,17 +4,17 @@ import { writeModalStyles } from '../styles/writeModalStyles';
 
 Modal.setAppElement('#root');
 
-const WriteModal = ({ isOpen, closeModal, addReview, }) => {
+const WriteModal = ({ isOpen, closeModal, addReview }) => {
+
+  const currentUser = { name: 'user1' };
+
   const [placeName, setPlaceName] = useState('');
   const [content, setContent] = useState('');
   const [selectedFiles, setSelectedFiles] = useState([null, null, null]);
   const fileInputRefs = [useRef(null), useRef(null), useRef(null)];
-  const [selectedTag, setSelectedTag] = useState(null);
+  const [selectedTags, setSelectedTags] = useState([]);
 
-  const predefinedTags = {
-    '#태그1': ['태그3', '태그4', '태그5'],
-    '#태그2': ['태그3', '태그4', '태그5'],
-  };
+  const predefinedTags = ['#식사', '#카페', '#공부', '#문화생활', '#쇼핑', '#자연', '#산책', '#친목', '#여럿이', '#혼자'];
 
   const handleIconClick = (index) => {
     if (fileInputRefs[index].current) {
@@ -36,7 +36,11 @@ const WriteModal = ({ isOpen, closeModal, addReview, }) => {
   };
 
   const handleTagClick = (tag) => {
-    setSelectedTag(tag === selectedTag ? null : tag);
+    if (selectedTags.includes(tag)) {
+      setSelectedTags(selectedTags.filter((t) => t !== tag));
+    } else if (selectedTags.length < 2) {
+      setSelectedTags([...selectedTags, tag]);
+    }
   };
 
   const handleAddReview = (e) => {
@@ -45,7 +49,7 @@ const WriteModal = ({ isOpen, closeModal, addReview, }) => {
       placeName,
       content,
       photoUrls: selectedFiles.map((file) => (file ? URL.createObjectURL(file) : null)).filter((url) => url !== null),
-      tags: selectedTag ? [selectedTag] : [],
+      tags: selectedTags,
     };
     addReview(newReview);
     handleCloseModal();
@@ -55,7 +59,7 @@ const WriteModal = ({ isOpen, closeModal, addReview, }) => {
     setPlaceName('');
     setContent('');
     setSelectedFiles([null, null, null]);
-    setSelectedTag(null);
+    setSelectedTags([]);
     closeModal();
   };
 
@@ -63,7 +67,10 @@ const WriteModal = ({ isOpen, closeModal, addReview, }) => {
     <Modal
       isOpen={isOpen}
       onRequestClose={handleCloseModal}
-      style={{ overlay: writeModalStyles.overlay, content: writeModalStyles.modal }}
+      style={{
+        overlay: writeModalStyles.overlay,
+        content: writeModalStyles.modal,
+      }}
       contentLabel='Write Review Modal'
     >
       <form onSubmit={handleAddReview}>
@@ -72,7 +79,7 @@ const WriteModal = ({ isOpen, closeModal, addReview, }) => {
         </button>
         <div style={writeModalStyles.profileContainer}>
           <img src='/img/default-profile.png' alt="profile image" style={writeModalStyles.profileImg} />
-          <span style={writeModalStyles.profileName}>솔룩션짱짱최고</span>
+          <span style={writeModalStyles.profileName}>{currentUser.name}</span>
         </div>
         <input
           type="text"
@@ -105,33 +112,25 @@ const WriteModal = ({ isOpen, closeModal, addReview, }) => {
             </span>
           ))}
         </div>
+        <div>태그 (2개 필수)</div>
         <div style={writeModalStyles.tagContainer}>
-          {Object.keys(predefinedTags).map((tag) => (
+          {predefinedTags.map((tag) => (
             <button
               type="button"
               key={tag}
               onClick={() => handleTagClick(tag)}
-              style={writeModalStyles.tagButton}
+              style={{
+                ...writeModalStyles.tagButton,
+                ...(selectedTags.includes(tag) ? writeModalStyles.selectedTagButton : {}),
+              }}
             >
               {tag}
             </button>
           ))}
         </div>
-        {selectedTag && predefinedTags[selectedTag] && (
-        <div style={writeModalStyles.subTagContainer}>
-          {predefinedTags[selectedTag].map((subTag) => (
-          <button
-            type="button"
-            key={subTag}
-            onClick={() => handleTagClick(subTag)}
-            style={writeModalStyles.tagButton}
-          >
-            {subTag}
-          </button>
-          ))}
-        </div>
-        )}
-        <button type="submit" style={writeModalStyles.button}>게시</button>
+        <button type="submit" style={writeModalStyles.button}>
+          게시
+        </button>
       </form>
     </Modal>
   );

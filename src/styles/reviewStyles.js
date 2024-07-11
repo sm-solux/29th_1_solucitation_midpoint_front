@@ -79,13 +79,14 @@ export const reviewStyles = {
     fontSize:'14px',
   },
   writeButton: {
-    width: '100px',
-    height:'100px',
+    width: '80px',
+    height:'80px',
     position: 'fixed',
     bottom: '60px',
-    right: '100px',
+    right: '90px',
     cursor: 'pointer',
     borderRadius:'50%',
     backgroundColor: '#1B4345',
+    padding:'5px',
   },
 };

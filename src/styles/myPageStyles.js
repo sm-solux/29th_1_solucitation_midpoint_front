@@ -8,7 +8,7 @@ export const myPageStyles = {
   },
   nav: {
     listStyleType: 'none',
-    padding: 0,
+    padding: '0',
     display: 'flex',
     justifyContent: 'center',
   },
