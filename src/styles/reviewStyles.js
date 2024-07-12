@@ -6,6 +6,17 @@ export const reviewStyles = {
     boxShadow: "0 4px 8px rgba(0,0,0,0.1)", //빼니까 구분이 잘 안돼서 구현은 해둠
     backgroundColor: "transparent",
   },
+  reviewContainer: {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, 1fr)",
+    overflowY: "auto",
+    gap: "20px",
+    padding: "20px",
+    margin: "0 auto", 
+    maxWidth: "1200px",
+    backgroundColor: "transparent",
+  },
+
   photoContainer: {
     width: "50",
     height: "50",
@@ -66,5 +77,16 @@ export const reviewStyles = {
     marginBottom: '5px',
     color:'#1B4345',
     fontSize:'14px',
-  }
+  },
+  writeButton: {
+    width: '80px',
+    height:'80px',
+    position: 'fixed',
+    bottom: '60px',
+    right: '90px',
+    cursor: 'pointer',
+    borderRadius:'50%',
+    backgroundColor: '#1B4345',
+    padding:'5px',
+  },
 };

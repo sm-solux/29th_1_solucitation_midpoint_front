@@ -1,4 +1,5 @@
 import React from 'react';
+import "../../styles/global.css";
 import { myPageStyles } from '../../styles/myPageStyles';
 
 const MyPageProfile = () => {
@@ -15,7 +16,7 @@ const MyPageProfile = () => {
     <div style={myPageStyles.profileContainer}>
       <div style={myPageStyles.profileItem}>
         <span style={myPageStyles.profileLabel}>이름</span>
-        <span style={myPageStyles.profileText}> {profileData.name}</span>
+        <div style={myPageStyles.profileText}> {profileData.name}</div>
       </div>
       <div style={myPageStyles.profileItem}>
         <span style={myPageStyles.profileLabel}>닉네임</span>
@@ -35,10 +36,8 @@ const MyPageProfile = () => {
           <img src={profileData.profileImage} alt="프로필 사진" style={{ maxWidth: '200px', borderRadius: '50%' }} />
         </div>
       </div>
-      <span style={myPageStyles.profileButtonContainer} >
         <button style={myPageStyles.profileButtonEdit}>편집</button>
         <button style={myPageStyles.profileButtonQuit}>탈퇴</button>
-      </span>
     </div>
   );
 };
