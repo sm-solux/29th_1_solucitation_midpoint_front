@@ -179,6 +179,15 @@ export const commonStyles = {
     cursor: 'pointer',
     marginTop: '3rem',
   },
+  retryButton: {
+    padding: '0.5rem 1rem',
+    fontSize: '1rem',
+    backgroundColor: '#1B4345',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+  },
   addButton: {
     cursor: 'pointer',
     marginBottom: '1rem',
@@ -195,6 +204,101 @@ export const commonStyles = {
     display: 'flex',
     width: '100%',
     marginTop: '1rem',
+  },
+  testContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    maxWidth: '600px',
+    margin: '0 auto',
+    padding: '2rem',
+    borderRadius: '8px',
+    backgroundColor: '#F2F2EF',
+  },
+  testTitle: {
+    fontSize: '2rem',
+    fontWeight: '700',
+    marginBottom: '1.5rem',
+  },
+  testOptions: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    width: '100%',
+  },
+  option: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    cursor: 'pointer',
+  },
+  optionImg: {
+    width: '100px',
+    height: '100px',
+    marginBottom: '0.5rem',
+  },
+  optionText: {
+    fontSize: '1.2rem',
+    fontWeight: '600',
+  },
+  resultContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    textAlign: 'center',
+  },
+  resultOptions: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    width: '100%',
+    maxWidth: '600px',
+    margin: '0 auto',
+  },
+  resultOption: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    margin: '0 1rem',
+  },
+  resultOptionBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '250px',
+    height: '250px',
+    border: 'none',
+    backgroundColor: '#fff',
+    borderRadius: '15px',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    cursor: 'pointer',
+    margin: '0 1rem',
+  },
+  resultOptionImg: {
+    width: '140px',
+    height: 'auto',
+  },
+  resultOptionText: {
+    marginTop: '1rem',
+    fontSize: '1.5rem',
+    fontWeight: '600',
+  },
+  resultButton: {
+    marginTop: '4rem',
+    padding: '0.5rem 1rem',
+    fontSize: '1.2rem',
+    fontWeight: '600',
+    color: '#000',
+    backgroundColor: '#F2F2EF',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    textAlign: 'center',
+    textDecoration: 'none',
+    display: 'inline-block',
+    textDecoration: 'underline',
   },
 };
 
@@ -379,3 +483,204 @@ export const StyledOption = styled.option`
   padding: 1rem; 
 `;
 
+export const TestFormContainer = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent !important;
+  margin-top: 4.9rem;
+`;
+
+export const ButtonContainer = styled.button`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 150px;
+  border: none;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  margin: 0 1rem;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  img {
+    width: 80px;
+    height: auto;
+  }
+
+  span {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #1b4345;
+  }
+`;
+
+export const ProgressBarContainer = styled.div`
+  width: 100%;
+  height: 10px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  margin-bottom: 2rem;
+  position: relative;
+`;
+
+export const ProgressBar = styled.div`
+  height: 100%;
+  background-color: #000; /* 색상을 검은색으로 변경 */
+  border-radius: 5px;
+  position: relative;
+  transition: width 0.3s ease;
+`;
+
+export const ProgressIndicator = styled.div`
+  width: 20px;
+  height: 20px;
+  background-color: #000; /* 색상을 검은색으로 변경 */
+  border-radius: 50%;
+  position: absolute;
+  top: -5px;
+  right: 0; /* 인디케이터를 진행 바의 맨 오른쪽에 위치하게 설정 */
+  transform: translateX(50%);
+`;
+
+export const PlaceContainer = styled.div`
+  display: flex;
+  width: 100%;
+`;
+
+export const Left = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center; /* WhiteBox를 가운데로 정렬 */
+  padding: 1rem;
+`;
+
+export const PlacesList = styled.ul`
+  list-style: none;
+  padding: 0;
+`;
+
+export const PlaceItem = styled.div`
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  img {
+    width: 50px;
+    height: 50px;
+    margin-right: 1rem;
+    border-radius: 8px;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    background-color: #000; /* 배경색을 검은색으로 변경 */
+    border-radius: 8px;
+    padding: 0.5rem;
+    flex: 1;
+
+    h3, p {
+      color: #fff; /* 글자색을 흰색으로 변경 */
+    }
+
+    h3 {
+      font-size: 1rem;
+      margin: 0;
+      margin-bottom: 0.3rem;
+    }
+
+    p {
+      font-size: 0.8rem;
+      margin: 0;
+    }
+  }
+`;
+
+export const BottomSection = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2rem;
+`;
+
+export const WeatherInfo = styled.div`
+  display: flex;
+  align-items: center;
+
+  img {
+    width: 24px;
+    height: 24px;
+    margin-right: 0.5rem;
+  }
+
+  span {
+    font-size: 1rem;
+    color: #666;
+  }
+`;
+
+export const Right = styled.div`
+  flex: 1;
+  padding: 1rem;
+`;
+
+export const MapContainer = styled.div`
+  h2 {
+    margin-bottom: 1rem;
+  }
+
+  iframe {
+    border: 0;
+    width: 100%;
+    height: 400px;
+  }
+`;
+
+export const WhiteBox = styled.div`
+  background-color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  width: 100%; /* Left 컨테이너 내에서의 크기를 설정 */
+  max-width: 90%; /* 최대 너비 설정 */
+`;
+
+export const ShareButton = styled.button`
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background-color: #FFF;
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  span {
+    font-weight: 800; /* 글씨 굵기를 설정 */
+  }
+
+  img {
+    margin-left: 0.5rem;
+  }
+`;
