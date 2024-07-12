@@ -3,15 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { commonStyles, ButtonContainer, ProgressBarContainer, ProgressBar, ProgressIndicator } from '../../styles/styles';
 import { Logo } from '../../components/CommonComponents';
 
-const Test1 = () => {
-  const [activeButton, setActiveButton] = useState(null); // 현재 활성화된 버튼 상태
+const Test1 = ({ updateAnswers }) => {
+  const [activeButton, setActiveButton] = useState(null); 
   const navigate = useNavigate();
 
   const handleClick = (button) => {
-    setActiveButton(button); // 클릭한 버튼의 상태를 설정
+    setActiveButton(button);
+    updateAnswers('test1', button);
     setTimeout(() => {
       navigate('/test2');
-    }, 200); // 0.2초 후에 페이지 이동
+    }, 200); 
   };
 
   const handleNextClick = () => {
@@ -36,7 +37,7 @@ const Test1 = () => {
             style={{ 
               position: 'absolute',
               top: '150%',
-              right: '-220px', // 필요한 만큼 오른쪽으로 이동
+              right: '-220px',
               transform: 'translateY(-50%)',
               background: 'none', 
               border: 'none', 

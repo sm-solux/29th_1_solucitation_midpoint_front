@@ -3,17 +3,47 @@ import { useNavigate } from 'react-router-dom';
 import { commonStyles, ButtonContainer, ProgressBarContainer, ProgressBar, ProgressIndicator } from '../../styles/styles';
 import { Logo } from '../../components/CommonComponents';
 
-const Test3 = () => {
-  const [activeButton, setActiveButton] = useState(null); // 현재 활성화된 버튼 상태
+const Test3 = ({ updateAnswers, answers }) => {
+  const [activeButton, setActiveButton] = useState(null); 
   const navigate = useNavigate();
 
   const handleClick = (button) => {
-    setActiveButton(button); // 클릭한 버튼의 상태를 설정
-    // 완료 처리를 위해 setTimeout 제거
+    setActiveButton(button);
+    updateAnswers('test3', button);
+
+    // Test1, Test2, Test3의 답변에 따라 결과 페이지로 이동
+    if (answers.test1 === 'yes') {
+      if (answers.test2 === 'city') {
+        if (button === 'calm') {
+          navigate('/result1');
+        } else {
+          navigate('/result1');
+        }
+      } else {
+        if (button === 'calm') {
+          navigate('/result1');
+        } else {
+          navigate('/result1');
+        }
+      }
+    } else {
+      if (answers.test2 === 'city') {
+        if (button === 'calm') {
+          navigate('/result3');
+        } else {
+          navigate('/result4');
+        }
+      } else {
+        if (button === 'calm') {
+          navigate('/result2');
+        } else {
+          navigate('/result2');
+        }
+      }
+    }
   };
 
   const handleNextClick = () => {
-    // 완료 처리 로직 추가 (필요에 따라)
     alert('완료되었습니다!');
   };
 
@@ -39,7 +69,7 @@ const Test3 = () => {
             style={{ 
               position: 'absolute',
               top: '150%',
-              left: '-152px', // 필요한 만큼 왼쪽으로 이동
+              left: '-152px',
               transform: 'translateY(-50%)',
               background: 'none', 
               border: 'none', 
@@ -54,7 +84,7 @@ const Test3 = () => {
             style={{ 
               position: 'absolute',
               top: '150%',
-              right: '-168px', // 필요한 만큼 오른쪽으로 이동
+              right: '-168px',
               transform: 'translateY(-50%)',
               fontSize: '1rem',
               color: 'rgba(0, 0, 0, 0.5)'
