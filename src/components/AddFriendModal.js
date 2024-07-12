@@ -43,11 +43,15 @@ export const AddFriendModal = ({ isOpen, closeModal, addFriend, editFriend, dele
       locate: location,
     };
     editFriend(updatedFriend);
-    clearInputs();
+    // Re-set the fields with updated data without closing the modal
+    setFriendName(updatedFriend.name);
+    setLocation(updatedFriend.locate);
+    setIsEditing(false);
   };
 
   const handleDeleteFriend = () => {
     deleteFriend(selectedFriend);
+    closeModal();
     clearInputs();
   };
 
