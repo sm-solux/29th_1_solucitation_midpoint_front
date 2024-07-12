@@ -71,7 +71,7 @@ const WriteModal = ({ isOpen, closeModal, addReview, }) => {
           X
         </button>
         <div style={writeModalStyles.profileContainer}>
-          <img src='/img/Rectangle.png' alt="Modal image" style={writeModalStyles.profileImg} />
+          <img src='/img/default-profile.png' alt="profile image" style={writeModalStyles.profileImg} />
           <span style={writeModalStyles.profileName}>솔룩션짱짱최고</span>
         </div>
         <input

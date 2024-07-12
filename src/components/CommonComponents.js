@@ -1,46 +1,68 @@
-import React, { useState, useRef } from "react";
-import {
-  commonStyles,
-  LoginFormContainer,
-  LoginInputField,
-  LoginInputGroup,
-  LoginInputLabel,
-  LoginSubmitButton,
-  JoinInputGroup,
-  JoinInputLabel,
-  ProfilePictureInput,
-  ProfilePictureLabel,
-  DefaultProfileImage,
-  JoinButton,
-  Verification,
-  VerificationLabel,
-  VerificationInput,
-} from "../styles/styles";
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { commonStyles } from "../styles/styles";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
-function Logo() {
-  const links = [
-    { name: 'home', path: '/Review', label: '홈' },
-    { name: 'review', path: '/Review', label: '게시판' },
-    { name: 'mypage', path: '/MyPage', label: '마이페이지' },
-    { name: 'logout', path: '', label: '로그아웃' }
+function Logo({ exist = true }) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const onClick = () => {
+    navigate("/home");
+  };
+
+  const loggedInLinks = [
+    { name: "home", path: "/home", label: "홈" },
+    { name: "review", path: "/Review", label: "게시판" },
+    { name: "mypage", path: "/MyPage", label: "마이페이지" },
+    { name: "logout", path: "/", label: "로그아웃" },
   ];
+
+  const loggedOutLinks = [
+    { name: "home", path: "/home", label: "홈" },
+    { name: "review", path: "/Review", label: "게시판" },
+    { name: "login", path: "/login", label: "로그인" },
+  ];
+
+  const links = isLoggedIn ? loggedInLinks : loggedOutLinks;
+
+  const linkStyle = {
+    ...commonStyles.link,
+    textDecoration: "none",
+  };
+
+  const activeLinkStyle = {
+    ...linkStyle,
+    textDecoration: "underline",
+    textUnderlineOffset: "3px",
+  };
+
+  const getLinkStyle = (path) => {
+    const isActive = location.pathname.startsWith(path);
+    return isActive ? activeLinkStyle : linkStyle;
+  };
 
   return (
     <header style={commonStyles.header}>
       <div style={commonStyles.logo_div}>
-        <img src="/img/logo.png" style={commonStyles.logo_img} alt="Logo" />
-        <h1 style={commonStyles.logo}>MIDPOINT</h1>
+        {exist && (
+          <h1 style={commonStyles.logo} onClick={onClick}>
+            MIDPOINT
+          </h1>
+        )}
       </div>
       <div style={commonStyles.move_div}>
-        {links.map(link => (
+        {links.map((link) => (
           <div style={commonStyles.linkContainer} key={link.name}>
-            {link.name === 'logout' ? (
-              <span style={commonStyles.link}>
+            {link.name === "logout" ? (
+              <span
+                style={getLinkStyle(link.path)}
+                onClick={() => setIsLoggedIn(false)}
+              >
                 {link.label}
               </span>
             ) : (
-              <Link to={link.path} style={commonStyles.link}>
+              <Link to={link.path} style={getLinkStyle(link.path)}>
                 {link.label}
               </Link>
             )}
@@ -49,22 +71,50 @@ function Logo() {
       </div>
     </header>
   );
+}
+
+// 4분 타이머
+const Timer = ({ isActive, resetTimer }) => {
+  const [seconds, setSeconds] = useState(240);
+
+  useEffect(() => {
+    let interval = null;
+    if (isActive) {
+      interval = setInterval(() => {
+        setSeconds((seconds) => {
+          if (seconds > 0) {
+            return seconds - 1;
+          } else {
+            clearInterval(interval);
+            alert("입력시간을 초과했습니다.");
+            return 0;
+          }
+        });
+      }, 1000);
+    } else {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [isActive]);
+
+  useEffect(() => {
+    if (resetTimer) {
+      setSeconds(240);
+    }
+  }, [resetTimer]);
+
+  // 초를 분과 초로 변환하는 함수
+  const formatTime = (timeInSeconds) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
+    return `${minutes < 10 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+  };
+
+  return (
+    <div>
+      <h5 style={{ color: '#EC5640', marginRight: '0.5rem', marginLeft: '0.5rem' }}>{formatTime(seconds)}</h5>
+    </div>
+  );
 };
 
-export {
-  Logo,
-  LoginFormContainer,
-  LoginInputField,
-  LoginInputGroup,
-  LoginInputLabel,
-  LoginSubmitButton,
-  JoinInputGroup,
-  JoinInputLabel,
-  ProfilePictureInput,
-  ProfilePictureLabel,
-  DefaultProfileImage,
-  JoinButton,
-  Verification,
-  VerificationLabel,
-  VerificationInput
-};
+export { Logo, Timer };

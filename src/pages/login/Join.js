@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const inputs = [
   { label: "이름", type: "name", id: "name", required: true },
   { label: "닉네임", type: "text", id: "nickname", required: true },
-  { label: "이메일", type: "email", id: "email", required: true },
+  { label: "이메일", type: "text", id: "email", required: true },
   { label: "비밀번호", type: "password", id: "password", required: true },
   {
     label: "비밀번호 확인",
@@ -17,12 +17,15 @@ const inputs = [
 ];
 
 function Join() {
+  const [values, setValues] = useState({});
   const [verificationVisible, setVerificationVisible] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event, formErrors) => {
     event.preventDefault();
-    setVerificationVisible(true);
+    if (formErrors && Object.keys(formErrors).length === 0) {
+      setVerificationVisible(true);
+    }
   };
 
   const handleProfileChange = (event) => {
@@ -31,19 +34,20 @@ function Join() {
 
   const handleVerificationSubmit = (event) => {
     event.preventDefault();
+    console.log("Submitted values:", values);
     navigate("/login");
   };
 
   return (
     <div>
       <Logo />
-      <JoinTitle text="회원가입" style={{ marginTop: "-3rem" }} />
+      <JoinTitle text="회원가입" />
       <JoinForm
         inputs={inputs}
-        buttonText="인증요청"
+        values={values}
+        setValues={setValues}
         onSubmit={handleSubmit}
         onProfile={handleProfileChange}
-        hideButton={verificationVisible}
         showVerification={verificationVisible}
         onVerificationSubmit={handleVerificationSubmit}
       />

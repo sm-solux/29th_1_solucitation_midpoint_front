@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import "../styles/global.css";
 import { myPageStyles } from '../styles/myPageStyles';
 import { Logo } from "../components/CommonComponents";
-import MyPageProfile from '../components/MyPageProfile';
-import MyPageFavorites from '../components/MyPageFavorites';
-import MyPageSearchHistory from '../components/MyPageSearchHistory';
-import MyPagePosts from '../components/MyPagePosts';
+import MyPageProfile from './MyPage/MyPageProfile';
+import MyPageFavorites from './MyPage/MyPageFavorites';
+import MyPageSearchHistory from './MyPage/MyPageSearchHistory';
+import MyPagePosts from './MyPage/MyPagePosts';
 
   const links = [
     { name: 'profile', label: '회원 정보' , icon: '/img/MyPageProfileIcon.png' },
@@ -17,7 +17,6 @@ import MyPagePosts from '../components/MyPagePosts';
 
 const MyPage = () => {
   const [currentPage, setCurrentPage] = useState('profile');
-
 
   const renderPage = () => {
     switch (currentPage) {

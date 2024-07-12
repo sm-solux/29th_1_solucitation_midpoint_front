@@ -1,5 +1,5 @@
 import React from 'react';
-import { myPageStyles } from '../styles/myPageStyles';
+import { myPageStyles } from '../../styles/myPageStyles';
 
 const MyPageProfile = () => {
   // 예시 데이터임, 수정해야함
@@ -8,7 +8,7 @@ const MyPageProfile = () => {
     nickname: '솔룩션짱짱최고',
     email: 'soluxion@sookmyung.ac.kr',
     password: '********',
-    profileImage: '../img/Rectangle.png',
+    profileImage: '../img/default-profile.png',
 
   };
   return (
