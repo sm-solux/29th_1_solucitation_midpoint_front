@@ -5,7 +5,6 @@ import WriteModal from '../../components/WriteModalComponents';
 import { reviewStyles } from '../../styles/reviewStyles';
 
 const MyPagePosts = () => {
-  // 가상 데이터
   const currentUser = 'user1';
 
   const initialReviews = [
