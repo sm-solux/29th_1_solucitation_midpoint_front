@@ -4,18 +4,28 @@ import { myPageStyles } from '../styles/myPageStyles';
 
 Modal.setAppElement('#root');
 
-export const AddFriendModal = ({ isOpen, closeModal, addFriend, editFriend, deleteFriend, selectedFriend }) => {
+export const AddFriendModal = ({
+  isOpen,
+  closeModal,
+  addFriend,
+  editFriend,
+  deleteFriend,
+  selectedFriend,
+}) => {
   const [friendName, setFriendName] = useState('');
   const [location, setLocation] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
+  const [isAdded, setIsAdded] = useState(false);
 
   useEffect(() => {
     if (selectedFriend) {
       setFriendName(selectedFriend.name);
       setLocation(selectedFriend.locate);
       setIsEditing(false);
+      setIsAdded(selectedFriend.locate.trim() !== '');
     } else {
       clearInputs();
+      setIsEditing(true);
     }
   }, [selectedFriend]);
 
@@ -32,7 +42,7 @@ export const AddFriendModal = ({ isOpen, closeModal, addFriend, editFriend, dele
       locate: location,
     };
     addFriend(newFriend);
-    closeModal();
+    setIsAdded(true);
     clearInputs();
   };
 
@@ -43,7 +53,6 @@ export const AddFriendModal = ({ isOpen, closeModal, addFriend, editFriend, dele
       locate: location,
     };
     editFriend(updatedFriend);
-    // Re-set the fields with updated data without closing the modal
     setFriendName(updatedFriend.name);
     setLocation(updatedFriend.locate);
     setIsEditing(false);
@@ -53,6 +62,7 @@ export const AddFriendModal = ({ isOpen, closeModal, addFriend, editFriend, dele
     deleteFriend(selectedFriend);
     closeModal();
     clearInputs();
+    setIsEditing(true);
   };
 
   const enableEditing = () => {
@@ -64,9 +74,13 @@ export const AddFriendModal = ({ isOpen, closeModal, addFriend, editFriend, dele
       isOpen={isOpen}
       onRequestClose={closeModal}
       style={{ overlay: myPageStyles.overlay, content: myPageStyles.modal }}
-      contentLabel="친구 추가/편집"
+      contentLabel='친구 추가/편집'
     >
-      <img src='/img/default-profile.png' style={myPageStyles.addImg} alt="addProfile" />
+      <img
+        src='/img/default-profile.png'
+        style={myPageStyles.addImg}
+        alt='addProfile'
+      />
       <input
         type='text'
         value={friendName}
@@ -75,34 +89,62 @@ export const AddFriendModal = ({ isOpen, closeModal, addFriend, editFriend, dele
         placeholder='친구 이름'
       />
       <input
-        type="text"
+        type='text'
         value={location}
         style={{
           ...myPageStyles.inputLocate,
-          backgroundColor: !!selectedFriend && !!selectedFriend.locate && !isEditing ? '#fff' : '#fff'
+          backgroundColor: '#fff',
+          color: '#1B4345',
         }}
+        disabled={!isEditing && isAdded}
         onChange={(e) => setLocation(e.target.value)}
         placeholder='장소 또는 주소 입력'
-        disabled={!!selectedFriend && !!selectedFriend.locate && !isEditing}
       />
       {selectedFriend ? (
         <div>
           {isEditing ? (
             <>
-              <button onClick={handleEditFriend} style={myPageStyles.favoriteButtonEdit}>저장</button>
-              <button onClick={() => setIsEditing(false)} style={myPageStyles.favoriteButtonQuit}>취소</button>
+              <button
+                onClick={handleEditFriend}
+                style={myPageStyles.favoriteButtonEdit}
+              >
+                저장
+              </button>
+              <button
+                onClick={() => setIsEditing(false)}
+                style={myPageStyles.favoriteButtonQuit}
+              >
+                취소
+              </button>
             </>
           ) : (
             <>
-              <button onClick={enableEditing} style={myPageStyles.favoriteButtonEdit}>편집</button>
-              <button onClick={handleDeleteFriend} style={myPageStyles.favoriteButtonQuit}>삭제</button>
+              <button
+                onClick={enableEditing}
+                style={myPageStyles.favoriteButtonEdit}
+              >
+                편집
+              </button>
+              <button
+                onClick={handleDeleteFriend}
+                style={myPageStyles.favoriteButtonQuit}
+              >
+                삭제
+              </button>
             </>
           )}
         </div>
       ) : (
-        <button onClick={handleAddFriend} style={myPageStyles.addFriendModalButton}>추가</button>
+        <button
+          onClick={handleAddFriend}
+          style={myPageStyles.addFriendModalButton}
+        >
+          추가
+        </button>
       )}
-      <button onClick={closeModal} style={myPageStyles.closeButton}>X</button>
+      <button onClick={closeModal} style={myPageStyles.closeButton}>
+        X
+      </button>
     </Modal>
   );
 };
