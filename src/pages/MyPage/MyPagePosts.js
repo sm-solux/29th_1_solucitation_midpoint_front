@@ -73,8 +73,7 @@ const MyPagePosts = () => {
   const addReview = (newReview, isEditing) => {
     if (isEditing) {
       const updatedReviews = reviews.map((review) =>
-        review.author === currentUser &&
-        review.placeName === (selectedReview?.placeName || newReview.placeName)
+        review.author === currentUser && review.placeName === (selectedReview?.placeName || newReview.placeName)
           ? newReview
           : review
       );
@@ -86,9 +85,7 @@ const MyPagePosts = () => {
   };
 
   const deleteReview = (reviewToDelete) => {
-    const updatedReviews = reviews.filter(
-      (review) => review !== reviewToDelete
-    );
+    const updatedReviews = reviews.filter((review) => review !== reviewToDelete);
     setReviews(updatedReviews);
   };
 
@@ -114,7 +111,7 @@ const MyPagePosts = () => {
           closeModal={closeReviewModal}
           currentUser={currentUser}
           openWriteModal={openWriteModal}
-          deleteReview={deleteReview}
+          deleteReview={deleteReview} // Pass deleteReview function
         />
       )}
       <WriteModal
