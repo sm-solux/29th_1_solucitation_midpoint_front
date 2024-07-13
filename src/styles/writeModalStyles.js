@@ -90,6 +90,7 @@ export const writeModalStyles = {
     marginTop:'15px',    
     marginBottom: '20px',
   },
+  
   tagButton: {
     padding: '5px 10px',
     border:'2px solid #000000',
@@ -101,6 +102,7 @@ export const writeModalStyles = {
     backgroundColor: '#000000',
     color: '#fff',
   },
+
   button: {
     color: '#FFFFFF',
     backgroundColor: '#1B4345',
