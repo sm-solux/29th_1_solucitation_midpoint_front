@@ -8,7 +8,7 @@ import MyPageSearchHistory from './MyPage/MyPageSearchHistory';
 import MyPagePosts from './MyPage/MyPagePosts';
 
 const links = [
-  { name: 'profile', label: '회원 정보', activeIcon: '/img/MyPageProfileIcon.png', icon: '/img/MyPageNullProfile.png'},
+  { name: 'profile', label: '회원 정보' , activeIcon: '/img/MyPageProfileIcon.png', icon: '/img/MyPageNullProfile.png'},
   { name: 'favorites', label: '즐겨찾기', activeIcon: '/img/MyPageFavoriteIcon.png', icon: '/img/MyPageNullHeart.png' },
   { name: 'history', label: '검색 기록', activeIcon: '/img/MyPageSearchHistoryIcon.png', icon: '/img/MyPageNullChart.png' },
   { name: 'posts', label: '내가 쓴 글', activeIcon: '/img/MyPagePostsIcon.png', icon: '/img/MyPageNullPosts.png' }
@@ -16,18 +16,11 @@ const links = [
 
 const MyPage = () => {
   const [currentPage, setCurrentPage] = useState('profile');
-  const [profileData, setProfileData] = useState({
-    name: '김눈송',
-    nickname: '솔룩션짱짱최고',
-    email: 'soluxion@sookmyung.ac.kr',
-    password: '12345678',
-    profileImage: '../img/default-profile.png',
-  });
 
   const renderPage = () => {
     switch (currentPage) {
       case 'profile':
-        return <MyPageProfile setCurrentPage={setCurrentPage} profileData={profileData} setProfileData={setProfileData} />;
+        return <MyPageProfile />;
       case 'favorites':
         return <MyPageFavorites />;
       case 'history':
@@ -35,16 +28,16 @@ const MyPage = () => {
       case 'posts':
         return <MyPagePosts />;
       default:
-        return <MyPageProfile setCurrentPage={setCurrentPage} profileData={profileData} setProfileData={setProfileData} />;
+        return <MyPageProfile />;
     }
   };
 
   return (
-    <div style={myPageStyles.wrapper}>
+    <div>
       <div>
         <Logo />
       </div>
-      <div style={myPageStyles.navWrapper}>
+      <div>
         <nav style={myPageStyles.container}>
           <ul style={myPageStyles.nav}>
             {links.map((link) => (
