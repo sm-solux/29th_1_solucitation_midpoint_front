@@ -11,32 +11,36 @@ const ReviewPage = () => {
 
   const initialReviews = [
     {
+      id: 1,
       photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_5.jpg",
-      tags: ["#식사", "#여럿이"],
+      tags: ["식사", "여럿이"],
       placeName: "맛있는 식당",
       content: '아오 맛있어~아오 맛있어~아오 맛있어~너무 맛있어서 눈물이나요',
       author: 'user1',
       likes: 0,
     },
     {
+      id: 2,
       photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg",
-      tags: ["#카페", "#팀플"],
+      tags: ["카페", "팀플"],
       placeName: "편안한 카페",
       content: '아오 맛있어~2',
       author: 'user2',
       likes: 3,
     },
     {
+      id: 3,
       photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_7.jpg",
-      tags: ["#카페", "#자연"],
+      tags: ["카페", "자연"],
       placeName: "편안한 카페",
       content: '아오 맛있어~3',
       author: 'user1',
       likes: 4,
     },
     {
+      id: 4,
       photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg",
-      tags: ["#쇼핑", "#산책"],
+      tags: ["쇼핑", "산책"],
       placeName: "편안한 카페",
       content: '아오 맛있어~4',
       author: 'user3',
@@ -49,6 +53,7 @@ const ReviewPage = () => {
   const [reviews, setReviews] = useState(initialReviews);
   const [selectedReview, setSelectedReview] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [filteredReviews, setFilteredReviews] = useState(reviews);
 
   const openWriteModal = (review, isEditing) => {
     setSelectedReview(review);
@@ -93,13 +98,19 @@ const ReviewPage = () => {
   return (
     <div>
       <Logo />
-      <div style={{ marginTop: '100px' }}>
-        <SearchBox />
+      <div style={{ marginTop: '120px' }}>
+        <SearchBox reviews={reviews} setFilteredReviews={setFilteredReviews} />
       </div>
       <div style={reviewStyles.reviewContainer}>
-        {reviews.map((review, index) => (
-          <ReviewCard key={index} review={review} onReviewClick={openReviewModal} currentUser={currentUser} />
-        ))}
+        {filteredReviews.length > 0 ? (
+          filteredReviews.map((review) => (
+            <ReviewCard key={review.id} review={review} onReviewClick={openReviewModal} currentUser={currentUser} />
+          ))
+        ) : (
+          reviews.map((review) => (
+            <ReviewCard key={review.id} review={review} onReviewClick={openReviewModal} currentUser={currentUser} />
+          ))
+        )}
       </div>
       <button onClick={() => openWriteModal(null, false)} style={reviewStyles.writeButton}>
         <img src="/img/WriteButtonIcon.png" alt="write button" style={reviewStyles.writeButton} />
