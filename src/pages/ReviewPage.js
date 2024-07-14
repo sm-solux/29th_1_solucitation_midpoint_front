@@ -8,7 +8,7 @@ import ReviewModal from '../components/ReviewModalComponents';
 import { reviewStyles } from '../styles/reviewStyles';
 
 const ReviewPage = () => {
-   const currentUser = 'user1';
+  const currentUser = 'user1';
 
   const initialReviews = [
     {
@@ -112,7 +112,7 @@ const ReviewPage = () => {
           closeModal={closeReviewModal}
           currentUser={currentUser}
           openWriteModal={openWriteModal}
-          deleteReview={deleteReview} // Pass deleteReview function
+          deleteReview={deleteReview}
         />
       )}
       <WriteModal
