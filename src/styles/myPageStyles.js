@@ -4,7 +4,7 @@ export const myPageStyles = {
   container: {
     maxWidth: '1000px',
     height:'40px',
-    margin: '125px auto 60px auto',
+    margin: '110px auto 35px auto',
     backgroundColor: '#000',
     marginTop: '110px'
   },
@@ -36,7 +36,6 @@ export const myPageStyles = {
   navLinkHover: {
     textDecoration: 'underline',
   },
-
   profileContainer: {
     maxWidth: '600px',
     margin: '0 auto',
@@ -45,13 +44,13 @@ export const myPageStyles = {
   profileItem: {
     display: 'flex',
     alignItems: 'center',
-    marginBottom: '20px',
+    marginBottom: '50px',
   },
   profilePictureItem: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
-    marginBottom: '20px',
+    marginBottom: '10px',
   },
   verificationContainer: {
     display: 'flex',
@@ -69,7 +68,7 @@ export const myPageStyles = {
     fontSize: '18px',
     fontWeight: 'bold',
     color: '#1B4345',
-    borderBottom: '3px solid black',
+    borderBottom: '3px solid #1B4345',
     paddingBottom: '6px',
   },
   profileEditContainer: {
@@ -80,7 +79,7 @@ export const myPageStyles = {
   profileEditText: {
     flex: 1,
     border: 'none',
-    borderBottom: '3px solid black',
+    borderBottom: '3px solid #1B4345',
     backgroundColor: 'transparent',
     color: '#1B4345',
     fontSize: '18px',
@@ -102,10 +101,10 @@ export const myPageStyles = {
   buttonContainer: {
     display: 'flex',
     justifyContent: 'center',
-    marginTop: '20px',
+    marginTop: '50px',
   },
   profileButtonEdit: {
-    marginRight: '10px',
+    marginRight: '60px',
     padding: '10px 30px',
     fontSize: '16px',
     fontWeight: 'bold',
@@ -137,6 +136,88 @@ export const myPageStyles = {
     cursor: 'pointer',
   },
 
+  passwordContainer: {
+    maxWidth: '650px',
+    margin: '0 auto',
+    padding: '20px',
+    textAlign: 'center',
+  },
+  passwordTitle: {
+    fontSize: '36px',
+    fontWeight: 'bold',
+    color: '#1B4345',
+    marginBottom: '60px',
+  },
+  passwordInputContainer: {
+    marginBottom: '80px',
+    display: 'flex',
+    alignItems: 'center',
+    borderBottom: '3px solid #1B4345',
+  },
+  passwordLabel: {
+    fontSize: '24px',
+    fontWeight: 'bold',
+    color: '#1B4345',
+    marginRight: '10px',
+  },
+  passwordInput: {
+    flex: 1,
+    padding: '10px',
+    fontSize: '18px',
+    border: 'none',
+    outline: 'none',
+    backgroundColor: 'transparent',
+  },
+
+  passwordCodeInput: {
+    flex: 1,
+    padding: '5px',
+    fontSize: '16px',
+    border: 'none',
+    borderBottom: '4px solid #1B4345',
+    outline: 'none',
+    backgroundColor: 'transparent',
+  },
+
+  passwordButton: {
+    padding: '10px 30px',
+    fontSize: '16px',
+    fontWeight: 'bold',
+    color: '#fff',
+    backgroundColor: '#1B4345',
+    border: 'none',
+    borderRadius: '2px',
+    cursor: 'pointer',
+  },
+  deleteConfirmationContainer: {
+    maxWidth: '650px',
+    margin: '0 auto',
+    padding: '20px',
+    textAlign: 'center',
+  },
+  deleteConfirmationTitle: {
+    fontSize: '36px',
+    fontWeight: 'bold',
+    color: '#1B4345',
+    marginBottom: '60px',
+  },
+  deleteConfirmationMessage: {
+    fontSize: '24px',
+    fontWeight: 'bold',
+    color: '#D00303',
+    marginBottom: '60px',
+  },
+  deleteButton: {
+    padding: '10px 30px',
+    fontSize: '16px',
+    fontWeight: 'bold',
+    color: '#fff',
+    backgroundColor: '#D00303',
+    border: 'none',
+    borderRadius: '2px',
+    cursor: 'pointer',
+  },
+
   favoritesContainer: {
     display: 'flex',
     flexDirection: 'row', 
@@ -145,7 +226,6 @@ export const myPageStyles = {
     gap: '100px',
     marginTop: '50px',
   },
-
   favoritesLocateContainer: {
     width: '200px',
     height: '150px',
@@ -153,7 +233,6 @@ export const myPageStyles = {
     borderRadius: "8px",
     padding: '10px',
   },
-
   favoritesFriendsContainer: {
     width: '350px',
     height: '500px',
@@ -161,7 +240,6 @@ export const myPageStyles = {
     borderRadius: "8px",
     padding: '10px',
   },
-
   locateontainer: {
     display: 'flex',
     alignItems: 'center',
@@ -171,18 +249,15 @@ export const myPageStyles = {
     paddingBottom: '15px',
     cursor:'pointer',
   },
-
   addFriendButton: {
     border: 'none',
     backgroundColor: 'transparent',
     display: 'inline-block',
     cursor: 'pointer',
   },
-
   overlay: {
     backgroundColor: 'rgba(1, 1, 1, 0.5)',
   },
-  
   modal: {
     position: 'fixed',
     top: '50%',

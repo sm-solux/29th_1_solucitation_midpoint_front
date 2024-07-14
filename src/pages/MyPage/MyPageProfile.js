@@ -1,23 +1,19 @@
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/global.css';
 import { myPageStyles } from '../../styles/myPageStyles';
 import { Timer } from '../../components/CommonComponents';
 
-const MyPageProfile = () => {
-  const [profileData, setProfileData] = useState({
-    name: '김눈송',
-    nickname: '솔룩션짱짱최고',
-    email: 'soluxion@sookmyung.ac.kr',
-    password: '12345678',
-    profileImage: '../img/default-profile.png',
-  });
-
+const MyPageProfile = ({ profileData, setProfileData }) => {
   const [editMode, setEditMode] = useState(false);
   const [passwordEditMode, setPasswordEditMode] = useState(false);
+  const [passwordConfirmationMode, setPasswordConfirmationMode] = useState(false);
+  const [deleteConfirmationMode, setDeleteConfirmationMode] = useState(false);
   const [showTimer, setShowTimer] = useState(false);
   const [resetTimer, setResetTimer] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
   const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -51,9 +47,8 @@ const MyPageProfile = () => {
     setShowTimer(false);
   };
 
-  // 탈퇴 버튼 함수
   const handleDeleteAccount = () => {
-    
+    setPasswordConfirmationMode(true);
   };
 
   const handleImageClick = () => {
@@ -77,8 +72,46 @@ const MyPageProfile = () => {
   };
 
   const handleVerification = () => {
-    alert('인증 코드가 확인되었습니다.'); //인증 확인 alert, 다른 방법?
+    alert('인증 코드가 확인되었습니다.');
   };
+
+  const handlePasswordConfirmation = (confirmPassword) => {
+    if (profileData.password === confirmPassword) {
+      console.log('맞아요');
+      setPasswordConfirmationMode(false);
+      setDeleteConfirmationMode(true);
+    } else {
+      alert('비밀번호가 일치하지 않습니다.');
+    }
+  };
+
+  const handleDeleteConfirm = () => {
+    alert('탈퇴 됐습니다.');
+    navigate('/'); // 홈 화면으로 가면서 logo가 변경 되는 건 안됐음
+  };
+
+  if (passwordConfirmationMode) {
+    return (
+      <PasswordConfirmation onConfirm={handlePasswordConfirmation} />
+    );
+  }
+
+  if (deleteConfirmationMode) {
+    return (
+      <div style={myPageStyles.deleteConfirmationContainer}>
+        <h2 style={myPageStyles.deleteConfirmationTitle}>미드포인트 탈퇴</h2>
+        <p style={myPageStyles.deleteConfirmationMessage}>
+          정말 탈퇴하시겠습니까? 탈퇴 시 되돌릴 수 없습니다. 신중하게 결정해주세요.
+        </p>
+        <button
+          style={myPageStyles.deleteButton}
+          onClick={handleDeleteConfirm}
+        >
+          탈퇴
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div style={myPageStyles.profileContainer}>
@@ -148,11 +181,11 @@ const MyPageProfile = () => {
       </div>
       {showTimer && (
         <div style={myPageStyles.verificationContainer}>
-          <span style={myPageStyles.profileLabel}>인증코드</span>
+          <span style={myPageStyles.profileLabel} >인증코드</span>
           <input
             type="text"
             name="verificationCode"
-            style={myPageStyles.profileEditText}
+            style={myPageStyles.passwordCodeInput}
             value={verificationCode}
             onChange={handleVerificationCodeChange}
           />
@@ -187,3 +220,34 @@ const MyPageProfile = () => {
 };
 
 export default MyPageProfile;
+
+const PasswordConfirmation = ({ onConfirm }) => {
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const handleConfirmPasswordChange = (e) => {
+    setConfirmPassword(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onConfirm(confirmPassword);
+  };
+
+  return (
+    <div style={myPageStyles.passwordContainer}>
+      <h2 style={myPageStyles.passwordTitle}>비밀번호 확인</h2>
+      <form onSubmit={handleSubmit}>
+        <div style={myPageStyles.passwordInputContainer}>
+          <span style={myPageStyles.passwordLabel}>기존 비밀번호</span>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={handleConfirmPasswordChange}
+            style={myPageStyles.passwordInput}
+          />
+        </div>
+        <button type="submit" style={myPageStyles.passwordButton}>다음</button>
+      </form>
+    </div>
+  );
+};
