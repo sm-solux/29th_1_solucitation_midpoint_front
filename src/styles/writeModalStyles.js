@@ -1,6 +1,7 @@
 export const writeModalStyles = {
   overlay: {
     backgroundColor: 'rgba(1, 1, 1, 0.5)',
+    zIndex: 2000,
   },
   modal: {
     position: 'fixed',
@@ -14,7 +15,7 @@ export const writeModalStyles = {
     border: '3px solid #1B4345',
     borderRadius: '10px',
     boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-    zIndex: '1000',
+    zIndex: '3000',
   },
   closeButton: {
     backgroundColor: 'transparent',
@@ -90,6 +91,7 @@ export const writeModalStyles = {
     marginTop:'15px',    
     marginBottom: '20px',
   },
+  
   tagButton: {
     padding: '5px 10px',
     border:'2px solid #000000',
@@ -101,6 +103,7 @@ export const writeModalStyles = {
     backgroundColor: '#000000',
     color: '#fff',
   },
+
   button: {
     color: '#FFFFFF',
     backgroundColor: '#1B4345',

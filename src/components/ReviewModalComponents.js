@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { reviewModalStyles } from '../styles/reviewModalStyles';
 
+<<<<<<< HEAD
 const ReviewModal = ({ isOpen, review, closeModal, currentUser, openWriteModal, deleteReview }) => {
+=======
+const ReviewModal = ({ isOpen, review, closeModal, currentUser, openWriteModal, deleteReview, setReviews }) => {
+>>>>>>> feature/review
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(review.likes || 0);
   const isCurrentUser = currentUser && currentUser === review.author;
@@ -12,6 +16,9 @@ const ReviewModal = ({ isOpen, review, closeModal, currentUser, openWriteModal, 
   const toggleLike = () => {
     setLiked(!liked);
     setLikeCount(liked ? likeCount - 1 : likeCount + 1);
+    setReviews(prevReviews =>
+      prevReviews.map(r => (r.id === review.id ? { ...r, likes: liked ? likeCount - 1 : likeCount + 1 } : r))
+    );
   };
 
   const handleEditClick = () => {
@@ -29,6 +36,11 @@ const ReviewModal = ({ isOpen, review, closeModal, currentUser, openWriteModal, 
       closeModal();
     }
   };
+<<<<<<< HEAD
+=======
+
+  const photos = Array.isArray(review.photos) ? review.photos : [];
+>>>>>>> feature/review
 
   return (
     <Modal
@@ -42,13 +54,21 @@ const ReviewModal = ({ isOpen, review, closeModal, currentUser, openWriteModal, 
         <img src="/img/default-profile.png" alt="profile" style={reviewModalStyles.profileImg} />
         <div style={reviewModalStyles.profileInfo}>
           <div style={reviewModalStyles.profileName}>{review.author}</div>
-          <div style={reviewModalStyles.date}>YYYY.MM.DD. HH:MM</div>
+          <div style={reviewModalStyles.date}>{new Date().toLocaleDateString()}</div>
         </div>
       </div>
       <div style={reviewModalStyles.contentContainer}>
         <div style={reviewModalStyles.placeName}>{review.placeName}</div>
         <p style={reviewModalStyles.content}>{review.content}</p>
+<<<<<<< HEAD
         {review.photo && <img src={review.photo} alt="review" style={reviewModalStyles.photo} />}
+=======
+        <div style={reviewModalStyles.photosContainer}>
+          {photos.map((photo, index) => (
+            photo && <img key={index} src={photo} alt={`review ${index + 1}`} style={reviewModalStyles.photo} />
+          ))}
+        </div>
+>>>>>>> feature/review
       </div>
       <div style={reviewModalStyles.footer}>
         <div style={reviewModalStyles.likeSection}>

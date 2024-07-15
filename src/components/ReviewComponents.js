@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { reviewStyles } from "../styles/reviewStyles";
 
-export const ReviewCard = ({ review, onReviewClick}) => {
-  const { photo, tags, placeName, content} = review;
+const ReviewCard = ({ review, onReviewClick }) => {
+  const { photos, tags, placeName, content } = review;
   const [liked, setLiked] = useState(false);
 
   const handleClick = () => {
@@ -23,7 +23,7 @@ export const ReviewCard = ({ review, onReviewClick}) => {
 
   return (
     <div style={reviewStyles.card} onClick={handleClick}>
-      {photo && <img src={photo} alt={placeName} style={reviewStyles.photo} />}
+      {photos && photos.length > 0 && <img src={photos[0]} alt={placeName} style={reviewStyles.photo} />}
       <div style={reviewStyles.details}>
         <div style={reviewStyles.tagsContainer}>
           <div style={reviewStyles.tags}>

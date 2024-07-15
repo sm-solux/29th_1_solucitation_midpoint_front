@@ -14,7 +14,7 @@ export const reviewModalStyles = {
     border: '3px solid #1B4345',
     borderRadius: "5px",
     boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-    zIndex: '1000',
+    zIndex: '2000',
   },
   closeButton: {
     position: 'absolute',
@@ -67,6 +67,12 @@ export const reviewModalStyles = {
     fontSize: '20px',
     fontWeight: 'bold',
     color: '#1B4345',
+  },
+  photosContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '10px',
+    marginTop:'70px',
   },
   photo: {
     width: '200px',
