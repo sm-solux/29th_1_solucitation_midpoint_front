@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Logo } from "../components/CommonComponents";
 import SearchBox from "../components/SearchComponents";
 import ReviewCard from "../components/ReviewComponents";
@@ -46,6 +46,51 @@ const ReviewPage = () => {
       author: 'user3',
       likes: 2,
     },
+    {
+      id: 5,
+      photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg",
+      tags: ["쇼핑", "산책"],
+      placeName: "편안한 카페",
+      content: '아오 맛있어~4',
+      author: 'user3',
+      likes: 2,
+    },
+    {
+      id: 6,
+      photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg",
+      tags: ["쇼핑", "산책"],
+      placeName: "편안한 카페",
+      content: '아오 맛있어~4',
+      author: 'user3',
+      likes: 7,
+    },
+    {
+      id: 7,
+      photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_5.jpg",
+      tags: ["쇼핑", "산책"],
+      placeName: "편안한 카페",
+      content: '아오 맛있어~4',
+      author: 'user3',
+      likes: 1,
+    },
+    {
+      id: 8,
+      photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg",
+      tags: ["쇼핑", "산책"],
+      placeName: "편안한 카페",
+      content: '아오 맛있어~4',
+      author: 'user3',
+      likes: 2,
+    },
+    {
+      id: 9,
+      photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg",
+      tags: ["쇼핑", "산책"],
+      placeName: "편안한 카페",
+      content: '아오 맛있어~4',
+      author: 'user3',
+      likes: 2,
+    },
   ];
 
   const [writeModalIsOpen, setWriteModalIsOpen] = useState(false);
@@ -54,6 +99,23 @@ const ReviewPage = () => {
   const [selectedReview, setSelectedReview] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [filteredReviews, setFilteredReviews] = useState(reviews);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
+      loadMoreReviews();
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [reviews]);
+
+  const loadMoreReviews = () => {
+    const newReviews = [
+      // 추가되는 리뷰들
+    ];
+    setReviews((prevReviews) => [...prevReviews, ...newReviews]);
+  };
 
   const openWriteModal = (review, isEditing) => {
     setSelectedReview(review);
@@ -96,11 +158,9 @@ const ReviewPage = () => {
   };
 
   return (
-    <div>
+    <div style={{ paddingTop: '120px' }}>
       <Logo />
-      <div style={{ marginTop: '120px' }}>
-        <SearchBox reviews={reviews} setFilteredReviews={setFilteredReviews} />
-      </div>
+      <SearchBox reviews={reviews} setFilteredReviews={setFilteredReviews} />
       <div style={reviewStyles.reviewContainer}>
         {filteredReviews.length > 0 ? (
           filteredReviews.map((review) => (

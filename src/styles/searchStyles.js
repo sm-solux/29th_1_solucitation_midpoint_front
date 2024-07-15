@@ -1,11 +1,10 @@
 export const searchStyles = {
   container: {
-    marginTop: '20px',
     marginBottom: '20px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: 'transparent'
+    backgroundColor: 'transparent',
   },
   inputContainer: {
     display: 'flex',
@@ -32,7 +31,7 @@ export const searchStyles = {
     backgroundColor: '#1B4345',
     border: 'none',
     borderRadius: '5px',
-    marginRight: '20px'
+    marginLeft: '10px',
   },
   tagContainer: {
     marginTop: '15px',
@@ -47,6 +46,7 @@ export const searchStyles = {
   tag: {
     padding: '5px 10px',
     fontSize: '14px',
+    fontWeight: 'bold',
     backgroundColor: 'transparent',
     border: '2px solid #1B4345',
     color: '#1B4345',
