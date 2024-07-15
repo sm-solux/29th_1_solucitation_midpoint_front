@@ -1,19 +1,30 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import { searchStyles } from '../styles/searchStyles';
 
 const SearchBox = ({ reviews, setFilteredReviews }) => {
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState('');
   const [clickedTags, setClickedTags] = useState([]);
-  const tags = ["식사", "카페", "공부", "문화생활", "쇼핑", "자연", "산책", "친목", "여럿이", "혼자"];
+  const tags = [
+    '식사',
+    '카페',
+    '공부',
+    '문화생활',
+    '쇼핑',
+    '자연',
+    '산책',
+    '친목',
+    '여럿이',
+    '혼자',
+  ];
 
   const handleInputChange = (e) => {
     setSearchText(e.target.value);
   };
 
   const handleTagClick = (tag) => {
-    setClickedTags(prevTags => {
+    setClickedTags((prevTags) => {
       if (prevTags.includes(tag)) {
-        const newTags = prevTags.filter(t => t !== tag);
+        const newTags = prevTags.filter((t) => t !== tag);
         handleFiltering(newTags, searchText);
         return newTags;
       } else if (prevTags.length < 2) {
@@ -26,9 +37,12 @@ const SearchBox = ({ reviews, setFilteredReviews }) => {
   };
 
   const handleFiltering = (tags, text) => {
-    const filtered = reviews.filter(review => {
-      const hasTag = tags.length === 0 || tags.some(tag => review.tags.includes(tag));
-      const matchesSearch = text === '' || review.content.toLowerCase().includes(text.toLowerCase());
+    const filtered = reviews.filter((review) => {
+      const hasTag =
+        tags.length === 0 || tags.some((tag) => review.tags.includes(tag));
+      const matchesSearch =
+        text === '' ||
+        review.content.toLowerCase().includes(text.toLowerCase());
       return hasTag && matchesSearch;
     });
     setFilteredReviews(filtered);
@@ -54,9 +68,9 @@ const SearchBox = ({ reviews, setFilteredReviews }) => {
       <div style={searchStyles.container}>
         <div style={searchStyles.inputContainer}>
           <input
-            type="text"
+            type='text'
             style={searchStyles.input}
-            placeholder={"검색어를 입력하세요"}
+            placeholder={'검색어를 입력하세요'}
             value={searchText}
             onChange={handleInputChange}
           />
@@ -71,7 +85,9 @@ const SearchBox = ({ reviews, setFilteredReviews }) => {
                 key={index}
                 style={{
                   ...searchStyles.tag,
-                  backgroundColor: clickedTags.includes(tag) ? '#1B4345' : 'transparent',
+                  backgroundColor: clickedTags.includes(tag)
+                    ? '#1B4345'
+                    : 'transparent',
                   color: clickedTags.includes(tag) ? '#fff' : '#1B4345',
                   borderColor: '#1B4345',
                   cursor: 'pointer',

@@ -10,9 +10,9 @@ export const reviewModalStyles = {
     width: '620px',
     height: '600px',
     backgroundColor: '#F2F2EF',
-    padding: "20px",
+    padding: '20px',
     border: '3px solid #1B4345',
-    borderRadius: "5px",
+    borderRadius: '5px',
     boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
     zIndex: '2000',
   },
@@ -24,7 +24,7 @@ export const reviewModalStyles = {
     border: 'none',
     color: '#1B4345',
     fontSize: '30px',
-    fontWeight:'bold',
+    fontWeight: 'bold',
     zIndex: '1000',
   },
   profileContainer: {
@@ -59,7 +59,7 @@ export const reviewModalStyles = {
     marginBottom: '10px',
     fontSize: '24px',
     fontWeight: 'bold',
-    textDecoration:'underline',
+    textDecoration: 'underline',
     color: '#1B4345',
   },
   content: {
@@ -72,7 +72,7 @@ export const reviewModalStyles = {
     display: 'flex',
     flexWrap: 'wrap',
     gap: '10px',
-    marginTop:'70px',
+    marginTop: '70px',
   },
   photo: {
     width: '200px',
@@ -108,7 +108,7 @@ export const reviewModalStyles = {
   },
   like: {
     fontSize: '14px',
-    fontWeight:'bold',
+    fontWeight: 'bold',
     color: '#1B4345',
   },
   tags: {
