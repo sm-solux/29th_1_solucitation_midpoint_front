@@ -12,6 +12,7 @@ const WriteModal = ({ isOpen, closeModal, addReview, existingReview = {}, isEdit
   const [selectedFiles, setSelectedFiles] = useState([null, null, null]);
   const fileInputRefs = [useRef(null), useRef(null), useRef(null)];
   const [selectedTags, setSelectedTags] = useState([]);
+  const [photoURLs, setPhotoURLs] = useState([null, null, null]);
 
   const predefinedTags = ['#식사', '#카페', '#공부', '#문화생활', '#쇼핑', '#자연', '#산책', '#친목', '#여럿이', '#혼자'];
 
@@ -19,10 +20,19 @@ const WriteModal = ({ isOpen, closeModal, addReview, existingReview = {}, isEdit
     if (existingReview && Object.keys(existingReview).length > 0) {
       setPlaceName(existingReview.placeName || '');
       setContent(existingReview.content || '');
-      setSelectedFiles(existingReview.photos || [null, null, null]);
+      setSelectedFiles([null, null, null]);
+      setPhotoURLs(existingReview.photos || [null, null, null]);
       setSelectedTags(existingReview.tags || []);
     }
   }, [existingReview]);
+
+  useEffect(() => {
+    return () => {
+      photoURLs.forEach(url => {
+        if (url) URL.revokeObjectURL(url);
+      });
+    };
+  }, [photoURLs]);
 
   const handleIconClick = (index) => {
     if (fileInputRefs[index].current) {
@@ -32,15 +42,18 @@ const WriteModal = ({ isOpen, closeModal, addReview, existingReview = {}, isEdit
 
   const handleFileChange = (index, e) => {
     const file = e.target.files[0];
-    const reader = new FileReader();
+    if (!file) return;
 
-    reader.onload = () => {
-      const newSelectedFiles = [...selectedFiles];
-      newSelectedFiles[index] = file;
-      setSelectedFiles(newSelectedFiles);
-    };
+    const newSelectedFiles = [...selectedFiles];
+    newSelectedFiles[index] = file;
+    setSelectedFiles(newSelectedFiles);
 
-    reader.readAsDataURL(file);
+    const newPhotoURLs = [...photoURLs];
+    if (newPhotoURLs[index]) {
+      URL.revokeObjectURL(newPhotoURLs[index]);
+    }
+    newPhotoURLs[index] = URL.createObjectURL(file);
+    setPhotoURLs(newPhotoURLs);
   };
 
   const handleTagClick = (tag) => {
@@ -55,13 +68,20 @@ const WriteModal = ({ isOpen, closeModal, addReview, existingReview = {}, isEdit
 
   const handleAddReview = (e) => {
     e.preventDefault();
+
+    if (selectedTags.length < 2) {
+      alert('태그를 2개 선택해 주세요.');
+      return;
+    }
+
     const newReview = {
       placeName,
       content,
-      photos: selectedFiles.filter(file => file !== null).map(file => URL.createObjectURL(file)),
+      photos: photoURLs.filter(url => url !== null),
       tags: selectedTags,
       author: currentUser.name,
     };
+
     addReview(newReview, isEditing);
     handleCloseModal();
   };
@@ -70,6 +90,7 @@ const WriteModal = ({ isOpen, closeModal, addReview, existingReview = {}, isEdit
     setPlaceName('');
     setContent('');
     setSelectedFiles([null, null, null]);
+    setPhotoURLs([null, null, null]);
     setSelectedTags([]);
     closeModal();
   };
@@ -101,13 +122,13 @@ const WriteModal = ({ isOpen, closeModal, addReview, existingReview = {}, isEdit
           style={writeModalStyles.textarea}
         />
         <div style={writeModalStyles.imgContainer}>
-          {selectedFiles.map((file, index) => (
+          {photoURLs.map((url, index) => (
             <span key={index}>
               <img
-                src={file ? URL.createObjectURL(file) : '/img/addPhoto.png'}
+                src={url || '/img/addPhoto.png'}
                 onClick={() => handleIconClick(index)}
                 style={writeModalStyles.addImg}
-                alt={`Upload ${index + 1}`}
+                alt={url ? `Image ${index + 1}` : `Upload ${index + 1}`}
               />
               <input
                 type="file"
