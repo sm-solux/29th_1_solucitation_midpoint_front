@@ -69,6 +69,7 @@ export const AddFriendModal = ({
     setIsEditing(true);
   };
 
+  //장소 추가가 타이핑이 아니라 api 지도로 수정 해야함
   return (
     <Modal
       isOpen={isOpen}

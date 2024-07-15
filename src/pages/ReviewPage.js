@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Logo } from "../components/CommonComponents";
-import SearchBox from "../components/SearchComponents";
-import ReviewCard from "../components/ReviewComponents";
+import { Logo } from '../components/CommonComponents';
+import SearchBox from '../components/SearchComponents';
+import ReviewCard from '../components/ReviewComponents';
 import ReviewModal from '../components/ReviewModalComponents';
 import WriteModal from '../components/WriteModalComponents';
 import { reviewStyles } from '../styles/reviewStyles';
@@ -11,26 +11,14 @@ const ReviewPage = () => {
 
   const initialReviews = [
     {
-<<<<<<< HEAD
-      photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_5.jpg",
-      tags: ["#식사", "#여럿이"],
-      placeName: "맛있는 식당",
-      content: '아오 맛있어~아오 맛있어~아오 맛있어~너무 맛있어서 눈물이나요',
-      author: 'user1',
-      likes: 5,
-    },
-    {
-      photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg",
-      tags: ["#카페", "#팀플"],
-=======
       id: 1,
       photos: [
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_5.jpg",
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_6.jpg",
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_7.jpg"
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_5.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_6.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_7.jpg',
       ],
-      tags: ["식사", "여럿이"],
-      placeName: "맛있는 식당",
+      tags: ['식사', '여럿이'],
+      placeName: '맛있는 식당',
       content: '아오 맛있어~아오 맛있어~아오 맛있어~너무 맛있어서 눈물이나요',
       author: 'user1',
       likes: 0,
@@ -38,49 +26,38 @@ const ReviewPage = () => {
     {
       id: 2,
       photos: [
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg",
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_6.jpg",
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg",
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_6.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg',
       ],
-      tags: ["카페", "팀플"],
->>>>>>> feature/review
-      placeName: "편안한 카페",
+      tags: ['카페', '팀플'],
+      placeName: '편안한 카페',
       content: '아오 맛있어~2',
       author: 'user2',
       likes: 3,
     },
     {
-<<<<<<< HEAD
-      photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_7.jpg",
-      tags: ["#카페", "#자연"],
-=======
       id: 3,
       photos: [
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_7.jpg",
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_6.jpg",
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_7.jpg",
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_7.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_6.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_7.jpg',
       ],
-      tags: ["카페", "자연"],
->>>>>>> feature/review
-      placeName: "편안한 카페",
+      tags: ['카페', '자연'],
+      placeName: '편안한 카페',
       content: '아오 맛있어~3',
       author: 'user1',
       likes: 4,
     },
     {
-<<<<<<< HEAD
-      photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg",
-      tags: ["#쇼핑", "#산책"],
-=======
       id: 4,
       photos: [
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg",
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg",
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg",
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg',
       ],
-      tags: ["쇼핑", "산책"],
->>>>>>> feature/review
-      placeName: "편안한 카페",
+      tags: ['쇼핑', '산책'],
+      placeName: '편안한 카페',
       content: '아오 맛있어~4',
       author: 'user3',
       likes: 2,
@@ -88,11 +65,11 @@ const ReviewPage = () => {
     {
       id: 5,
       photos: [
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg",
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg",
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg',
       ],
-      tags: ["쇼핑", "산책"],
-      placeName: "편안한 카페",
+      tags: ['쇼핑', '산책'],
+      placeName: '편안한 카페',
       content: '아오 맛있어~4',
       author: 'user3',
       likes: 2,
@@ -100,50 +77,43 @@ const ReviewPage = () => {
     {
       id: 6,
       photos: [
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg",
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg",
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg",
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg',
       ],
-      tags: ["쇼핑", "산책"],
-      placeName: "편안한 카페",
+      tags: ['쇼핑', '산책'],
+      placeName: '편안한 카페',
       content: '아오 맛있어~4',
       author: 'user3',
       likes: 7,
     },
     {
       id: 7,
-      photos: [
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_5.jpg",
-      ],
-      tags: ["쇼핑", "산책"],
-      placeName: "편안한 카페",
+      photos: ['http://www.lampcook.com/wi_files/food_top100/top5/5_5.jpg'],
+      tags: ['쇼핑', '산책'],
+      placeName: '편안한 카페',
       content: '아오 맛있어~4',
       author: 'user3',
       likes: 1,
     },
     {
       id: 8,
-      photos: [
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg",
-      ],
-      tags: ["쇼핑", "산책"],
-      placeName: "편안한 카페",
+      photos: ['http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg'],
+      tags: ['쇼핑', '산책'],
+      placeName: '편안한 카페',
       content: '아오 맛있어~4',
       author: 'user3',
       likes: 2,
     },
     {
       id: 9,
-      photos: [
-        "http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg",
-      ],
-      tags: ["쇼핑", "산책"],
-      placeName: "편안한 카페",
+      photos: ['http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg'],
+      tags: ['쇼핑', '산책'],
+      placeName: '편안한 카페',
       content: '아오 맛있어~4',
       author: 'user3',
       likes: 2,
     },
-    
   ];
 
   const [writeModalIsOpen, setWriteModalIsOpen] = useState(false);
@@ -151,10 +121,6 @@ const ReviewPage = () => {
   const [reviews, setReviews] = useState(initialReviews);
   const [selectedReview, setSelectedReview] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-<<<<<<< HEAD
-
-  const openWriteModal = (review, isEditing) => {
-=======
   const [filteredReviews, setFilteredReviews] = useState(reviews);
 
   useEffect(() => {
@@ -163,7 +129,11 @@ const ReviewPage = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
+      if (
+        window.innerHeight + document.documentElement.scrollTop !==
+        document.documentElement.offsetHeight
+      )
+        return;
       loadMoreReviews();
     };
 
@@ -172,14 +142,11 @@ const ReviewPage = () => {
   }, [reviews]);
 
   const loadMoreReviews = () => {
-    const newReviews = [
-
-    ];
+    const newReviews = [];
     setReviews((prevReviews) => [...prevReviews, ...newReviews]);
   };
 
   const openWriteModal = (review = null, isEditing = false) => {
->>>>>>> feature/review
     setSelectedReview(review);
     setIsEditing(isEditing);
     setWriteModalIsOpen(true);
@@ -203,32 +170,22 @@ const ReviewPage = () => {
   const addReview = (newReview, isEditing) => {
     if (isEditing) {
       const updatedReviews = reviews.map((review) =>
-<<<<<<< HEAD
-        review.author === currentUser && review.placeName === (selectedReview?.placeName || newReview.placeName)
-          ? newReview
-=======
-        review.id === selectedReview.id
-          ? { ...review, ...newReview }
->>>>>>> feature/review
-          : review
+        review.id === selectedReview.id ? { ...review, ...newReview } : review
       );
       setReviews(updatedReviews);
     } else {
-<<<<<<< HEAD
-      setReviews([...reviews, newReview]);
-=======
-      setReviews(prevReviews => [...prevReviews, { ...newReview, id: prevReviews.length + 1 }]);
->>>>>>> feature/review
+      setReviews((prevReviews) => [
+        ...prevReviews,
+        { ...newReview, id: prevReviews.length + 1 },
+      ]);
     }
     closeWriteModal();
   };
 
   const deleteReview = (reviewToDelete) => {
-<<<<<<< HEAD
-    const updatedReviews = reviews.filter((review) => review !== reviewToDelete);
-=======
-    const updatedReviews = reviews.filter((review) => review.id !== reviewToDelete.id);
->>>>>>> feature/review
+    const updatedReviews = reviews.filter(
+      (review) => review.id !== reviewToDelete.id
+    );
     setReviews(updatedReviews);
   };
 
@@ -239,18 +196,33 @@ const ReviewPage = () => {
         <SearchBox reviews={reviews} setFilteredReviews={setFilteredReviews} />
       </div>
       <div style={reviewStyles.reviewContainer}>
-        {filteredReviews.length > 0 ? (
-          filteredReviews.map((review) => (
-            <ReviewCard key={review.id} review={review} onReviewClick={openReviewModal} currentUser={currentUser} />
-          ))
-        ) : (
-          reviews.map((review) => (
-            <ReviewCard key={review.id} review={review} onReviewClick={openReviewModal} currentUser={currentUser} />
-          ))
-        )}
+        {filteredReviews.length > 0
+          ? filteredReviews.map((review) => (
+              <ReviewCard
+                key={review.id}
+                review={review}
+                onReviewClick={openReviewModal}
+                currentUser={currentUser}
+              />
+            ))
+          : reviews.map((review) => (
+              <ReviewCard
+                key={review.id}
+                review={review}
+                onReviewClick={openReviewModal}
+                currentUser={currentUser}
+              />
+            ))}
       </div>
-      <button onClick={() => openWriteModal(null, false)} style={reviewStyles.writeButton}>
-        <img src="/img/WriteButtonIcon.png" alt="write button" style={reviewStyles.writeButton} />
+      <button
+        onClick={() => openWriteModal(null, false)}
+        style={reviewStyles.writeButton}
+      >
+        <img
+          src='/img/WriteButtonIcon.png'
+          alt='write button'
+          style={reviewStyles.writeButton}
+        />
       </button>
       {selectedReview && (
         <ReviewModal
@@ -266,20 +238,11 @@ const ReviewPage = () => {
         isOpen={writeModalIsOpen}
         closeModal={closeWriteModal}
         addReview={addReview}
-<<<<<<< HEAD
-        existingReview={selectedReview}
-=======
         existingReview={isEditing ? selectedReview : {}}
->>>>>>> feature/review
         isEditing={isEditing}
       />
     </div>
   );
 };
 
-<<<<<<< HEAD
-
 export default ReviewPage;
-=======
-export default ReviewPage;
->>>>>>> feature/review

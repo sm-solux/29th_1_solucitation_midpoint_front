@@ -4,7 +4,13 @@ import { writeModalStyles } from '../styles/writeModalStyles';
 
 Modal.setAppElement('#root');
 
-const WriteModal = ({ isOpen, closeModal, addReview, existingReview = {}, isEditing }) => {
+const WriteModal = ({
+  isOpen,
+  closeModal,
+  addReview,
+  existingReview = {},
+  isEditing,
+}) => {
   const currentUser = { name: 'user1' };
 
   const [placeName, setPlaceName] = useState('');
@@ -14,33 +20,37 @@ const WriteModal = ({ isOpen, closeModal, addReview, existingReview = {}, isEdit
   const [selectedTags, setSelectedTags] = useState([]);
   const [photoURLs, setPhotoURLs] = useState([null, null, null]);
 
-  const predefinedTags = ['#식사', '#카페', '#공부', '#문화생활', '#쇼핑', '#자연', '#산책', '#친목', '#여럿이', '#혼자'];
+  const predefinedTags = [
+    '#식사',
+    '#카페',
+    '#공부',
+    '#문화생활',
+    '#쇼핑',
+    '#자연',
+    '#산책',
+    '#친목',
+    '#여럿이',
+    '#혼자',
+  ];
 
   useEffect(() => {
     if (existingReview && Object.keys(existingReview).length > 0) {
       setPlaceName(existingReview.placeName || '');
       setContent(existingReview.content || '');
-<<<<<<< HEAD
-      setSelectedFiles(existingReview.photos || [null, null, null]);
-=======
       setSelectedFiles([null, null, null]);
       setPhotoURLs(existingReview.photos || [null, null, null]);
->>>>>>> feature/review
       setSelectedTags(existingReview.tags || []);
     }
   }, [existingReview]);
 
-<<<<<<< HEAD
-=======
   useEffect(() => {
     return () => {
-      photoURLs.forEach(url => {
+      photoURLs.forEach((url) => {
         if (url) URL.revokeObjectURL(url);
       });
     };
   }, [photoURLs]);
 
->>>>>>> feature/review
   const handleIconClick = (index) => {
     if (fileInputRefs[index].current) {
       fileInputRefs[index].current.click();
@@ -65,7 +75,7 @@ const WriteModal = ({ isOpen, closeModal, addReview, existingReview = {}, isEdit
 
   const handleTagClick = (tag) => {
     if (selectedTags.includes(tag)) {
-      const newTags = selectedTags.filter(t => t !== tag);
+      const newTags = selectedTags.filter((t) => t !== tag);
       setSelectedTags(newTags);
     } else if (selectedTags.length < 2) {
       const newTags = [...selectedTags, tag];
@@ -84,18 +94,11 @@ const WriteModal = ({ isOpen, closeModal, addReview, existingReview = {}, isEdit
     const newReview = {
       placeName,
       content,
-<<<<<<< HEAD
-      photos: selectedFiles.filter(file => file !== null).map(file => URL.createObjectURL(file)),
-      tags: selectedTags,
-      author: currentUser.name,
-    };
-=======
-      photos: photoURLs.filter(url => url !== null),
+      photos: photoURLs.filter((url) => url !== null),
       tags: selectedTags,
       author: currentUser.name,
     };
 
->>>>>>> feature/review
     addReview(newReview, isEditing);
     handleCloseModal();
   };
@@ -113,38 +116,38 @@ const WriteModal = ({ isOpen, closeModal, addReview, existingReview = {}, isEdit
     <Modal
       isOpen={isOpen}
       onRequestClose={handleCloseModal}
-      style={{ overlay: writeModalStyles.overlay, content: writeModalStyles.modal }}
-      contentLabel="Write Review Modal"
+      style={{
+        overlay: writeModalStyles.overlay,
+        content: writeModalStyles.modal,
+      }}
+      contentLabel='Write Review Modal'
     >
       <form onSubmit={handleAddReview}>
-        <button onClick={handleCloseModal} style={writeModalStyles.closeButton}>X</button>
+        <button onClick={handleCloseModal} style={writeModalStyles.closeButton}>
+          X
+        </button>
         <div style={writeModalStyles.profileContainer}>
-          <img src="/img/default-profile.png" alt="profile" style={writeModalStyles.profileImg} />
+          <img
+            src='/img/default-profile.png'
+            alt='profile'
+            style={writeModalStyles.profileImg}
+          />
           <span style={writeModalStyles.profileName}>{currentUser.name}</span>
         </div>
         <input
-          type="text"
-          placeholder="글제목"
+          type='text'
+          placeholder='글제목'
           value={placeName}
           onChange={(e) => setPlaceName(e.target.value)}
           style={writeModalStyles.inputName}
         />
         <textarea
-          placeholder="내용을 입력하세요"
+          placeholder='내용을 입력하세요'
           value={content}
           onChange={(e) => setContent(e.target.value)}
           style={writeModalStyles.textarea}
         />
         <div style={writeModalStyles.imgContainer}>
-<<<<<<< HEAD
-          {selectedFiles.map((file, index) => (
-            <span key={index}>
-              <img
-                src={file ? URL.createObjectURL(file) : '/img/addPhoto.png'}
-                onClick={() => handleIconClick(index)}
-                style={writeModalStyles.addImg}
-                alt={`Upload ${index + 1}`}
-=======
           {photoURLs.map((url, index) => (
             <span key={index}>
               <img
@@ -152,10 +155,9 @@ const WriteModal = ({ isOpen, closeModal, addReview, existingReview = {}, isEdit
                 onClick={() => handleIconClick(index)}
                 style={writeModalStyles.addImg}
                 alt={url ? `Image ${index + 1}` : `Upload ${index + 1}`}
->>>>>>> feature/review
               />
               <input
-                type="file"
+                type='file'
                 ref={fileInputRefs[index]}
                 onChange={(e) => handleFileChange(index, e)}
                 style={{ display: 'none' }}
@@ -167,19 +169,23 @@ const WriteModal = ({ isOpen, closeModal, addReview, existingReview = {}, isEdit
         <div style={writeModalStyles.tagContainer}>
           {predefinedTags.map((tag) => (
             <button
-              type="button"
+              type='button'
               key={tag}
               onClick={() => handleTagClick(tag)}
               style={{
                 ...writeModalStyles.tagButton,
-                ...(selectedTags.includes(tag) ? writeModalStyles.selectedTagButton : {}),
+                ...(selectedTags.includes(tag)
+                  ? writeModalStyles.selectedTagButton
+                  : {}),
               }}
             >
               {tag}
             </button>
           ))}
         </div>
-        <button type="submit" style={writeModalStyles.button}>게시</button>
+        <button type='submit' style={writeModalStyles.button}>
+          게시
+        </button>
       </form>
     </Modal>
   );
