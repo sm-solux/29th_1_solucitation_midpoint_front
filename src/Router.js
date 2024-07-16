@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as AppRouter, Routes, Route } from "react-router-dom";
 import MainPage from "./pages/MainPage";
 import LoginPage from "./pages/login/LoginPage";
 import DirectLoginPage from "./pages/login/DirectLoginPage";
@@ -17,7 +17,7 @@ import Result3 from './pages/home/Result3';
 import Result4 from './pages/home/Result4';
 import Midpoint from './pages/home/Midpoint';
 
-function AppRouter() {
+function Router() {
   const [answers, setAnswers] = useState({});
 
   const updateAnswers = (question, answer) => {
@@ -28,7 +28,7 @@ function AppRouter() {
   };
 
   return (
-    <Router>
+    <AppRouter>
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -47,7 +47,7 @@ function AppRouter() {
         <Route path="/result4" element={<Result4 />} />
         <Route path="/midpoint" element={<Midpoint />} />
       </Routes>
-    </Router>
+    </AppRouter>
   );
 }
 

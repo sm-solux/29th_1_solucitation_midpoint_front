@@ -1,47 +1,154 @@
-import React, {useState} from "react";
-import "../styles/global.css";
-import { Logo } from "../components/CommonComponents";
-import SearchBox from "../components/SearchComponents";
-import ReviewCard from "../components/ReviewComponents";
-import WriteModal from "../components/WriteModalComponents";
+import React, { useState, useEffect } from 'react';
+import { Logo } from '../components/CommonComponents';
+import SearchBox from '../components/SearchComponents';
+import ReviewCard from '../components/ReviewComponents';
 import ReviewModal from '../components/ReviewModalComponents';
-import { searchStyles } from '../styles/searchStyles';
+import WriteModal from '../components/WriteModalComponents';
+import { reviewStyles } from '../styles/reviewStyles';
 
 const ReviewPage = () => {
+  const currentUser = 'user1';
+
   const initialReviews = [
-  {
-    photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_5.jpg",
-    tags: ["식사", "여럿이"],
-    placeName: "맛있는 식당",
-    content: '아오 맛있어~아오 맛있어~아오 맛있어~너무 맛있어서 눈물이나요',
-  },
-  {
-    photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg",
-    tags: ["카페", "분위기 좋은",],
-    placeName: "편안한 카페",
-    content: '아오 맛있어~2',
-  },
     {
-    photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_7.jpg",
-    tags: ["카페", "분위기 좋은",],
-    placeName: "편안한 카페",
-    content: '아오 맛있어~3',
-  },
-      {
-    photo: "http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg",
-    tags: ["카페", "분위기 좋은",],
-    placeName: "편안한 카페",
-    content: '아오 맛있어~4',
-  },
-
+      id: 1,
+      photos: [
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_5.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_6.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_7.jpg',
+      ],
+      tags: ['식사', '여럿이'],
+      placeName: '맛있는 식당',
+      content: '아오 맛있어~아오 맛있어~아오 맛있어~너무 맛있어서 눈물이나요',
+      author: 'user1',
+      likes: 0,
+    },
+    {
+      id: 2,
+      photos: [
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_6.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg',
+      ],
+      tags: ['카페', '팀플'],
+      placeName: '편안한 카페',
+      content: '아오 맛있어~2',
+      author: 'user2',
+      likes: 3,
+    },
+    {
+      id: 3,
+      photos: [
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_7.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_6.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_7.jpg',
+      ],
+      tags: ['카페', '자연'],
+      placeName: '편안한 카페',
+      content: '아오 맛있어~3',
+      author: 'user1',
+      likes: 4,
+    },
+    {
+      id: 4,
+      photos: [
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg',
+      ],
+      tags: ['쇼핑', '산책'],
+      placeName: '편안한 카페',
+      content: '아오 맛있어~4',
+      author: 'user3',
+      likes: 2,
+    },
+    {
+      id: 5,
+      photos: [
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg',
+      ],
+      tags: ['쇼핑', '산책'],
+      placeName: '편안한 카페',
+      content: '아오 맛있어~4',
+      author: 'user3',
+      likes: 2,
+    },
+    {
+      id: 6,
+      photos: [
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg',
+        'http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg',
+      ],
+      tags: ['쇼핑', '산책'],
+      placeName: '편안한 카페',
+      content: '아오 맛있어~4',
+      author: 'user3',
+      likes: 7,
+    },
+    {
+      id: 7,
+      photos: ['http://www.lampcook.com/wi_files/food_top100/top5/5_5.jpg'],
+      tags: ['쇼핑', '산책'],
+      placeName: '편안한 카페',
+      content: '아오 맛있어~4',
+      author: 'user3',
+      likes: 1,
+    },
+    {
+      id: 8,
+      photos: ['http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg'],
+      tags: ['쇼핑', '산책'],
+      placeName: '편안한 카페',
+      content: '아오 맛있어~4',
+      author: 'user3',
+      likes: 2,
+    },
+    {
+      id: 9,
+      photos: ['http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg'],
+      tags: ['쇼핑', '산책'],
+      placeName: '편안한 카페',
+      content: '아오 맛있어~4',
+      author: 'user3',
+      likes: 2,
+    },
   ];
-  
-const [writeModalIsOpen, setWriteModalIsOpen] = useState(false);
-const [reviewModalIsOpen, setReviewModalIsOpen] = useState(false);
-const [reviews, setReviews] = useState(initialReviews);
-const [selectedReview, setSelectedReview] = useState(null);
 
-  const openWriteModal = () => {
+  const [writeModalIsOpen, setWriteModalIsOpen] = useState(false);
+  const [reviewModalIsOpen, setReviewModalIsOpen] = useState(false);
+  const [reviews, setReviews] = useState(initialReviews);
+  const [selectedReview, setSelectedReview] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [filteredReviews, setFilteredReviews] = useState(reviews);
+
+  useEffect(() => {
+    setFilteredReviews(reviews);
+  }, [reviews]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop !==
+        document.documentElement.offsetHeight
+      )
+        return;
+      loadMoreReviews();
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [reviews]);
+
+  const loadMoreReviews = () => {
+    const newReviews = [];
+    setReviews((prevReviews) => [...prevReviews, ...newReviews]);
+  };
+
+  const openWriteModal = (review = null, isEditing = false) => {
+    setSelectedReview(review);
+    setIsEditing(isEditing);
     setWriteModalIsOpen(true);
   };
 
@@ -52,6 +159,7 @@ const [selectedReview, setSelectedReview] = useState(null);
 
   const closeWriteModal = () => {
     setWriteModalIsOpen(false);
+    setSelectedReview(null);
   };
 
   const closeReviewModal = () => {
@@ -59,40 +167,82 @@ const [selectedReview, setSelectedReview] = useState(null);
     setSelectedReview(null);
   };
 
-  const addReview = (newReview) => {
-    setReviews([...reviews, newReview]);
+  const addReview = (newReview, isEditing) => {
+    if (isEditing) {
+      const updatedReviews = reviews.map((review) =>
+        review.id === selectedReview.id ? { ...review, ...newReview } : review
+      );
+      setReviews(updatedReviews);
+    } else {
+      setReviews((prevReviews) => [
+        ...prevReviews,
+        { ...newReview, id: prevReviews.length + 1 },
+      ]);
+    }
     closeWriteModal();
-};
+  };
+
+  const deleteReview = (reviewToDelete) => {
+    const updatedReviews = reviews.filter(
+      (review) => review.id !== reviewToDelete.id
+    );
+    setReviews(updatedReviews);
+  };
 
   return (
     <div>
       <Logo />
-      <div style={{ marginTop: '100px' }}>
-        <SearchBox />
+      <div style={{ marginTop: '120px' }}>
+        <SearchBox reviews={reviews} setFilteredReviews={setFilteredReviews} />
       </div>
-      <div style={reviewContainer}>
-        {reviews.map((review, index) => (
-          <ReviewCard key={index} review={review} onReviewClick={openReviewModal} />
-        ))}
+      <div style={reviewStyles.reviewContainer}>
+        {filteredReviews.length > 0
+          ? filteredReviews.map((review) => (
+              <ReviewCard
+                key={review.id}
+                review={review}
+                onReviewClick={openReviewModal}
+                currentUser={currentUser}
+              />
+            ))
+          : reviews.map((review) => (
+              <ReviewCard
+                key={review.id}
+                review={review}
+                onReviewClick={openReviewModal}
+                currentUser={currentUser}
+              />
+            ))}
       </div>
-      <button onClick={openWriteModal} style={searchStyles.writeButton}>
-        글쓰기
+      <button
+        onClick={() => openWriteModal(null, false)}
+        style={reviewStyles.writeButton}
+      >
+        <img
+          src='/img/WriteButtonIcon.png'
+          alt='write button'
+          style={reviewStyles.writeButton}
+        />
       </button>
-      <ReviewModal isOpen={reviewModalIsOpen} review={selectedReview} closeModal={closeReviewModal} />
-      <WriteModal isOpen={writeModalIsOpen} closeModal={closeWriteModal} addReview={addReview} />
-    </div >
+      {selectedReview && (
+        <ReviewModal
+          isOpen={reviewModalIsOpen}
+          review={selectedReview}
+          closeModal={closeReviewModal}
+          currentUser={currentUser}
+          openWriteModal={openWriteModal}
+          deleteReview={deleteReview}
+        />
+      )}
+      <WriteModal
+        isOpen={writeModalIsOpen}
+        closeModal={closeWriteModal}
+        addReview={addReview}
+        existingReview={isEditing ? selectedReview : {}}
+        isEditing={isEditing}
+      />
+    </div>
   );
-};
-
-const reviewContainer = {
-  display: "grid",
-  gridTemplateColumns: "repeat(4, 1fr)",
-  overflowY: "auto",
-  gap: "20px",
-  padding: "20px",
-  margin: "0 auto", 
-  maxWidth: "1200px",
-  backgroundColor: "transparent",
 };
 
 export default ReviewPage;

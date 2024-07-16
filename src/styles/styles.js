@@ -4,7 +4,7 @@ export const commonStyles = {
   header: {
     position: "fixed",
     width: "100%",
-    height: "10%",
+    height: "80px", // 적절한 높이 고정으로 수정했어요
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -12,6 +12,7 @@ export const commonStyles = {
     paddingBottom: "1rem",
     top: 0,
     zIndex: 1000,
+    backgroundColor: "#F2F2EF",
   },
   logo_div: {
     marginLeft: "4.5rem",
