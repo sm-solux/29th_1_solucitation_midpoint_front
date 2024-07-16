@@ -722,17 +722,18 @@ export const Left = styled.div`
 export const PlacesList = styled.ul`
   list-style: none;
   padding: 0;
+  max-height: 200px; /* 높이를 제한하여 스크롤을 만들기 위함 */
+  overflow-y: auto; /* 스크롤을 가능하게 함 */
 `;
 
 export const PlaceItem = styled.div`
   display: flex;
   align-items: center;
-  background-color: #fff;
+  background-color: #000;
   border-radius: 8px;
   padding: 0.5rem;
   margin-bottom: 1rem;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease;
 
   &:hover {
@@ -742,7 +743,6 @@ export const PlaceItem = styled.div`
   img {
     width: 50px;
     height: 50px;
-    margin-right: 1rem;
     border-radius: 8px;
   }
 
@@ -751,11 +751,59 @@ export const PlaceItem = styled.div`
     flex-direction: column;
     background-color: #000; /* 배경색을 검은색으로 변경 */
     border-radius: 8px;
-    padding: 0.5rem;
+    padding: 0.3rem;
     flex: 1;
 
     h3, p {
       color: #fff; /* 글자색을 흰색으로 변경 */
+    }
+
+    h3 {
+      font-size: 1rem;
+      margin: 0;
+      margin-bottom: 0.3rem;
+    }
+
+    p {
+      font-size: 0.8rem;
+      margin: 0;
+    }
+  }
+`;
+
+export const FriendItem = styled.div`
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  img {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    margin-left: 0.2rem;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff; 
+    border-radius: 8px;
+    margin-left: 0.8rem;
+    padding: 0.3rem;
+    flex: 1;
+
+    h3, p {
+      color: #000; 
     }
 
     h3 {
