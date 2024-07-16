@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { commonStyles, ButtonContainer, ProgressBarContainer, ProgressBar, ProgressIndicator } from '../../styles/styles';
-import { Logo } from '../../components/CommonComponents'; // Logo 컴포넌트 가져오기
+import { Logo } from '../../components/CommonComponents';
 
-const Test1 = ({ updateAnswers }) => {
+const Test1 = ({ updateAnswers, answers }) => {
   const [activeButton, setActiveButton] = useState(null);
   const navigate = useNavigate();
 
@@ -21,20 +21,21 @@ const Test1 = ({ updateAnswers }) => {
 
   return (
     <div style={commonStyles.container}>
-      <Logo /> {/* Logo 컴포넌트 사용 */}
+      <Logo />
       <div style={commonStyles.content}>
-        <h1 style={{ marginBottom: '4rem', position: 'relative' }}>Q1. 식사 예정이신가요?
+        <h1 style={{ marginBottom: '4rem', position: 'relative', fontSize: '2.3rem' }}>
+          Q1. 식사 예정이신가요?
           <button 
             onClick={handleNextClick} 
             style={{ 
               position: 'absolute',
               top: '150%',
-              right: '-220px',
+              right: '-250px',
               transform: 'translateY(-50%)',
               background: 'none', 
               border: 'none', 
               cursor: 'pointer',
-              fontSize: '2rem', 
+              fontSize: '2.2rem', 
               color: 'rgba(0, 0, 0, 0.5)', 
             }}
           >

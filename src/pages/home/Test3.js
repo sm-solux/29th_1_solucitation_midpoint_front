@@ -55,18 +55,18 @@ const Test3 = ({ updateAnswers, answers }) => {
     <div style={commonStyles.container}>
       <Logo />
       <div style={commonStyles.content}>
-        <h1 style={{ marginBottom: '4rem', position: 'relative' }}>Q3. 어떤 분위기를 선호하시나요?
+        <h1 style={{ marginBottom: '4rem', position: 'relative', fontSize: '2.3rem' }}>Q3. 어떤 분위기를 선호하시나요?
           <button 
             onClick={handlePrevClick} 
             style={{ 
               position: 'absolute',
               top: '150%',
-              left: '-152px',
+              left: '-190px',
               transform: 'translateY(-50%)',
               background: 'none', 
               border: 'none', 
               cursor: 'pointer',
-              fontSize: '2rem', 
+              fontSize: '2.2rem', 
               color: 'rgba(0, 0, 0, 0.5)'
             }}
           >
@@ -76,9 +76,9 @@ const Test3 = ({ updateAnswers, answers }) => {
             style={{ 
               position: 'absolute',
               top: '150%',
-              right: '-168px',
+              right: '-195px',
               transform: 'translateY(-50%)',
-              fontSize: '1rem',
+              fontSize: '1.3rem',
               color: 'rgba(0, 0, 0, 0.5)'
             }}
           >

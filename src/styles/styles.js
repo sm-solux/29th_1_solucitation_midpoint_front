@@ -46,7 +46,6 @@ export const commonStyles = {
     cursor: "pointer",
     textDecoration: "none",
     display: "inline-block",
-    // padding: '10px 16px',
     paddingLeft: "52px",
     marginBottom: "12px",
     fontWeight: "bold",
@@ -127,17 +126,16 @@ export const commonStyles = {
   },
   inputField: {
     flex: 1,
-    width: "500px", // 고정된 크기
-    padding: "0.7rem",
+    width: "500px",
+    padding: "0.8rem",
     fontSize: "1rem",
     border: "1px solid #FFF",
     borderRadius: "4px",
-    marginRight: "0.5rem",
     textAlign: "center",
   },
   selectField: {
     flex: 1,
-    padding: "0.7rem",
+    padding: "0.8rem",
     fontSize: "1rem",
     border: "1px solid #FFF",
     borderRadius: "4px",
@@ -152,7 +150,7 @@ export const commonStyles = {
     MozAppearance: "none",
   },
   submitButton: {
-    padding: "0.5rem 1rem",
+    padding: "0.8rem 1rem",
     fontSize: "1rem",
     backgroundColor: "#1B4345",
     color: "#fff",
@@ -291,6 +289,151 @@ export const commonStyles = {
     display: 'inline-block',
     textDecoration: 'underline',
   },
+  popupContainer: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  popupBox: {
+    position: 'relative',
+    backgroundColor: '#F2F2EF',
+    width: '600px',
+    height: '550px',
+    border: '1px solid #ccc',
+    borderRadius: '0',
+    padding: '1rem',
+  },
+  popupHeader: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: '2rem',
+    paddingRight: '1rem',
+    paddingLeft: '1rem',
+    width: '75%',
+    margin: '0 auto',
+  },
+  popupInput: {
+    flex: 1,
+    padding: '0.5rem',
+    fontSize: '1rem',
+    border: '1px solid #fff',
+    borderRadius: "4px",
+    textAlign: "center",
+  },
+  popupButton: {
+    padding: '0.5rem 1rem',
+    fontSize: '1rem',
+    backgroundColor: '#1B4345',
+    color: '#fff',
+    border: 'none',
+    cursor: 'pointer',
+    borderRadius: "4px",
+  },
+  popupCloseButton: {
+    fontSize: '1rem',
+    backgroundColor: '#F2F2EF',
+    color: '#000',
+    border: 'none',
+    cursor: 'pointer',
+    position: 'absolute', 
+    top: '10px', 
+    right: '10px', 
+  },
+  popupContent: {
+    paddingTop: '1rem',
+    paddingBottom: '1rem',
+    paddingRight: '4.7rem',
+    paddingLeft: '4.7rem',
+  },
+  popupSections: {
+    display: 'flex',
+    justifyContent: 'space-between', 
+  },
+  popupSection1: {
+    backgroundColor: 'rgba(255, 255, 255, 0.5)', 
+    borderRadius: '10px', 
+    alignItems: 'center',
+    width: '33%',
+    height: '15%',
+    marginBottom: '0.5rem',
+  },
+  popupSection2: {
+    backgroundColor: 'rgba(255, 255, 255, 0.5)', 
+    borderRadius: '10px', 
+    width: '62%',
+    height: '15%', 
+    marginBottom: '0.5rem', 
+  },
+  popupSectionTitle: {
+    fontSize: '1rem', 
+    fontWeight: '700', 
+    paddingLeft: '1.1rem',
+  },
+  favoritePlaces: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+  },
+  favoritePlace: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    border: 'none',
+    cursor: 'pointer',
+    margin: '0 0.5rem',
+  },
+  favoritePlaceImage: {
+    width: '23px', 
+    height: '23px',
+  },
+  favoriteFriends: {
+    display: 'flex',
+    paddingLeft: '1.2rem',
+    flexWrap: 'wrap',
+  },
+  favoriteFriend: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginRight: '1.2rem',
+    backgroundColor: 'transparent',
+    border: 'none',
+    cursor: 'pointer',
+  },
+  favoriteFriendImage: {
+    width: '23px', 
+    height: '23px', 
+  },
+  locationContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    cursor: 'pointer',
+    marginBottom: '1rem',
+  },
+  locationIcon: {
+    marginRight: '0.5rem',
+  },
+  mapContainer: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  currentLocationText: {
+    fontSize: '1rem',
+    fontWeight: 'bold',
+    marginBottom: '0.5rem',
+  },
+  
 };
 
 export const LoginFormContainer = styled.form`
@@ -509,8 +652,8 @@ export const ButtonContainer = styled.button`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 150px;
-  height: 150px;
+  width: 240px;
+  height: 240px;
   border: none;
   background-color: #fff;
   border-radius: 15px;
@@ -523,13 +666,13 @@ export const ButtonContainer = styled.button`
   }
 
   img {
-    width: 80px;
+    width: 140px;
     height: auto;
   }
 
   span {
-    margin-top: 0.5rem;
-    font-size: 1rem;
+    margin-top: 0.7rem;
+    font-size: 1.5rem;
     font-weight: bold;
     color: #1b4345;
   }
@@ -540,7 +683,7 @@ export const ProgressBarContainer = styled.div`
   height: 10px;
   background-color: #e0e0e0;
   border-radius: 5px;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
   position: relative;
 `;
 

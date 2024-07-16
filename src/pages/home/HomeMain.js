@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { commonStyles } from "../../styles/styles";
 import { Logo } from "../../components/CommonComponents";
+import HomePopup from "./HomePopup";
+import { useNavigate } from 'react-router-dom';
 
-const HomeMain = () => {
+const Home = () => {
   const [addressInputs, setAddressInputs] = useState([
     { profile: "/img/default-profile.png", name: "솔룩션짱짱최고" },
   ]);
   const [selectedPurpose, setSelectedPurpose] = useState("");
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleAddInput = () => {
     setAddressInputs([
@@ -15,19 +19,31 @@ const HomeMain = () => {
     ]);
   };
 
+  const handlePopupOpen = () => {
+    setIsPopupOpen(true);
+  };
+
+  const handlePopupClose = () => {
+    setIsPopupOpen(false);
+  };
+
   const handlePurposeChange = (event) => {
-    setSelectedPurpose(event.target.value);
+    const selectedValue = event.target.value;
+    setSelectedPurpose(selectedValue);
+    if (selectedValue === "/test1") {
+      navigate("/test1");
+    }
   };
 
   const purposes = [
-    "목적 추천 TEST",
-    "맛집",
-    "카페",
-    "산책/등산",
-    "공부",
-    "문화생활",
-    "핫플",
-    "친목",
+    { label: "목적 추천 TEST", value: "/test1" },
+    { label: "맛집", value: "/restaurant" },
+    { label: "카페", value: "/cafe" },
+    { label: "산책/등산", value: "/hiking" },
+    { label: "공부", value: "/study" },
+    { label: "문화생활", value: "/culture" },
+    { label: "핫플", value: "/hotplace" },
+    { label: "친목", value: "/social" },
   ];
 
   return (
@@ -49,6 +65,7 @@ const HomeMain = () => {
                 type="text"
                 placeholder="주소를 입력하세요"
                 style={commonStyles.inputField}
+                onClick={handlePopupOpen}
               />
               <button type="button" style={commonStyles.submitButton}>
                 검색
@@ -67,8 +84,8 @@ const HomeMain = () => {
               목적을 선택하세요
             </option>
             {purposes.map((purpose, index) => (
-              <option key={index} value={purpose}>
-                {purpose}
+              <option key={index} value={purpose.value}>
+                {purpose.label}
               </option>
             ))}
           </select>
@@ -79,8 +96,9 @@ const HomeMain = () => {
           </button>
         </div>
       </div>
+      {isPopupOpen && <HomePopup onClose={handlePopupClose} />}
     </div>
   );
 };
 
-export default HomeMain;
+export default Home;
