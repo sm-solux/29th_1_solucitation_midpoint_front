@@ -51,4 +51,4 @@ function Router() {
   );
 }
 
-export default AppRouter;
+export default Router;
