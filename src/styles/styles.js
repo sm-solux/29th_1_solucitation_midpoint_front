@@ -101,6 +101,7 @@ export const commonStyles = {
   inputContainer: {
     display: "flex",
     alignItems: "center",
+    justifyContent: "center",
     marginBottom: "1rem",
     width: "100%",
   },
@@ -618,7 +619,6 @@ export const VerificationButton = styled.button`
   align-items: center;
   justify-content: center;
 `
-
 export const StyledSelect = styled.select`
   flex: 1;
   padding: 0.5rem;
@@ -690,7 +690,7 @@ export const ProgressBarContainer = styled.div`
 
 export const ProgressBar = styled.div`
   height: 100%;
-  background-color: #000; /* 색상을 검은색으로 변경 */
+  background-color: #000; 
   border-radius: 5px;
   position: relative;
   transition: width 0.3s ease;
@@ -699,11 +699,11 @@ export const ProgressBar = styled.div`
 export const ProgressIndicator = styled.div`
   width: 20px;
   height: 20px;
-  background-color: #000; /* 색상을 검은색으로 변경 */
+  background-color: #000; 
   border-radius: 50%;
   position: absolute;
   top: -5px;
-  right: 0; /* 인디케이터를 진행 바의 맨 오른쪽에 위치하게 설정 */
+  right: 0; 
   transform: translateX(50%);
 `;
 
@@ -715,15 +715,15 @@ export const PlaceContainer = styled.div`
 export const Left = styled.div`
   flex: 1;
   display: flex;
-  justify-content: center; /* WhiteBox를 가운데로 정렬 */
+  justify-content: center; 
   padding: 1rem;
 `;
 
 export const PlacesList = styled.ul`
   list-style: none;
   padding: 0;
-  max-height: 200px; /* 높이를 제한하여 스크롤을 만들기 위함 */
-  overflow-y: auto; /* 스크롤을 가능하게 함 */
+  max-height: 200px; 
+  overflow-y: auto;
 `;
 
 export const PlaceItem = styled.div`
@@ -749,13 +749,13 @@ export const PlaceItem = styled.div`
   div {
     display: flex;
     flex-direction: column;
-    background-color: #000; /* 배경색을 검은색으로 변경 */
+    background-color: #000; 
     border-radius: 8px;
     padding: 0.3rem;
     flex: 1;
 
     h3, p {
-      color: #fff; /* 글자색을 흰색으로 변경 */
+      color: #fff; 
     }
 
     h3 {
@@ -865,8 +865,8 @@ export const WhiteBox = styled.div`
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
-  width: 100%; /* Left 컨테이너 내에서의 크기를 설정 */
-  max-width: 90%; /* 최대 너비 설정 */
+  width: 100%;
+  max-width: 90%; 
 `;
 
 export const ShareButton = styled.button`
@@ -881,7 +881,7 @@ export const ShareButton = styled.button`
   cursor: pointer;
 
   span {
-    font-weight: 800; /* 글씨 굵기를 설정 */
+    font-weight: 800; 
   }
 
   img {
