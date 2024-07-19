@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { searchStyles } from '../styles/searchStyles';
 
-const SearchBox = ({ reviews, setFilteredReviews }) => {
+const SearchBox = ({
+  reviews,
+  setFilteredReviews,
+  clickedTags,
+  setClickedTags,
+}) => {
   const [searchText, setSearchText] = useState('');
-  const [clickedTags, setClickedTags] = useState([]);
   const tags = [
     '식사',
     '카페',
@@ -23,23 +27,23 @@ const SearchBox = ({ reviews, setFilteredReviews }) => {
 
   const handleTagClick = (tag) => {
     setClickedTags((prevTags) => {
+      let newTags;
       if (prevTags.includes(tag)) {
-        const newTags = prevTags.filter((t) => t !== tag);
-        handleFiltering(newTags, searchText);
-        return newTags;
+        newTags = prevTags.filter((t) => t !== tag);
       } else if (prevTags.length < 2) {
-        const newTags = [...prevTags, tag];
-        handleFiltering(newTags, searchText);
-        return newTags;
+        newTags = [...prevTags, tag];
+      } else {
+        newTags = prevTags;
       }
-      return prevTags;
+      return newTags;
     });
   };
 
   const handleFiltering = (tags, text) => {
     const filtered = reviews.filter((review) => {
       const hasTag =
-        tags.length === 0 || tags.some((tag) => review.tags.includes(tag));
+        tags.length === 0 ||
+        tags.some((tag) => review.tags.includes(`#${tag}`));
       const matchesSearch =
         text === '' ||
         review.content.toLowerCase().includes(text.toLowerCase());

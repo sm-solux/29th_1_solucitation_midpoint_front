@@ -19,17 +19,17 @@ const ReviewModal = ({
 
   const toggleLike = () => {
     setLiked(!liked);
-    setLikeCount(liked ? likeCount - 1 : likeCount + 1);
+    const updatedLikeCount = liked ? likeCount - 1 : likeCount + 1;
+    setLikeCount(updatedLikeCount);
     setReviews((prevReviews) =>
       prevReviews.map((r) =>
-        r.id === review.id
-          ? { ...r, likes: liked ? likeCount - 1 : likeCount + 1 }
-          : r
+        r.id === review.id ? { ...r, likes: updatedLikeCount } : r
       )
     );
   };
 
   const handleEditClick = () => {
+    console.log('handleEditClick 호출됨', { review }); // 디버깅용 로그
     const editData = {
       ...review,
       author: currentUser,
@@ -93,7 +93,10 @@ const ReviewModal = ({
       <div style={reviewModalStyles.footer}>
         <div style={reviewModalStyles.likeSection}>
           <button
-            onClick={toggleLike}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleLike();
+            }}
             style={
               liked
                 ? reviewModalStyles.likeButtonActive

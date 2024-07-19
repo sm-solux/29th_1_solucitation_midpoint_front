@@ -8,7 +8,7 @@ const WriteModal = ({
   isOpen,
   closeModal,
   addReview,
-  existingReview = {},
+  existingReview,
   isEditing,
 }) => {
   const currentUser = { name: 'user1' };
@@ -34,14 +34,35 @@ const WriteModal = ({
   ];
 
   useEffect(() => {
-    if (existingReview && Object.keys(existingReview).length > 0) {
-      setPlaceName(existingReview.placeName || '');
-      setContent(existingReview.content || '');
-      setSelectedFiles([null, null, null]);
-      setPhotoURLs(existingReview.photos || [null, null, null]);
-      setSelectedTags(existingReview.tags || []);
+    if (isOpen) {
+      console.log(
+        'isOpen:',
+        isOpen,
+        'isEditing:',
+        isEditing,
+        'existingReview:',
+        existingReview
+      ); // 디버깅용 로그
+      if (
+        isEditing &&
+        existingReview &&
+        Object.keys(existingReview).length > 0
+      ) {
+        console.log('기존 리뷰 데이터로 초기화', existingReview); // 디버깅용 로그
+        setPlaceName(existingReview.placeName || '');
+        setContent(existingReview.content || '');
+        setPhotoURLs(existingReview.photos || [null, null, null]);
+        setSelectedTags(existingReview.tags || []);
+      } else {
+        console.log('새 리뷰 데이터로 초기화'); // 디버깅용 로그
+        setPlaceName('');
+        setContent('');
+        setPhotoURLs([null, null, null]);
+        setSelectedTags([]);
+      }
+      setSelectedFiles([null, null, null]); // 항상 초기화
     }
-  }, [existingReview]);
+  }, [isOpen, isEditing, existingReview]);
 
   useEffect(() => {
     return () => {
