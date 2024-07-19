@@ -3,7 +3,7 @@ import { commonStyles } from '../styles/styles';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 // 헤더 (배경색 설정 가능 / default는 transparent)
-function Logo({ exist = true, bgColor = "transparent" }) {
+function Logo({ exist = true, bgColor = 'transparent' }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ function Logo({ exist = true, bgColor = "transparent" }) {
 
   const getLinkStyle = (link) => {
     const isActive = location.pathname.startsWith(link.path);
-    if (link.name === "logout") {
+    if (link.name === 'logout') {
       return linkStyle;
     }
     return isActive ? activeLinkStyle : linkStyle;
@@ -112,8 +112,8 @@ const Timer = ({ isActive, resetTimer }) => {
   const formatTime = (timeInSeconds) => {
     const minutes = Math.floor(timeInSeconds / 60);
     const seconds = timeInSeconds % 60;
-    return `${minutes < 10 ? "0" + minutes : minutes}:${
-      seconds < 10 ? "0" + seconds : seconds
+    return `${minutes < 10 ? '0' + minutes : minutes}:${
+      seconds < 10 ? '0' + seconds : seconds
     }`;
   };
 
@@ -121,9 +121,9 @@ const Timer = ({ isActive, resetTimer }) => {
     <div>
       <h5
         style={{
-          color: "#EC5640",
-          marginRight: "0.5rem",
-          marginLeft: "0.5rem",
+          color: '#EC5640',
+          marginRight: '0.5rem',
+          marginLeft: '0.5rem',
         }}
       >
         {formatTime(seconds)}

@@ -195,7 +195,7 @@ const ReviewPage = () => {
 
   return (
     <div>
-      <Logo />
+      <Logo bgColor='#F2F2F2' />
       <div style={{ marginTop: '120px' }}>
         <SearchBox
           reviews={reviews}
