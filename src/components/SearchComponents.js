@@ -35,6 +35,7 @@ const SearchBox = ({
       } else {
         newTags = prevTags;
       }
+      handleFiltering(newTags, searchText);
       return newTags;
     });
   };
