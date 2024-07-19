@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const commonStyles = {
-  header: {
+  header: (bgColor = 'transparent') => ({
     position: "fixed",
     width: "100%",
     height: "80px", // 적절한 높이 고정으로 수정했어요
@@ -12,8 +12,8 @@ export const commonStyles = {
     paddingBottom: "1rem",
     top: 0,
     zIndex: 1000,
-    backgroundColor: "#F2F2EF",
-  },
+    backgroundColor: bgColor,
+  }),
   logo_div: {
     marginLeft: "4.5rem",
   },

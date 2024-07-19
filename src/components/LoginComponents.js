@@ -167,8 +167,7 @@ const JoinForm = ({
     if (verificationCodeInput === mockVerificationCode) {
       setErrors({ ...errors, verificationCode: "" });
       setIsTimerActive(false);
-      alert("인증 완료되었습니다!");
-      onVerificationSubmit(event);
+      alert("인증 완료되었습니다😊");
     } else {
       alert("인증코드가 일치하지 않습니다.");
     }
@@ -276,17 +275,49 @@ const JoinForm = ({
 // 비밀번호 찾기 폼
 const FindPasswordForm = ({
   inputs,
-  buttonText,
   onSubmit,
   hideButton,
   showVerification,
-  onVerificationSubmit,
 }) => {
+  const navigate = useNavigate();
+  const [isTimerActive, setIsTimerActive] = useState(true);
+  const [resetTimer, setResetTimer] = useState(false);
+  const toResetPassword = () => {
+    navigate("/login/resetpassword");
+  };
+
+  // mock data
+  const mockVerificationCode = "1234";
+
+  const resend = (event) => {
+    event.preventDefault();
+    setResetTimer(true);
+    setIsTimerActive(true);
+    document.getElementById("verificationCode").value = "";
+    setTimeout(() => setResetTimer(false), 1000);
+  };
+
+  const verify = (event) => {
+    event.preventDefault();
+    const verificationCodeInput = document
+      .getElementById("verificationCode")
+      .value.trim();
+
+    if (verificationCodeInput === mockVerificationCode) {
+      setIsTimerActive(false);
+      alert("인증 완료되었습니다😊");
+    } else {
+      alert("인증코드가 일치하지 않습니다.");
+    }
+  };
+
   return (
     <LoginFormContainer onSubmit={onSubmit}>
       {inputs.map(({ label, type, id, required }) => (
         <LoginInputGroup key={id}>
-          <LoginInputLabel htmlFor={id} style={{width:'5rem'}}>{label}</LoginInputLabel>
+          <LoginInputLabel htmlFor={id} style={{ width: "7.5rem" }}>
+            {label}
+          </LoginInputLabel>
           <LoginInputField type={type} id={id} required={required} />
         </LoginInputGroup>
       ))}
@@ -294,34 +325,142 @@ const FindPasswordForm = ({
         <div
           style={{ width: "100%", display: "flex", justifyContent: "center" }}
         >
-          <LoginSubmitButton type="submit" style={{ width: "12rem" }}>
-            {buttonText}
+          <LoginSubmitButton type="submit" style={{ width: "9.3rem" }}>
+            인증번호 받기
           </LoginSubmitButton>
         </div>
       )}
       {showVerification && (
-        <form>
-          <LoginInputGroup>
-            <LoginInputLabel style={{ fontSize: "1.4rem" }}>
-              인증번호
-            </LoginInputLabel>
-            <LoginInputField type="text" id="verificationCode" required />
-          </LoginInputGroup>
-
-          <JoinButton
-            type="submit"
+        <div>
+          <div style={{ display: "flex", marginTop: "-3rem" }}>
+            <Verification style={{ borderBottom: "0.3rem solid #1b4345" }}>
+              <VerificationLabel
+                htmlFor="verificationCode"
+                style={{
+                  fontSize: "1.4rem",
+                  fontWeight: "800",
+                  width: "9rem",
+                  marginLeft: "0.5rem",
+                }}
+              >
+                인증코드 입력
+              </VerificationLabel>
+              <VerificationInput type="text" id="verificationCode" required />
+              <Timer isActive={isTimerActive} resetTimer={resetTimer} />
+            </Verification>
+            <VerificationButton type="submit" onClick={resend}> 재전송</VerificationButton>
+            <VerificationButton type="submit" onClick={verify}>인증확인</VerificationButton>
+          </div>
+          <div
             style={{
-              margin: "0rem auto",
-              marginTop: "4.2rem",
+              width: "44rem",
+              display: "flex",
+              justifyContent: "center",
             }}
-            onClick={onVerificationSubmit}
           >
-            인증
-          </JoinButton>
-        </form>
+            <JoinButton type="button" onClick={toResetPassword}>
+              다음
+            </JoinButton>
+          </div>
+        </div>
       )}
     </LoginFormContainer>
   );
 };
 
-export { LoginTitle, JoinTitle, LoginForm, JoinForm, FindPasswordForm };
+// 비밀번호 재설정 폼
+const ResetPasswordForm = ({ inputs, values, setValues, buttonText }) => {
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
+
+  const validateInputs = (id, value) => {
+    const newErrors = { ...errors };
+    if (id === "password") {
+      if (value.length < 8 || value.length > 16) {
+        newErrors.password = "비밀번호는 8자 이상 16자 이하여야 합니다.";
+      } else {
+        newErrors.password = "";
+      }
+      if (
+        values.passwordVerification &&
+        value !== values.passwordVerification
+      ) {
+        newErrors.passwordVerification = "비밀번호가 일치하지 않습니다.";
+      } else {
+        newErrors.passwordVerification = "";
+      }
+    }
+    if (id === "passwordVerification") {
+      if (value !== values.password) {
+        newErrors.passwordVerification = "비밀번호가 일치하지 않습니다.";
+      } else {
+        newErrors.passwordVerification = "";
+      }
+    }
+    return newErrors;
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    const newValues = { ...values, [name]: value };
+    const newErrors = validateInputs(name, value);
+    setValues(newValues);
+    setErrors(newErrors);
+  };
+
+  const resetpassword = (event) => {
+    event.preventDefault();
+    const formErrors = {};
+
+    inputs.forEach(({ id }) => {
+      const newErrors = validateInputs(id, values[id] || "");
+      if (newErrors[id]) {
+        formErrors[id] = newErrors[id];
+      }
+    });
+
+    setErrors(formErrors);
+    if (Object.keys(formErrors).length === 0) {
+      alert("비밀번호 변경 완료되었습니다😊")
+      navigate("/login");
+    }
+  };
+
+  return (
+    <LoginFormContainer onSubmit={resetpassword}>
+      {inputs.map(({ label, type, id, required }) => (
+        <LoginInputGroup key={id}>
+          <LoginInputLabel htmlFor={id} style={{ width: "8.4rem" }}>
+            {label}
+          </LoginInputLabel>
+          <LoginInputField
+            type={type}
+            id={id}
+            name={id}
+            required={required}
+            onChange={handleChange}
+          />
+          {errors[id] && (
+            <p style={{ color: "#EC5640", marginBottom: "0rem", fontSize: "1.1rem" }}>
+              {errors[id]}
+            </p>
+          )}
+        </LoginInputGroup>
+      ))}
+      <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+        <JoinButton type="submit">
+          {buttonText}
+        </JoinButton>
+      </div>
+    </LoginFormContainer>
+  );
+};
+
+export {
+  LoginTitle,
+  JoinTitle,
+  LoginForm,
+  JoinForm,
+  FindPasswordForm,
+  ResetPasswordForm,
+};

@@ -6,14 +6,14 @@ import { commonStyles, LoginText } from "../../styles/styles";
 import { Navigate, useNavigate } from "react-router-dom";
 
 const inputs = [
-  { label: "닉네임 또는 이메일", type: "email", id: "email", required: true },
+  { label: "닉네임 또는 이메일", type: "id", id: "id", required: true },
   { label: "비밀번호", type: "password", id: "password", required: true },
 ];
 
 function DirectLoginPage() {
   const navigate = useNavigate();
   const handleSubmit = () => {
-    console.log("Form submitted!");
+    navigate('/home')
   };
   const toFindPassword = () => {
     navigate("/login/findpassword");

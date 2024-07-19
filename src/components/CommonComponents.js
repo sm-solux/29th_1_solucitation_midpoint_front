@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { commonStyles } from "../styles/styles";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
-function Logo({ exist = true }) {
+// 헤더 (배경색 설정 가능 / default는 transparent)
+function Logo({ exist = true, bgColor = "transparent" }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ function Logo({ exist = true }) {
     { name: "login", path: "/login", label: "로그인" },
   ];
 
-  const links = isLoggedIn ? loggedInLinks : loggedInLinks;
+  const links = isLoggedIn ? loggedInLinks : loggedOutLinks;
   //뒤에를 loggedOutLinks로 수정해야함 마이페이지 작업 때문에 수정했음
 
   const linkStyle = {
@@ -38,13 +39,16 @@ function Logo({ exist = true }) {
     textUnderlineOffset: "3px",
   };
 
-  const getLinkStyle = (path) => {
-    const isActive = location.pathname.startsWith(path);
+  const getLinkStyle = (link) => {
+    const isActive = location.pathname.startsWith(link.path);
+    if (link.name === "logout") {
+      return linkStyle;
+    }
     return isActive ? activeLinkStyle : linkStyle;
   };
 
   return (
-    <header style={commonStyles.header}>
+    <header style={commonStyles.header(bgColor)}>
       <div style={commonStyles.logo_div}>
         {exist && (
           <h1 style={commonStyles.logo} onClick={onClick}>
@@ -63,7 +67,7 @@ function Logo({ exist = true }) {
                 {link.label}
               </span>
             ) : (
-              <Link to={link.path} style={getLinkStyle(link.path)}>
+              <Link to={link.path} style={getLinkStyle(link)}>
                 {link.label}
               </Link>
             )}
@@ -108,12 +112,22 @@ const Timer = ({ isActive, resetTimer }) => {
   const formatTime = (timeInSeconds) => {
     const minutes = Math.floor(timeInSeconds / 60);
     const seconds = timeInSeconds % 60;
-    return `${minutes < 10 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+    return `${minutes < 10 ? "0" + minutes : minutes}:${
+      seconds < 10 ? "0" + seconds : seconds
+    }`;
   };
 
   return (
     <div>
-      <h5 style={{ color: '#EC5640', marginRight: '0.5rem', marginLeft: '0.5rem' }}>{formatTime(seconds)}</h5>
+      <h5
+        style={{
+          color: "#EC5640",
+          marginRight: "0.5rem",
+          marginLeft: "0.5rem",
+        }}
+      >
+        {formatTime(seconds)}
+      </h5>
     </div>
   );
 };
