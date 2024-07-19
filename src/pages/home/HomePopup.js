@@ -18,16 +18,16 @@ const HomePopup = ({ onClose }) => {
 
   useEffect(() => {
     const script = document.createElement('script');
-    script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.REACT_APP_NAVER_MAP_CLIENT_ID}`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`;
     script.async = true;
     script.onload = () => {
-      if (window.naver && mapRef.current && showMap) {
+      if (window.google && mapRef.current && showMap) {
         const mapOptions = {
-          center: new window.naver.maps.LatLng(37.5665, 126.9780),
+          center: new window.google.maps.LatLng(37.5665, 126.9780),
           zoom: 10,
         };
-        const naverMap = new window.naver.maps.Map(mapRef.current, mapOptions);
-        setMap(naverMap);
+        const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
+        setMap(googleMap);
       }
     };
     document.head.appendChild(script);
@@ -49,6 +49,42 @@ const HomePopup = ({ onClose }) => {
     setShowMap(true);
     setShowPlacesList(false);
     setSelectedFriend(null);
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const currentLocation = { lat: latitude, lng: longitude };
+
+          if (map) {
+            map.setCenter(currentLocation);
+            new window.google.maps.Marker({
+              position: currentLocation,
+              map: map,
+              title: '현재 위치',
+            });
+          } else {
+            const mapOptions = {
+              center: currentLocation,
+              zoom: 15,
+            };
+            const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
+            new window.google.maps.Marker({
+              position: currentLocation,
+              map: googleMap,
+              title: '현재 위치',
+            });
+            setMap(googleMap);
+          }
+        },
+        (error) => {
+          console.error('Error getting current position:', error);
+          alert('현재 위치를 사용할 수 없습니다.');
+        }
+      );
+    } else {
+      alert('현재 위치를 사용할 수 없습니다.');
+    }
   };
 
   const handleInputFocus = () => {

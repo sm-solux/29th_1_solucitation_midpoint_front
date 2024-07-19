@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const commonStyles = {
-  header: (bgColor = 'transparent') => ({
+  header: (bgColor = "transparent") => ({
     position: "fixed",
     width: "100%",
     height: "80px", // 적절한 높이 고정으로 수정했어요
@@ -101,6 +101,7 @@ export const commonStyles = {
   inputContainer: {
     display: "flex",
     alignItems: "center",
+    justifyContent: "center",
     marginBottom: "1rem",
     width: "100%",
   },
@@ -170,13 +171,13 @@ export const commonStyles = {
     marginTop: "3rem",
   },
   retryButton: {
-    padding: '0.5rem 1rem',
-    fontSize: '1rem',
-    backgroundColor: '#1B4345',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
+    padding: "0.5rem 1rem",
+    fontSize: "1rem",
+    backgroundColor: "#1B4345",
+    color: "#fff",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
   },
   addButton: {
     cursor: "pointer",
@@ -196,250 +197,249 @@ export const commonStyles = {
     marginTop: "1rem",
   },
   testContent: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    maxWidth: '600px',
-    margin: '0 auto',
-    padding: '2rem',
-    borderRadius: '8px',
-    backgroundColor: '#F2F2EF',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    maxWidth: "600px",
+    margin: "0 auto",
+    padding: "2rem",
+    borderRadius: "8px",
+    backgroundColor: "#F2F2EF",
   },
   testTitle: {
-    fontSize: '2rem',
-    fontWeight: '700',
-    marginBottom: '1.5rem',
+    fontSize: "2rem",
+    fontWeight: "700",
+    marginBottom: "1.5rem",
   },
   testOptions: {
-    display: 'flex',
-    justifyContent: 'space-around',
-    width: '100%',
+    display: "flex",
+    justifyContent: "space-around",
+    width: "100%",
   },
   option: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    cursor: 'pointer',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    cursor: "pointer",
   },
   optionImg: {
-    width: '100px',
-    height: '100px',
-    marginBottom: '0.5rem',
+    width: "100px",
+    height: "100px",
+    marginBottom: "0.5rem",
   },
   optionText: {
-    fontSize: '1.2rem',
-    fontWeight: '600',
+    fontSize: "1.2rem",
+    fontWeight: "600",
   },
   resultContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-    textAlign: 'center',
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "column",
+    textAlign: "center",
   },
   resultOptions: {
-    display: 'flex',
-    justifyContent: 'space-around',
-    width: '100%',
-    maxWidth: '600px',
-    margin: '0 auto',
+    display: "flex",
+    justifyContent: "space-around",
+    width: "100%",
+    maxWidth: "600px",
+    margin: "0 auto",
   },
   resultOption: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    margin: '0 1rem',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    margin: "0 1rem",
   },
   resultOptionBox: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '250px',
-    height: '250px',
-    border: 'none',
-    backgroundColor: '#fff',
-    borderRadius: '15px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-    cursor: 'pointer',
-    margin: '0 1rem',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "250px",
+    height: "250px",
+    border: "none",
+    backgroundColor: "#fff",
+    borderRadius: "15px",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+    cursor: "pointer",
+    margin: "0 1rem",
   },
   resultOptionImg: {
-    width: '140px',
-    height: 'auto',
+    width: "140px",
+    height: "auto",
   },
   resultOptionText: {
-    marginTop: '1rem',
-    fontSize: '1.5rem',
-    fontWeight: '600',
+    marginTop: "1rem",
+    fontSize: "1.5rem",
+    fontWeight: "600",
   },
   resultButton: {
-    marginTop: '4rem',
-    padding: '0.5rem 1rem',
-    fontSize: '1.2rem',
-    fontWeight: '600',
-    color: '#000',
-    backgroundColor: '#F2F2EF',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    textAlign: 'center',
-    textDecoration: 'none',
-    display: 'inline-block',
-    textDecoration: 'underline',
+    marginTop: "4rem",
+    padding: "0.5rem 1rem",
+    fontSize: "1.2rem",
+    fontWeight: "600",
+    color: "#000",
+    backgroundColor: "#F2F2EF",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+    textAlign: "center",
+    textDecoration: "none",
+    display: "inline-block",
+    textDecoration: "underline",
   },
   popupContainer: {
-    position: 'fixed',
+    position: "fixed",
     top: 0,
     left: 0,
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   popupBox: {
-    position: 'relative',
-    backgroundColor: '#F2F2EF',
-    width: '600px',
-    height: '550px',
-    border: '1px solid #ccc',
-    borderRadius: '0',
-    padding: '1rem',
+    position: "relative",
+    backgroundColor: "#F2F2EF",
+    width: "600px",
+    height: "550px",
+    border: "1px solid #ccc",
+    borderRadius: "0",
+    padding: "1rem",
   },
   popupHeader: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: '2rem',
-    paddingRight: '1rem',
-    paddingLeft: '1rem',
-    width: '75%',
-    margin: '0 auto',
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: "2rem",
+    paddingRight: "1rem",
+    paddingLeft: "1rem",
+    width: "75%",
+    margin: "0 auto",
   },
   popupInput: {
     flex: 1,
-    padding: '0.5rem',
-    fontSize: '1rem',
-    border: '1px solid #fff',
+    padding: "0.5rem",
+    fontSize: "1rem",
+    border: "1px solid #fff",
     borderRadius: "4px",
     textAlign: "center",
   },
   popupButton: {
-    padding: '0.5rem 1rem',
-    fontSize: '1rem',
-    backgroundColor: '#1B4345',
-    color: '#fff',
-    border: 'none',
-    cursor: 'pointer',
+    padding: "0.5rem 1rem",
+    fontSize: "1rem",
+    backgroundColor: "#1B4345",
+    color: "#fff",
+    border: "none",
+    cursor: "pointer",
     borderRadius: "4px",
   },
   popupCloseButton: {
-    fontSize: '1rem',
-    backgroundColor: '#F2F2EF',
-    color: '#000',
-    border: 'none',
-    cursor: 'pointer',
-    position: 'absolute', 
-    top: '10px', 
-    right: '10px', 
+    fontSize: "1rem",
+    backgroundColor: "#F2F2EF",
+    color: "#000",
+    border: "none",
+    cursor: "pointer",
+    position: "absolute",
+    top: "10px",
+    right: "10px",
   },
   popupContent: {
-    paddingTop: '1rem',
-    paddingBottom: '1rem',
-    paddingRight: '4.7rem',
-    paddingLeft: '4.7rem',
+    paddingTop: "1rem",
+    paddingBottom: "1rem",
+    paddingRight: "4.7rem",
+    paddingLeft: "4.7rem",
   },
   popupSections: {
-    display: 'flex',
-    justifyContent: 'space-between', 
+    display: "flex",
+    justifyContent: "space-between",
   },
   popupSection1: {
-    backgroundColor: 'rgba(255, 255, 255, 0.5)', 
-    borderRadius: '10px', 
-    alignItems: 'center',
-    width: '33%',
-    height: '15%',
-    marginBottom: '0.5rem',
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    borderRadius: "10px",
+    alignItems: "center",
+    width: "33%",
+    height: "15%",
+    marginBottom: "0.5rem",
   },
   popupSection2: {
-    backgroundColor: 'rgba(255, 255, 255, 0.5)', 
-    borderRadius: '10px', 
-    width: '62%',
-    height: '15%', 
-    marginBottom: '0.5rem', 
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    borderRadius: "10px",
+    width: "62%",
+    height: "15%",
+    marginBottom: "0.5rem",
   },
   popupSectionTitle: {
-    fontSize: '1rem', 
-    fontWeight: '700', 
-    paddingLeft: '1.1rem',
+    fontSize: "1rem",
+    fontWeight: "700",
+    paddingLeft: "1.1rem",
   },
   favoritePlaces: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
   },
   favoritePlace: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-    border: 'none',
-    cursor: 'pointer',
-    margin: '0 0.5rem',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    backgroundColor: "transparent",
+    border: "none",
+    cursor: "pointer",
+    margin: "0 0.5rem",
   },
   favoritePlaceImage: {
-    width: '23px', 
-    height: '23px',
+    width: "23px",
+    height: "23px",
   },
   favoriteFriends: {
-    display: 'flex',
-    paddingLeft: '1.2rem',
-    flexWrap: 'wrap',
+    display: "flex",
+    paddingLeft: "1.2rem",
+    flexWrap: "wrap",
   },
   favoriteFriend: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    marginRight: '1.2rem',
-    backgroundColor: 'transparent',
-    border: 'none',
-    cursor: 'pointer',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    marginRight: "1.2rem",
+    backgroundColor: "transparent",
+    border: "none",
+    cursor: "pointer",
   },
   favoriteFriendImage: {
-    width: '23px', 
-    height: '23px', 
+    width: "23px",
+    height: "23px",
   },
   locationContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    cursor: 'pointer',
-    marginBottom: '1rem',
+    display: "flex",
+    alignItems: "center",
+    cursor: "pointer",
+    marginBottom: "1rem",
   },
   locationIcon: {
-    marginRight: '0.5rem',
+    marginRight: "0.5rem",
   },
   mapContainer: {
     flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   currentLocationText: {
-    fontSize: '1rem',
-    fontWeight: 'bold',
-    marginBottom: '0.5rem',
+    fontSize: "1rem",
+    fontWeight: "bold",
+    marginBottom: "0.5rem",
   },
-  
 };
 
 export const LoginFormContainer = styled.form`
-  width: 44rem; 
-  margin: 0 auto; 
+  width: 44rem;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: flex-start; /* 내부 내용물을 왼쪽으로 정렬 */
@@ -489,7 +489,7 @@ export const LoginSubmitButton = styled.button`
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
 `;
 
 export const LoginText = styled.p`
@@ -572,7 +572,7 @@ export const JoinButton = styled.button`
 
 export const Verification = styled.div`
   display: flex;
-  flex-direction: row; 
+  flex-direction: row;
   align-items: center;
   width: 29rem;
   height: 2.5rem;
@@ -617,8 +617,7 @@ export const VerificationButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-`
-
+`;
 export const StyledSelect = styled.select`
   flex: 1;
   padding: 0.5rem;
@@ -690,7 +689,7 @@ export const ProgressBarContainer = styled.div`
 
 export const ProgressBar = styled.div`
   height: 100%;
-  background-color: #000; /* 색상을 검은색으로 변경 */
+  background-color: #000;
   border-radius: 5px;
   position: relative;
   transition: width 0.3s ease;
@@ -699,11 +698,11 @@ export const ProgressBar = styled.div`
 export const ProgressIndicator = styled.div`
   width: 20px;
   height: 20px;
-  background-color: #000; /* 색상을 검은색으로 변경 */
+  background-color: #000;
   border-radius: 50%;
   position: absolute;
   top: -5px;
-  right: 0; /* 인디케이터를 진행 바의 맨 오른쪽에 위치하게 설정 */
+  right: 0;
   transform: translateX(50%);
 `;
 
@@ -715,15 +714,15 @@ export const PlaceContainer = styled.div`
 export const Left = styled.div`
   flex: 1;
   display: flex;
-  justify-content: center; /* WhiteBox를 가운데로 정렬 */
+  justify-content: center;
   padding: 1rem;
 `;
 
 export const PlacesList = styled.ul`
   list-style: none;
   padding: 0;
-  max-height: 200px; /* 높이를 제한하여 스크롤을 만들기 위함 */
-  overflow-y: auto; /* 스크롤을 가능하게 함 */
+  max-height: 200px;
+  overflow-y: auto;
 `;
 
 export const PlaceItem = styled.div`
@@ -749,13 +748,14 @@ export const PlaceItem = styled.div`
   div {
     display: flex;
     flex-direction: column;
-    background-color: #000; /* 배경색을 검은색으로 변경 */
+    background-color: #000;
     border-radius: 8px;
     padding: 0.3rem;
     flex: 1;
 
-    h3, p {
-      color: #fff; /* 글자색을 흰색으로 변경 */
+    h3,
+    p {
+      color: #fff;
     }
 
     h3 {
@@ -796,14 +796,15 @@ export const FriendItem = styled.div`
   div {
     display: flex;
     flex-direction: column;
-    background-color: #fff; 
+    background-color: #fff;
     border-radius: 8px;
     margin-left: 0.8rem;
     padding: 0.3rem;
     flex: 1;
 
-    h3, p {
-      color: #000; 
+    h3,
+    p {
+      color: #000;
     }
 
     h3 {
@@ -865,8 +866,8 @@ export const WhiteBox = styled.div`
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
-  width: 100%; /* Left 컨테이너 내에서의 크기를 설정 */
-  max-width: 90%; /* 최대 너비 설정 */
+  width: 100%;
+  max-width: 90%;
 `;
 
 export const ShareButton = styled.button`
@@ -874,18 +875,17 @@ export const ShareButton = styled.button`
   align-items: center;
   padding: 0.5rem 1rem;
   font-size: 1rem;
-  background-color: #FFF;
+  background-color: #fff;
   color: #000;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 
   span {
-    font-weight: 800; /* 글씨 굵기를 설정 */
+    font-weight: 800;
   }
 
   img {
     margin-left: 0.5rem;
   }
 `;
-

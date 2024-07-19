@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { commonStyles } from "../styles/styles";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { commonStyles } from '../styles/styles';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 // 헤더 (배경색 설정 가능 / default는 transparent)
 function Logo({ exist = true, bgColor = "transparent" }) {
@@ -9,20 +9,20 @@ function Logo({ exist = true, bgColor = "transparent" }) {
   const navigate = useNavigate();
 
   const onClick = () => {
-    navigate("/home");
+    navigate('/home');
   };
 
   const loggedInLinks = [
-    { name: "home", path: "/home", label: "홈" },
-    { name: "review", path: "/Review", label: "게시판" },
-    { name: "mypage", path: "/MyPage", label: "마이페이지" },
-    { name: "logout", path: "/", label: "로그아웃" },
+    { name: 'home', path: '/home', label: '홈' },
+    { name: 'review', path: '/Review', label: '게시판' },
+    { name: 'mypage', path: '/MyPage', label: '마이페이지' },
+    { name: 'logout', path: '/', label: '로그아웃' },
   ];
 
   const loggedOutLinks = [
-    { name: "home", path: "/home", label: "홈" },
-    { name: "review", path: "/Review", label: "게시판" },
-    { name: "login", path: "/login", label: "로그인" },
+    { name: 'home', path: '/home', label: '홈' },
+    { name: 'review', path: '/Review', label: '게시판' },
+    { name: 'login', path: '/login', label: '로그인' },
   ];
 
   const links = isLoggedIn ? loggedInLinks : loggedOutLinks;
@@ -30,13 +30,13 @@ function Logo({ exist = true, bgColor = "transparent" }) {
 
   const linkStyle = {
     ...commonStyles.link,
-    textDecoration: "none",
+    textDecoration: 'none',
   };
 
   const activeLinkStyle = {
     ...linkStyle,
-    textDecoration: "underline",
-    textUnderlineOffset: "3px",
+    textDecoration: 'underline',
+    textUnderlineOffset: '3px',
   };
 
   const getLinkStyle = (link) => {
@@ -59,7 +59,7 @@ function Logo({ exist = true, bgColor = "transparent" }) {
       <div style={commonStyles.move_div}>
         {links.map((link) => (
           <div style={commonStyles.linkContainer} key={link.name}>
-            {link.name === "logout" ? (
+            {link.name === 'logout' ? (
               <span
                 style={getLinkStyle(link.path)}
                 onClick={() => setIsLoggedIn(false)}
@@ -91,7 +91,7 @@ const Timer = ({ isActive, resetTimer }) => {
             return seconds - 1;
           } else {
             clearInterval(interval);
-            alert("입력시간을 초과했습니다.");
+            alert('입력시간을 초과했습니다.');
             return 0;
           }
         });

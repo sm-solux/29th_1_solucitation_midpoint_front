@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { commonStyles } from "../../styles/styles";
 import { Logo } from "../../components/CommonComponents";
 import HomePopup from "./HomePopup";
@@ -32,6 +33,36 @@ const Home = () => {
     setSelectedPurpose(selectedValue);
     if (selectedValue === "/test1") {
       navigate("/test1");
+    }
+  };
+
+  const handleFindPlace = async () => {
+    try {
+      // 중간지점 찾기
+      const logicResponse = await axios.post('/api/logic', {
+        addressInputs
+      });
+
+      if (logicResponse.data.success) {
+        // 중간지점 근처 장소 찾기
+        const placesResponse = await axios.get('/api/places', {
+          params: {
+            midpoint: logicResponse.data.midpoint,
+            purpose: selectedPurpose
+          }
+        });
+
+        if (placesResponse.data.success && placesResponse.data.places.length > 0) {
+          navigate("/midpoint");
+        } else {
+          navigate("/again");
+        }
+      } else {
+        navigate("/again");
+      }
+    } catch (error) {
+      console.error("Error finding place:", error);
+      navigate("/again");
     }
   };
 
@@ -91,7 +122,11 @@ const Home = () => {
           </select>
         </div>
         <div>
-          <button type="button" style={commonStyles.placeButton}>
+          <button
+            type="button"
+            style={commonStyles.placeButton}
+            onClick={handleFindPlace}
+          >
             장소 찾기
           </button>
         </div>

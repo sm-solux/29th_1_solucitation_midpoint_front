@@ -9,6 +9,7 @@ import ResetPassword from "./pages/login/ResetPassword";
 import Home from "./pages/home/HomeMain";
 import ReviewPage from "./pages/ReviewPage";
 import MyPage from "./pages/MyPage";
+import Again from "./pages/home/Again";
 import Test1 from './pages/home/Test1';
 import Test2 from './pages/home/Test2';
 import Test3 from './pages/home/Test3';
@@ -40,6 +41,7 @@ function Router() {
         <Route path="/home" element={<Home />} />
         <Route path="/Review" element={<ReviewPage />} />
         <Route path="/Mypage" element={<MyPage />} />
+        <Route path="/again" element={<Again />} />
         <Route path="/test1" element={<Test1 updateAnswers={updateAnswers} answers={answers} />} />
         <Route path="/test2" element={<Test2 updateAnswers={updateAnswers} answers={answers} />} />
         <Route path="/test3" element={<Test3 updateAnswers={updateAnswers} answers={answers} />} />
