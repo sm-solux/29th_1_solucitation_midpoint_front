@@ -24,7 +24,7 @@ function Logo({ exist = true }) {
     { name: 'login', path: '/login', label: '로그인' },
   ];
 
-  const links = isLoggedIn ? loggedInLinks : loggedOutLinks;
+  const links = isLoggedIn ? loggedInLinks : loggedInLinks;
   //뒤에를 loggedOutLinks로 수정해야함 마이페이지 작업 때문에 수정했음
 
   const linkStyle = {
