@@ -122,6 +122,7 @@ const ReviewPage = () => {
   const [selectedReview, setSelectedReview] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [filteredReviews, setFilteredReviews] = useState(reviews);
+  const [clickedTags, setClickedTags] = useState([]);
 
   useEffect(() => {
     setFilteredReviews(reviews);
@@ -168,15 +169,18 @@ const ReviewPage = () => {
   };
 
   const addReview = (newReview, isEditing) => {
-    if (isEditing) {
+    if (isEditing && selectedReview) {
       const updatedReviews = reviews.map((review) =>
-        review.id === selectedReview.id ? { ...review, ...newReview } : review
+        review.id === selectedReview.id
+          ? { ...review, ...newReview, id: review.id }
+          : review
       );
       setReviews(updatedReviews);
     } else {
+      const newId = reviews.length > 0 ? reviews[reviews.length - 1].id + 1 : 1;
       setReviews((prevReviews) => [
         ...prevReviews,
-        { ...newReview, id: prevReviews.length + 1 },
+        { ...newReview, id: newId },
       ]);
     }
     closeWriteModal();
@@ -193,7 +197,12 @@ const ReviewPage = () => {
     <div>
       <Logo />
       <div style={{ marginTop: '120px' }}>
-        <SearchBox reviews={reviews} setFilteredReviews={setFilteredReviews} />
+        <SearchBox
+          reviews={reviews}
+          setFilteredReviews={setFilteredReviews}
+          clickedTags={clickedTags}
+          setClickedTags={setClickedTags}
+        />
       </div>
       <div style={reviewStyles.reviewContainer}>
         {filteredReviews.length > 0
@@ -232,13 +241,14 @@ const ReviewPage = () => {
           currentUser={currentUser}
           openWriteModal={openWriteModal}
           deleteReview={deleteReview}
+          setReviews={setReviews}
         />
       )}
       <WriteModal
         isOpen={writeModalIsOpen}
         closeModal={closeWriteModal}
         addReview={addReview}
-        existingReview={isEditing ? selectedReview : {}}
+        existingReview={selectedReview || {}}
         isEditing={isEditing}
       />
     </div>
