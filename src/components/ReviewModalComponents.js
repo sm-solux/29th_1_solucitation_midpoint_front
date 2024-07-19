@@ -29,7 +29,6 @@ const ReviewModal = ({
   };
 
   const handleEditClick = () => {
-    console.log('handleEditClick 호출됨', { review }); // 디버깅용 로그
     const editData = {
       ...review,
       author: currentUser,
@@ -40,6 +39,7 @@ const ReviewModal = ({
 
   const handleDeleteClick = () => {
     if (window.confirm('삭제하시겠습니까?')) {
+      //삭제라서 일단 구현
       deleteReview(review);
       closeModal();
     }
