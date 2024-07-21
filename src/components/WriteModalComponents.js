@@ -8,7 +8,7 @@ const WriteModal = ({
   isOpen,
   closeModal,
   addReview,
-  existingReview = {},
+  existingReview,
   isEditing,
 }) => {
   const currentUser = { name: 'user1' };

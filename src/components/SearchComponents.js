@@ -1,20 +1,10 @@
 import React, { useState } from 'react';
 import { searchStyles } from '../styles/searchStyles';
 
-const SearchBox = ({ reviews, setFilteredReviews }) => {
+const SearchBox = ({ reviews, setFilteredReviews, clickedTags, setClickedTags }) => {
   const [searchText, setSearchText] = useState('');
-  const [clickedTags, setClickedTags] = useState([]);
   const tags = [
-    '식사',
-    '카페',
-    '공부',
-    '문화생활',
-    '쇼핑',
-    '자연',
-    '산책',
-    '친목',
-    '여럿이',
-    '혼자',
+    '식사', '카페', '공부', '문화생활', '쇼핑', '자연', '산책', '친목', '여럿이', '혼자'
   ];
 
   const handleInputChange = (e) => {
@@ -23,26 +13,25 @@ const SearchBox = ({ reviews, setFilteredReviews }) => {
 
   const handleTagClick = (tag) => {
     setClickedTags((prevTags) => {
+      let newTags;
       if (prevTags.includes(tag)) {
-        const newTags = prevTags.filter((t) => t !== tag);
-        handleFiltering(newTags, searchText);
-        return newTags;
+        newTags = prevTags.filter((t) => t !== tag);
       } else if (prevTags.length < 2) {
-        const newTags = [...prevTags, tag];
-        handleFiltering(newTags, searchText);
-        return newTags;
+        newTags = [...prevTags, tag];
+      } else {
+        newTags = prevTags;
       }
-      return prevTags;
+      handleFiltering(newTags, searchText);
+      return newTags;
     });
   };
 
   const handleFiltering = (tags, text) => {
     const filtered = reviews.filter((review) => {
-      const hasTag =
-        tags.length === 0 || tags.some((tag) => review.tags.includes(tag));
-      const matchesSearch =
-        text === '' ||
-        review.content.toLowerCase().includes(text.toLowerCase());
+      const hasTag = tags.length === 0 || tags.some((tag) => review.tags.includes(`#${tag}`));
+      const matchesSearch = text === '' || 
+        review.content.toLowerCase().includes(text.toLowerCase()) ||
+        review.placeName.toLowerCase().includes(text.toLowerCase());
       return hasTag && matchesSearch;
     });
     setFilteredReviews(filtered);
@@ -59,7 +48,6 @@ const SearchBox = ({ reviews, setFilteredReviews }) => {
           input::placeholder {
             color: #999;
           }
-
           input:focus::placeholder {
             color: transparent;
           }
@@ -85,9 +73,7 @@ const SearchBox = ({ reviews, setFilteredReviews }) => {
                 key={index}
                 style={{
                   ...searchStyles.tag,
-                  backgroundColor: clickedTags.includes(tag)
-                    ? '#1B4345'
-                    : 'transparent',
+                  backgroundColor: clickedTags.includes(tag) ? '#1B4345' : 'transparent',
                   color: clickedTags.includes(tag) ? '#fff' : '#1B4345',
                   borderColor: '#1B4345',
                   cursor: 'pointer',
