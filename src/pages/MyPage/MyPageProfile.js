@@ -2,25 +2,21 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/global.css';
 import { myPageStyles } from '../../styles/myPageStyles';
-import { Timer } from '../../components/CommonComponents';
 
 const MyPageProfile = () => {
   const [editMode, setEditMode] = useState(false);
   const [passwordEditMode, setPasswordEditMode] = useState(false);
   const [passwordConfirmationMode, setPasswordConfirmationMode] = useState(false);
   const [deleteConfirmationMode, setDeleteConfirmationMode] = useState(false);
-  const [showTimer, setShowTimer] = useState(false);
-  const [resetTimer, setResetTimer] = useState(false);
-  const [verificationCode, setVerificationCode] = useState('');
-  const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [errors, setErrors] = useState({});
-  const [nextMode, setNextMode] = useState(null); // 추가: 다음 모드를 저장하는 상태
+  const [nextMode, setNextMode] = useState(null);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
   const [profileData, setProfileData] = useState({
     name: '김눈송',
     nickname: '솔룩션짱짱최고',
+    id: 'soluxion',
     email: 'soluxion@sookmyung.ac.kr',
     password: '12345678',
     profileImage: '../img/default-profile.png',
@@ -42,68 +38,33 @@ const MyPageProfile = () => {
     }
   };
 
-  const toggleEditMode = () => {
-    setEditMode(true);
-  };
-
   const handleSave = () => {
-    if (!isEmailVerified) {
-      alert('이메일을 인증하지 않았습니다.');
-      return;
-    }
     setEditMode(false);
     setPasswordEditMode(false);
-    setShowTimer(false);
   };
 
   const handleCancel = () => {
     setEditMode(false);
     setPasswordEditMode(false);
-    setShowTimer(false);
   };
 
   const handleDeleteAccount = () => {
-    setNextMode('delete'); // 추가: 다음 모드를 'delete'로 설정
+    setNextMode('delete');
     setPasswordConfirmationMode(true);
-  };
-
-  const handleImageClick = () => {
-    if (editMode && fileInputRef.current) {
-      fileInputRef.current.click();
-    }
   };
 
   const togglePasswordEditMode = () => {
-    setNextMode('passwordChange'); // 추가: 다음 모드를 'passwordChange'로 설정
+    setNextMode('passwordChange');
     setPasswordConfirmationMode(true);
-  };
-
-  const handleRequestVerification = () => {
-    setShowTimer(true);
-    setResetTimer(true);
-    setTimeout(() => setResetTimer(false), 1000);
-  };
-
-  const handleVerificationCodeChange = (e) => {
-    setVerificationCode(e.target.value);
-  };
-
-  const handleVerification = () => {
-    if (verificationCode === '123456') {
-      setIsEmailVerified(true);
-      alert('이메일 인증이 완료되었습니다.');
-    } else {
-      alert('인증 코드가 올바르지 않습니다.');
-    }
   };
 
   const handlePasswordConfirmation = (confirmPassword) => {
     if (profileData.password === confirmPassword) {
       setPasswordConfirmationMode(false);
       if (nextMode === 'delete') {
-        setDeleteConfirmationMode(true); // 탈퇴 모드로 전환
+        setDeleteConfirmationMode(true);
       } else if (nextMode === 'passwordChange') {
-        setPasswordEditMode(true); // 비밀번호 변경 모드로 전환
+        setPasswordEditMode(true);
       }
     } else {
       setErrors({ confirmPassword: '비밀번호가 일치하지 않습니다.' });
@@ -112,13 +73,11 @@ const MyPageProfile = () => {
 
   const handleDeleteConfirm = () => {
     alert('탈퇴 됐습니다.');
-    navigate('/'); //로고가 바뀌는 것은 하지 못했음.
+    navigate('/');
   };
 
   if (passwordConfirmationMode) {
-    return (
-      <PasswordConfirmation onConfirm={handlePasswordConfirmation} currentPassword={profileData.password} />
-    );
+    return <PasswordConfirmation onConfirm={handlePasswordConfirmation} currentPassword={profileData.password} />;
   }
 
   if (passwordEditMode) {
@@ -144,10 +103,7 @@ const MyPageProfile = () => {
         <p style={myPageStyles.deleteConfirmationMessage}>
           정말 탈퇴하시겠습니까? 탈퇴 시 되돌릴 수 없습니다. 신중하게 결정해주세요.
         </p>
-        <button
-          style={myPageStyles.deleteButton}
-          onClick={handleDeleteConfirm}
-        >
+        <button style={myPageStyles.deleteButton} onClick={handleDeleteConfirm}>
           탈퇴
         </button>
       </div>
@@ -156,85 +112,31 @@ const MyPageProfile = () => {
 
   return (
     <div style={myPageStyles.profileContainer}>
-      {['name', 'nickname', 'email'].map((field) => (
-        <div key={field} style={myPageStyles.profileItem}>
-          <span style={myPageStyles.profileLabel}>
-            {field === 'name' ? '이름' : field === 'nickname' ? '닉네임' : '이메일'}
-          </span>
-          {editMode ? (
-            <div style={myPageStyles.profileEditContainer}>
-              <input
-                type={field === 'email' ? 'email' : 'text'}
-                name={field}
-                style={myPageStyles.profileEditText}
-                value={profileData[field]}
-                onChange={handleInputChange}
-              />
-              {field === 'email' && (
-                <button style={myPageStyles.profileButton} onClick={handleRequestVerification}>인증요청</button>
-              )}
-            </div>
-          ) : (
-            <div style={myPageStyles.profileText}>{profileData[field]}</div>
-          )}
-        </div>
-      ))}
-      <div style={myPageStyles.profileItem}>
-        <span style={myPageStyles.profileLabel}>비밀번호</span>
-        {passwordEditMode ? (
-          <div style={myPageStyles.profileEditContainer}>
-            <input
-              type="password"
-              name="password"
-              style={myPageStyles.profileEditText}
-              value={profileData.password}
-              onChange={handleInputChange}
-            />
-          </div>
-        ) : (
-          <div style={myPageStyles.profileText}>
-            {'*'.repeat(profileData.password.length)}
-          </div>
-        )}
-        {editMode && !passwordEditMode && (
-          <button style={myPageStyles.profileButton} onClick={togglePasswordEditMode}>
-            비밀번호 변경
-          </button>
-        )}
+      <div style={myPageStyles.profileInfo}>
+        {['name', 'nickname', 'id', 'email'].map((field) => (
+          <ProfileItem
+            key={field}
+            field={field}
+            value={profileData[field]}
+            editMode={editMode}
+            handleInputChange={handleInputChange}
+            isEditable={field !== 'id' && field !== 'email'}
+          />
+        ))}
+        <ProfilePassword
+          password={profileData.password}
+          passwordEditMode={passwordEditMode}
+          editMode={editMode}
+          togglePasswordEditMode={togglePasswordEditMode}
+        />
+        <ProfileImage
+          profileImage={profileData.profileImage}
+          editMode={editMode}
+          handleFileChange={handleFileChange}
+          handleImageClick={() => fileInputRef.current && fileInputRef.current.click()}
+          fileInputRef={fileInputRef}
+        />
       </div>
-      <div style={myPageStyles.profilePictureItem}>
-        <div style={myPageStyles.profileLabel}>프로필 사진</div>
-        <div>
-          <img
-            src={profileData.profileImage}
-            alt="프로필 사진"
-            style={{ width: '100px', height: '100px', borderRadius: '50%', marginTop: '10px', cursor: editMode ? 'pointer' : 'default' }}
-            onClick={handleImageClick}
-          />
-          <input
-            type="file"
-            name="profileImage"
-            style={{ display: 'none' }}
-            ref={fileInputRef}
-            onChange={handleFileChange}
-          />
-        </div>
-      </div>
-      {showTimer && (
-        <div style={myPageStyles.verificationContainer}>
-          <span style={myPageStyles.profileLabel}>인증 코드</span>
-          <input
-            type="text"
-            name="verificationCode"
-            style={myPageStyles.profileEditText}
-            value={verificationCode}
-            onChange={handleVerificationCodeChange}
-          />
-          <Timer isActive={true} resetTimer={resetTimer} />
-          <button style={myPageStyles.profileButton} onClick={handleRequestVerification}>재전송</button>
-          <button style={myPageStyles.profileButton} onClick={handleVerification}>인증확인</button>
-        </div>
-      )}
       <div style={myPageStyles.buttonContainer}>
         {editMode ? (
           <>
@@ -247,7 +149,7 @@ const MyPageProfile = () => {
           </>
         ) : (
           <>
-            <button onClick={toggleEditMode} style={myPageStyles.profileButtonEdit}>
+            <button onClick={() => setEditMode(true)} style={myPageStyles.profileButtonEdit}>
               편집
             </button>
             <button onClick={handleDeleteAccount} style={myPageStyles.profileButtonQuit}>
@@ -260,9 +162,72 @@ const MyPageProfile = () => {
   );
 };
 
-export default MyPageProfile;
+const ProfileItem = ({ field, value, editMode, handleInputChange, isEditable }) => (
+  <div style={myPageStyles.profileItem}>
+    <span style={myPageStyles.profileLabel}>
+      {field === 'name' ? '이름' : field === 'nickname' ? '닉네임' : field === 'id' ? '아이디' : '이메일'}
+    </span>
+    {editMode && isEditable ? (
+      <div style={myPageStyles.profileEditContainer}>
+        <input
+          type={field === 'email' ? 'email' : 'text'}
+          name={field}
+          style={myPageStyles.profileEditText}
+          value={value}
+          onChange={handleInputChange}
+        />
+      </div>
+    ) : (
+      <div style={myPageStyles.profileText}>{value}</div>
+    )}
+  </div>
+);
 
-//비밀번호 확인하는 부분
+const ProfilePassword = ({ password, passwordEditMode, editMode, togglePasswordEditMode }) => (
+  <div style={myPageStyles.profileItem}>
+    <span style={myPageStyles.profileLabel}>비밀번호</span>
+    {passwordEditMode ? (
+      <div style={myPageStyles.profileEditContainer}>
+        <input type="password" name="password" style={myPageStyles.profileEditText} value={password} readOnly />
+      </div>
+    ) : (
+      <div style={myPageStyles.profileText}>{'*'.repeat(password.length)}</div>
+    )}
+    {editMode && !passwordEditMode && (
+      <button style={myPageStyles.profileButton} onClick={togglePasswordEditMode}>
+        비밀번호 변경
+      </button>
+    )}
+  </div>
+);
+
+const ProfileImage = ({ profileImage, editMode, handleFileChange, handleImageClick, fileInputRef }) => (
+  <div style={myPageStyles.profilePictureItem}>
+    <div style={myPageStyles.profileLabel}>프로필 사진</div>
+    <div>
+      <img
+        src={profileImage}
+        alt="프로필 사진"
+        style={{
+          width: '100px',
+          height: '100px',
+          borderRadius: '50%',
+          marginTop: '10px',
+          cursor: editMode ? 'pointer' : 'default',
+        }}
+        onClick={handleImageClick}
+      />
+      <input
+        type="file"
+        name="profileImage"
+        style={{ display: 'none' }}
+        ref={fileInputRef}
+        onChange={handleFileChange}
+      />
+    </div>
+  </div>
+);
+
 const PasswordConfirmation = ({ onConfirm, currentPassword }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState({});
@@ -305,13 +270,14 @@ const PasswordConfirmation = ({ onConfirm, currentPassword }) => {
             <span style={{ color: 'red', marginLeft: '10px' }}>{errors.confirmPassword}</span>
           )}
         </div>
-        <button type="submit" style={myPageStyles.passwordButton}>다음</button>
+        <button type="submit" style={myPageStyles.passwordButton}>
+          다음
+        </button>
       </form>
     </div>
   );
 };
 
-//비밀번호 변경 하는 부분
 const PasswordChange = ({ onChangePassword }) => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -378,8 +344,12 @@ const PasswordChange = ({ onChangePassword }) => {
             <span style={{ color: 'red', marginLeft: '10px' }}>{errors.confirmPassword}</span>
           )}
         </div>
-        <button type="submit" style={myPageStyles.passwordButton}>변경</button>
+        <button type="submit" style={myPageStyles.passwordButton}>
+          변경
+        </button>
       </form>
     </div>
   );
 };
+
+export default MyPageProfile;
