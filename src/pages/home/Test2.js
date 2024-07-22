@@ -20,25 +20,25 @@ const Test2 = ({ updateAnswers, answers }) => {
   };
 
   const handlePrevClick = () => {
-    navigate('/');
+    navigate('/test1');
   };
 
   return (
     <div style={commonStyles.container}>
       <Logo />
       <div style={commonStyles.content}>
-        <h1 style={{ marginBottom: '4rem', position: 'relative' }}>Q2. 어떤 장소를 선호하시나요?
+        <h1 style={{ marginBottom: '4rem', position: 'relative', fontSize: '2.3rem' }}>Q2. 어떤 장소를 선호하시나요?
           <button 
             onClick={handleNextClick} 
             style={{ 
               position: 'absolute',
               top: '150%',
-              right: '-168px',
+              right: '-204px',
               transform: 'translateY(-50%)',
               background: 'none', 
               border: 'none', 
               cursor: 'pointer',
-              fontSize: '2rem', 
+              fontSize: '2.2rem', 
               color: 'rgba(0, 0, 0, 0.5)'
             }}
           >
@@ -49,12 +49,12 @@ const Test2 = ({ updateAnswers, answers }) => {
             style={{ 
               position: 'absolute',
               top: '150%',
-              left: '-168px',
+              left: '-204px',
               transform: 'translateY(-50%)',
               background: 'none', 
               border: 'none', 
               cursor: 'pointer',
-              fontSize: '2rem', 
+              fontSize: '2.2rem', 
               color: 'rgba(0, 0, 0, 0.5)'
             }}
           >

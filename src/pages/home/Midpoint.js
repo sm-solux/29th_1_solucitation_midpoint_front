@@ -53,7 +53,7 @@ function Midpoint() {
       <PlaceContainer>
         <Left>
           <WhiteBox> {/* WhiteBox로 장소 추천, 공유, 날씨 부분 묶기 */}
-            <h2>{dongName} 장소 추천</h2>
+            <h2>{dongName} 주변 장소 추천</h2>
             <PlacesList>
               {places.map((place, index) => (
                 <PlaceItem key={index} onClick={() => handlePlaceClick(place)}>

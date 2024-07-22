@@ -1,175 +1,174 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const commonStyles = {
   header: {
-    position: "fixed",
-    width: "100%",
-    height: "80px", // 적절한 높이 고정으로 수정했어요
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingTop: "1rem",
-    paddingBottom: "1rem",
+    position: 'fixed',
+    width: '100%',
+    height: '80px', // 적절한 높이 고정으로 수정했어요
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: '1rem',
+    paddingBottom: '1rem',
     top: 0,
     zIndex: 1000,
-    backgroundColor: "#F2F2EF",
+    backgroundColor: '#transparent',
   },
   logo_div: {
-    marginLeft: "4.5rem",
+    marginLeft: '4.5rem',
   },
   logo: {
-    fontFamily: "AkiraExpanded",
-    fontSize: "2rem",
-    color: "#1B4345",
-    display: "inline-block",
-    verticalAlign: "middle",
-    cursor: "pointer",
+    fontFamily: 'AkiraExpanded',
+    fontSize: '2rem',
+    color: '#1B4345',
+    display: 'inline-block',
+    verticalAlign: 'middle',
+    cursor: 'pointer',
   },
   move_div: {
-    height: "40px",
-    float: "right",
-    marginTop: "10px",
-    marginRight: "4.5rem",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
+    height: '40px',
+    float: 'right',
+    marginTop: '10px',
+    marginRight: '4.5rem',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   linkContainer: {
-    position: "relative",
-    display: "inline-block",
-    margin: "0 10px",
-    textAlign: "center",
+    position: 'relative',
+    display: 'inline-block',
+    margin: '0 10px',
+    textAlign: 'center',
   },
   link: {
-    fontSize: "1.5rem",
-    color: "#000000",
-    height: "20px",
-    cursor: "pointer",
-    textDecoration: "none",
-    display: "inline-block",
-    // padding: '10px 16px',
-    paddingLeft: "52px",
-    marginBottom: "12px",
-    fontWeight: "bold",
-    marginRight: "-15px",
+    fontSize: '1.5rem',
+    color: '#000000',
+    height: '20px',
+    cursor: 'pointer',
+    textDecoration: 'none',
+    display: 'inline-block',
+    paddingLeft: '52px',
+    marginBottom: '12px',
+    fontWeight: 'bold',
+    marginRight: '-15px',
   },
   loginTitle: {
-    fontSize: "3.4rem",
-    textAlign: "center",
-    fontWeight: "700",
-    marginTop: "7.3rem",
+    fontSize: '3.4rem',
+    textAlign: 'center',
+    fontWeight: '700',
+    marginTop: '7.3rem',
   },
   joinTitle: {
-    fontSize: "3.05rem",
-    textAlign: "center",
-    fontWeight: "700",
-    marginTop: "7.15rem",
+    fontSize: '3.05rem',
+    textAlign: 'center',
+    fontWeight: '700',
+    marginTop: '7.15rem',
   },
   centerContainer: {
-    display: "flex",
-    justifyContent: "center",
-    flexDirection: "column",
-    alignItems: "center",
-    minHeight: "calc(100vh - 10% - 12.6rem)",
-    paddingTop: "6.3rem",
-    paddingBottom: "6.3rem",
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    alignItems: 'center',
+    minHeight: 'calc(100vh - 10% - 12.6rem)',
+    paddingTop: '6.3rem',
+    paddingBottom: '6.3rem',
   },
 
   nav: {
-    display: "flex",
-    gap: "2rem",
-    marginRight: "3rem",
+    display: 'flex',
+    gap: '2rem',
+    marginRight: '3rem',
   },
 
   container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "2rem",
-    minHeight: "100vh",
-    backgroundColor: "#F2F2EF",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '2rem',
+    minHeight: '100vh',
+    backgroundColor: '#F2F2EF',
   },
   content: {
-    width: "100%",
-    maxWidth: "600px",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    padding: "2rem",
-    borderRadius: "8px",
+    width: '100%',
+    maxWidth: '600px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '2rem',
+    borderRadius: '8px',
   },
   inputContainer: {
-    display: "flex",
-    alignItems: "center",
-    marginBottom: "1rem",
-    width: "100%",
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: '1rem',
+    width: '100%',
   },
   profileContainer: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    marginRight: "1rem",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginRight: '1rem',
   },
   profileImg: {
-    width: "50px",
-    height: "50px",
-    borderRadius: "50%",
+    width: '50px',
+    height: '50px',
+    borderRadius: '50%',
   },
   profileName: {
-    fontSize: "0.8rem",
-    fontWeight: "bold",
-    textAlign: "center",
+    fontSize: '0.8rem',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   inputGroup: {
-    display: "flex",
-    alignItems: "center",
-    width: "100%",
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%',
   },
   inputField: {
     flex: 1,
-    width: "500px", // 고정된 크기
-    padding: "0.7rem",
-    fontSize: "1rem",
-    border: "1px solid #FFF",
-    borderRadius: "4px",
-    marginRight: "0.5rem",
-    textAlign: "center",
+    width: '500px',
+    padding: '0.8rem',
+    fontSize: '1rem',
+    border: '1px solid #FFF',
+    borderRadius: '4px',
+    textAlign: 'center',
   },
   selectField: {
     flex: 1,
-    padding: "0.7rem",
-    fontSize: "1rem",
-    border: "1px solid #FFF",
-    borderRadius: "4px",
-    textAlign: "center",
+    padding: '0.8rem',
+    fontSize: '1rem',
+    border: '1px solid #FFF',
+    borderRadius: '4px',
+    textAlign: 'center',
     backgroundImage:
       "url(\"data:image/svg+xml;utf8,<svg viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'><polyline points='0,0 70,100 140,0' style='fill:none;stroke:black;stroke-width:20'/></svg>\")",
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "right 15px center",
-    backgroundSize: "12px",
-    appearance: "none",
-    WebkitAppearance: "none",
-    MozAppearance: "none",
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'right 15px center',
+    backgroundSize: '12px',
+    appearance: 'none',
+    WebkitAppearance: 'none',
+    MozAppearance: 'none',
   },
   submitButton: {
-    padding: "0.5rem 1rem",
-    fontSize: "1rem",
-    backgroundColor: "#1B4345",
-    color: "#fff",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
+    padding: '0.8rem 1rem',
+    fontSize: '1rem',
+    backgroundColor: '#1B4345',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
   },
   placeButton: {
-    padding: "0.5rem 1rem",
-    fontSize: "1rem",
-    backgroundColor: "#1B4345",
-    color: "#fff",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-    marginTop: "3rem",
+    padding: '0.5rem 1rem',
+    fontSize: '1rem',
+    backgroundColor: '#1B4345',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    marginTop: '3rem',
   },
   retryButton: {
     padding: '0.5rem 1rem',
@@ -181,21 +180,21 @@ export const commonStyles = {
     cursor: 'pointer',
   },
   addButton: {
-    cursor: "pointer",
-    marginBottom: "1rem",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "40px",
-    height: "40px",
+    cursor: 'pointer',
+    marginBottom: '1rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '40px',
+    height: '40px',
     backgroundImage: 'url("/img/plusbutton.png")',
-    backgroundSize: "cover",
-    backgroundPosition: "center",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
   },
   destination: {
-    display: "flex",
-    width: "100%",
-    marginTop: "1rem",
+    display: 'flex',
+    width: '100%',
+    marginTop: '1rem',
   },
   testContent: {
     display: 'flex',
@@ -292,11 +291,155 @@ export const commonStyles = {
     display: 'inline-block',
     textDecoration: 'underline',
   },
+  popupContainer: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  popupBox: {
+    position: 'relative',
+    backgroundColor: '#F2F2EF',
+    width: '600px',
+    height: '550px',
+    border: '1px solid #ccc',
+    borderRadius: '0',
+    padding: '1rem',
+  },
+  popupHeader: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: '2rem',
+    paddingRight: '1rem',
+    paddingLeft: '1rem',
+    width: '75%',
+    margin: '0 auto',
+  },
+  popupInput: {
+    flex: 1,
+    padding: '0.5rem',
+    fontSize: '1rem',
+    border: '1px solid #fff',
+    borderRadius: '4px',
+    textAlign: 'center',
+  },
+  popupButton: {
+    padding: '0.5rem 1rem',
+    fontSize: '1rem',
+    backgroundColor: '#1B4345',
+    color: '#fff',
+    border: 'none',
+    cursor: 'pointer',
+    borderRadius: '4px',
+  },
+  popupCloseButton: {
+    fontSize: '1rem',
+    backgroundColor: '#F2F2EF',
+    color: '#000',
+    border: 'none',
+    cursor: 'pointer',
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+  },
+  popupContent: {
+    paddingTop: '1rem',
+    paddingBottom: '1rem',
+    paddingRight: '4.7rem',
+    paddingLeft: '4.7rem',
+  },
+  popupSections: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  popupSection1: {
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    borderRadius: '10px',
+    alignItems: 'center',
+    width: '33%',
+    height: '15%',
+    marginBottom: '0.5rem',
+  },
+  popupSection2: {
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    borderRadius: '10px',
+    width: '62%',
+    height: '15%',
+    marginBottom: '0.5rem',
+  },
+  popupSectionTitle: {
+    fontSize: '1rem',
+    fontWeight: '700',
+    paddingLeft: '1.1rem',
+  },
+  favoritePlaces: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+  },
+  favoritePlace: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    border: 'none',
+    cursor: 'pointer',
+    margin: '0 0.5rem',
+  },
+  favoritePlaceImage: {
+    width: '23px',
+    height: '23px',
+  },
+  favoriteFriends: {
+    display: 'flex',
+    paddingLeft: '1.2rem',
+    flexWrap: 'wrap',
+  },
+  favoriteFriend: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginRight: '1.2rem',
+    backgroundColor: 'transparent',
+    border: 'none',
+    cursor: 'pointer',
+  },
+  favoriteFriendImage: {
+    width: '23px',
+    height: '23px',
+  },
+  locationContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    cursor: 'pointer',
+    marginBottom: '1rem',
+  },
+  locationIcon: {
+    marginRight: '0.5rem',
+  },
+  mapContainer: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  currentLocationText: {
+    fontSize: '1rem',
+    fontWeight: 'bold',
+    marginBottom: '0.5rem',
+  },
 };
 
 export const LoginFormContainer = styled.form`
-  width: 44rem; 
-  margin: 0 auto; 
+  width: 44rem;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: flex-start; /* 내부 내용물을 왼쪽으로 정렬 */
@@ -346,7 +489,7 @@ export const LoginSubmitButton = styled.button`
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
 `;
 
 export const LoginText = styled.p`
@@ -357,7 +500,7 @@ export const LoginText = styled.p`
   padding-bottom: 2px;
   cursor: pointer;
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     left: 0;
     right: 0;
@@ -403,9 +546,9 @@ export const DefaultProfileImage = styled.img`
 `;
 
 export const ProfilePictureInput = styled.input.attrs({
-  type: "file",
-  id: "profilePicture",
-  accept: "image/*",
+  type: 'file',
+  id: 'profilePicture',
+  accept: 'image/*',
 })`
   display: none;
 `;
@@ -429,7 +572,7 @@ export const JoinButton = styled.button`
 
 export const Verification = styled.div`
   display: flex;
-  flex-direction: row; 
+  flex-direction: row;
   align-items: center;
   width: 29rem;
   height: 2.5rem;
@@ -474,8 +617,7 @@ export const VerificationButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-`
-
+`;
 export const StyledSelect = styled.select`
   flex: 1;
   padding: 0.5rem;
@@ -510,8 +652,8 @@ export const ButtonContainer = styled.button`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 150px;
-  height: 150px;
+  width: 240px;
+  height: 240px;
   border: none;
   background-color: #fff;
   border-radius: 15px;
@@ -524,13 +666,13 @@ export const ButtonContainer = styled.button`
   }
 
   img {
-    width: 80px;
+    width: 140px;
     height: auto;
   }
 
   span {
-    margin-top: 0.5rem;
-    font-size: 1rem;
+    margin-top: 0.7rem;
+    font-size: 1.5rem;
     font-weight: bold;
     color: #1b4345;
   }
@@ -541,13 +683,13 @@ export const ProgressBarContainer = styled.div`
   height: 10px;
   background-color: #e0e0e0;
   border-radius: 5px;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
   position: relative;
 `;
 
 export const ProgressBar = styled.div`
   height: 100%;
-  background-color: #000; /* 색상을 검은색으로 변경 */
+  background-color: #000;
   border-radius: 5px;
   position: relative;
   transition: width 0.3s ease;
@@ -556,11 +698,11 @@ export const ProgressBar = styled.div`
 export const ProgressIndicator = styled.div`
   width: 20px;
   height: 20px;
-  background-color: #000; /* 색상을 검은색으로 변경 */
+  background-color: #000;
   border-radius: 50%;
   position: absolute;
   top: -5px;
-  right: 0; /* 인디케이터를 진행 바의 맨 오른쪽에 위치하게 설정 */
+  right: 0;
   transform: translateX(50%);
 `;
 
@@ -572,24 +714,25 @@ export const PlaceContainer = styled.div`
 export const Left = styled.div`
   flex: 1;
   display: flex;
-  justify-content: center; /* WhiteBox를 가운데로 정렬 */
+  justify-content: center;
   padding: 1rem;
 `;
 
 export const PlacesList = styled.ul`
   list-style: none;
   padding: 0;
+  max-height: 200px;
+  overflow-y: auto;
 `;
 
 export const PlaceItem = styled.div`
   display: flex;
   align-items: center;
-  background-color: #fff;
+  background-color: #000;
   border-radius: 8px;
   padding: 0.5rem;
   margin-bottom: 1rem;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease;
 
   &:hover {
@@ -599,20 +742,69 @@ export const PlaceItem = styled.div`
   img {
     width: 50px;
     height: 50px;
-    margin-right: 1rem;
     border-radius: 8px;
   }
 
   div {
     display: flex;
     flex-direction: column;
-    background-color: #000; /* 배경색을 검은색으로 변경 */
+    background-color: #000;
     border-radius: 8px;
-    padding: 0.5rem;
+    padding: 0.3rem;
     flex: 1;
 
-    h3, p {
-      color: #fff; /* 글자색을 흰색으로 변경 */
+    h3,
+    p {
+      color: #fff;
+    }
+
+    h3 {
+      font-size: 1rem;
+      margin: 0;
+      margin-bottom: 0.3rem;
+    }
+
+    p {
+      font-size: 0.8rem;
+      margin: 0;
+    }
+  }
+`;
+
+export const FriendItem = styled.div`
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  img {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    margin-left: 0.2rem;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 8px;
+    margin-left: 0.8rem;
+    padding: 0.3rem;
+    flex: 1;
+
+    h3,
+    p {
+      color: #000;
     }
 
     h3 {
@@ -674,8 +866,8 @@ export const WhiteBox = styled.div`
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
-  width: 100%; /* Left 컨테이너 내에서의 크기를 설정 */
-  max-width: 90%; /* 최대 너비 설정 */
+  width: 100%;
+  max-width: 90%;
 `;
 
 export const ShareButton = styled.button`
@@ -683,18 +875,17 @@ export const ShareButton = styled.button`
   align-items: center;
   padding: 0.5rem 1rem;
   font-size: 1rem;
-  background-color: #FFF;
+  background-color: #fff;
   color: #000;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 
   span {
-    font-weight: 800; /* 글씨 굵기를 설정 */
+    font-weight: 800;
   }
 
   img {
     margin-left: 0.5rem;
   }
 `;
-
