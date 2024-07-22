@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import { searchStyles } from '../styles/searchStyles';
 
-const SearchBox = ({
-  reviews,
-  setFilteredReviews,
-  clickedTags,
-  setClickedTags,
-}) => {
+const SearchBox = ({ reviews, setFilteredReviews, clickedTags, setClickedTags }) => {
   const [searchText, setSearchText] = useState('');
   const tags = [
     '식사', '카페', '공부', '문화생활', '쇼핑', '자연', '산책', '친목', '여럿이', '혼자'
@@ -33,12 +28,10 @@ const SearchBox = ({
 
   const handleFiltering = (tags, text) => {
     const filtered = reviews.filter((review) => {
-      const hasTag =
-        tags.length === 0 ||
-        tags.some((tag) => review.tags.includes(`#${tag}`));
-      const matchesSearch =
-        text === '' ||
-        review.content.toLowerCase().includes(text.toLowerCase());
+      const hasTag = tags.length === 0 || tags.some((tag) => review.tags.includes(`#${tag}`));
+      const matchesSearch = text === '' || 
+        review.content.toLowerCase().includes(text.toLowerCase()) ||
+        review.placeName.toLowerCase().includes(text.toLowerCase());
       return hasTag && matchesSearch;
     });
     setFilteredReviews(filtered);

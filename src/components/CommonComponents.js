@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { commonStyles } from '../styles/styles';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-function Logo({ exist = true }) {
+// 헤더 (배경색 설정 가능 / default는 transparent)
+function Logo({ exist = true, bgColor = 'transparent' }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -38,13 +39,16 @@ function Logo({ exist = true }) {
     textUnderlineOffset: '3px',
   };
 
-  const getLinkStyle = (path) => {
-    const isActive = location.pathname.startsWith(path);
+  const getLinkStyle = (link) => {
+    const isActive = location.pathname.startsWith(link.path);
+    if (link.name === 'logout') {
+      return linkStyle;
+    }
     return isActive ? activeLinkStyle : linkStyle;
   };
 
   return (
-    <header style={commonStyles.header}>
+    <header style={commonStyles.header(bgColor)}>
       <div style={commonStyles.logo_div}>
         {exist && (
           <h1 style={commonStyles.logo} onClick={onClick}>
@@ -63,7 +67,7 @@ function Logo({ exist = true }) {
                 {link.label}
               </span>
             ) : (
-              <Link to={link.path} style={getLinkStyle(link.path)}>
+              <Link to={link.path} style={getLinkStyle(link)}>
                 {link.label}
               </Link>
             )}
