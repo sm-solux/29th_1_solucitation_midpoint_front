@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { reviewStyles } from '../styles/reviewStyles';
 
 const ReviewCard = ({ review, onReviewClick }) => {
-  const { photos, tags, placeName, content } = review;
-  const [liked, setLiked] = useState(false);
+  const { firstImageUrl, hashtags, title, likes, postId } = review;
+  const [liked, setLiked] = useState(likes);
 
   const handleClick = () => {
-    onReviewClick(review);
+    onReviewClick(postId); // postId를 전달
   };
 
   const toggleLike = () => {
@@ -23,13 +23,13 @@ const ReviewCard = ({ review, onReviewClick }) => {
 
   return (
     <div style={reviewStyles.card} onClick={handleClick}>
-      {photos && photos.length > 0 && (
-        <img src={photos[0]} alt={placeName} style={reviewStyles.photo} />
+      {firstImageUrl && (
+        <img src={firstImageUrl} alt={title} style={reviewStyles.photo} />
       )}
       <div style={reviewStyles.details}>
         <div style={reviewStyles.tagsContainer}>
           <div style={reviewStyles.tags}>
-            {tags.map((tag, index) => (
+            {hashtags.map((tag, index) => (
               <span key={index} style={reviewStyles.tag}>
                 {tag}
               </span>
@@ -47,9 +47,9 @@ const ReviewCard = ({ review, onReviewClick }) => {
             {liked ? '♥' : '♡'}
           </button>
         </div>
-        <div style={reviewStyles.placeName}>{placeName}</div>
+        <div style={reviewStyles.placeName}>{title}</div>
         <div style={reviewStyles.content}>
-          {limitContentLength(content, 20)}
+          {limitContentLength(title, 20)}
         </div>
       </div>
     </div>

@@ -43,11 +43,13 @@ export const reviewModalStyles = {
     flexDirection: 'column',
   },
   profileName: {
+    fontFamily: 'Freesentation',
     fontSize: '20px',
     fontWeight: 'bold',
     color: '#1B4345',
   },
   date: {
+    fontFamily: 'Freesentation',
     fontSize: '14px',
     fontWeight: 'bold',
     color: '#1B4345',
@@ -57,7 +59,8 @@ export const reviewModalStyles = {
   },
   placeName: {
     marginBottom: '10px',
-    fontSize: '24px',
+    fontFamily: 'Freesentation',
+    fontSize: '30px',
     fontWeight: 'bold',
     textDecoration: 'underline',
     color: '#1B4345',

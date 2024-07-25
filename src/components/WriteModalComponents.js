@@ -1,6 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from 'react-modal';
-import { writeModalStyles } from '../styles/writeModalStyles';
+import {
+  StyledModal,
+  CloseButton,
+  ProfileContainer,
+  ProfileImg,
+  ProfileName,
+  InputName,
+  Textarea,
+  ImgContainer,
+  AddImg,
+  TagContainer,
+  TagButton,
+  SubmitButton
+} from '../styles/writeModalStyles';
 
 Modal.setAppElement('#root');
 
@@ -11,7 +24,14 @@ const WriteModal = ({
   existingReview,
   isEditing,
 }) => {
-  const currentUser = { name: 'user1' };
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      setCurrentUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   const [placeName, setPlaceName] = useState('');
   const [content, setContent] = useState('');
@@ -35,11 +55,11 @@ const WriteModal = ({
 
   useEffect(() => {
     if (existingReview && Object.keys(existingReview).length > 0) {
-      setPlaceName(existingReview.placeName || '');
+      setPlaceName(existingReview.title || '');
       setContent(existingReview.content || '');
       setSelectedFiles([null, null, null]);
-      setPhotoURLs(existingReview.photos || [null, null, null]);
-      setSelectedTags(existingReview.tags || []);
+      setPhotoURLs(existingReview.images || [null, null, null]);
+      setSelectedTags(existingReview.postHashtags ? existingReview.postHashtags.map(tagId => predefinedTags[tagId - 1]) : []);
     }
   }, [existingReview]);
 
@@ -94,9 +114,9 @@ const WriteModal = ({
     const newReview = {
       placeName,
       content,
-      photos: photoURLs.filter((url) => url !== null),
+      photos: selectedFiles.filter(file => file !== null),
       tags: selectedTags,
-      author: currentUser.name,
+      author: currentUser,
     };
 
     addReview(newReview, isEditing);
@@ -113,47 +133,36 @@ const WriteModal = ({
   };
 
   return (
-    <Modal
+    <StyledModal
       isOpen={isOpen}
       onRequestClose={handleCloseModal}
-      style={{
-        overlay: writeModalStyles.overlay,
-        content: writeModalStyles.modal,
-      }}
+      className="ReactModal__Content"
+      overlayClassName="ReactModal__Overlay"
       contentLabel='Write Review Modal'
     >
       <form onSubmit={handleAddReview}>
-        <button onClick={handleCloseModal} style={writeModalStyles.closeButton}>
-          X
-        </button>
-        <div style={writeModalStyles.profileContainer}>
-          <img
-            src='/img/default-profile.png'
-            alt='profile'
-            style={writeModalStyles.profileImg}
-          />
-          <span style={writeModalStyles.profileName}>{currentUser.name}</span>
-        </div>
-        <input
+        <CloseButton onClick={handleCloseModal}>X</CloseButton>
+        <ProfileContainer>
+          <ProfileImg src='/img/default-profile.png' alt='profile' />
+          <ProfileName>{currentUser ? currentUser.name : '가상 글쓴이'}</ProfileName>
+        </ProfileContainer>
+        <InputName
           type='text'
           placeholder='글제목'
           value={placeName}
           onChange={(e) => setPlaceName(e.target.value)}
-          style={writeModalStyles.inputName}
         />
-        <textarea
+        <Textarea
           placeholder='내용을 입력하세요'
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          style={writeModalStyles.textarea}
         />
-        <div style={writeModalStyles.imgContainer}>
+        <ImgContainer>
           {photoURLs.map((url, index) => (
             <span key={index}>
-              <img
+              <AddImg
                 src={url || '/img/addPhoto.png'}
                 onClick={() => handleIconClick(index)}
-                style={writeModalStyles.addImg}
                 alt={url ? `Image ${index + 1}` : `Upload ${index + 1}`}
               />
               <input
@@ -164,30 +173,23 @@ const WriteModal = ({
               />
             </span>
           ))}
-        </div>
-        <div>태그 (2개 필수)</div>
-        <div style={writeModalStyles.tagContainer}>
+        </ImgContainer>
+        <div style={{ fontWeight: 'bold' }}>태그 (2개 필수)</div>
+        <TagContainer>
           {predefinedTags.map((tag) => (
-            <button
+            <TagButton
               type='button'
               key={tag}
               onClick={() => handleTagClick(tag)}
-              style={{
-                ...writeModalStyles.tagButton,
-                ...(selectedTags.includes(tag)
-                  ? writeModalStyles.selectedTagButton
-                  : {}),
-              }}
+              selected={selectedTags.includes(tag)}
             >
               {tag}
-            </button>
+            </TagButton>
           ))}
-        </div>
-        <button type='submit' style={writeModalStyles.button}>
-          게시
-        </button>
+        </TagContainer>
+        <SubmitButton type='submit'>게시</SubmitButton>
       </form>
-    </Modal>
+    </StyledModal>
   );
 };
 

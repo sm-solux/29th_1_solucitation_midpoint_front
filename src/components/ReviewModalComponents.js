@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { reviewModalStyles } from '../styles/reviewModalStyles';
 
@@ -12,8 +12,13 @@ const ReviewModal = ({
   setReviews,
 }) => {
   const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(review.likes || 0);
-  const isCurrentUser = currentUser && currentUser === review.author;
+  const [likeCount, setLikeCount] = useState(review.likeCnt || 0);
+  const isCurrentUser = currentUser && currentUser === review.nickname;
+
+  useEffect(() => {
+    setLiked(review.likes);
+    setLikeCount(review.likeCnt);
+  }, [review]);
 
   if (!review) return null;
 
@@ -23,20 +28,23 @@ const ReviewModal = ({
     setLikeCount(updatedLikeCount);
     setReviews((prevReviews) =>
       prevReviews.map((r) =>
-        r.id === review.id ? { ...r, likes: updatedLikeCount } : r
+        r.postId === review.postId ? { ...r, likeCnt: updatedLikeCount } : r
       )
     );
   };
 
   const handleEditClick = () => {
+    openWriteModal(review, true);
+    /*
     const editData = {
       ...review,
       author: currentUser,
     };
-    openWriteModal(editData, true);
+    openWriteModal(editData, true);*/
     closeModal();
   };
 
+  const photos = Array.isArray(review.images) ? review.images : [];
   const handleDeleteClick = () => {
     if (window.confirm('삭제하시겠습니까?')) {
       //삭제라서 일단 구현
@@ -44,8 +52,6 @@ const ReviewModal = ({
       closeModal();
     }
   };
-
-  const photos = Array.isArray(review.photos) ? review.photos : [];
 
   return (
     <Modal
@@ -67,14 +73,14 @@ const ReviewModal = ({
           style={reviewModalStyles.profileImg}
         />
         <div style={reviewModalStyles.profileInfo}>
-          <div style={reviewModalStyles.profileName}>{review.author}</div>
+          <div style={reviewModalStyles.profileName}>{review.nickname}</div>
           <div style={reviewModalStyles.date}>
-            {new Date().toLocaleDateString()}
+            {new Date(review.createDate).toLocaleDateString()}
           </div>
         </div>
       </div>
       <div style={reviewModalStyles.contentContainer}>
-        <div style={reviewModalStyles.placeName}>{review.placeName}</div>
+        <div style={reviewModalStyles.placeName}>{review.title}</div>
         <p style={reviewModalStyles.content}>{review.content}</p>
         <div style={reviewModalStyles.photosContainer}>
           {photos.map(
@@ -108,7 +114,7 @@ const ReviewModal = ({
           <span style={reviewModalStyles.like}>좋아요 {likeCount}</span>
         </div>
         <div style={reviewModalStyles.tags}>
-          {review.tags.map((tag, index) => (
+          {review.postHashtags.map((tag, index) => (
             <span key={index} style={reviewModalStyles.tagButton}>
               {tag}
             </span>
