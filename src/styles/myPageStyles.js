@@ -19,7 +19,7 @@ export const myPageStyles = {
     margin: '0 55px',
     padding: '10px',
     alignItems: 'center', 
-    color:'#000',
+    color: '#000',
 
   },
   navLink: {
@@ -27,7 +27,8 @@ export const myPageStyles = {
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
-    fontSize:'17px'
+    fontSize: '20px',
+    fontFamily: 'Freesentation',
   },
   navLinkText: {
     marginLeft: '5px',
@@ -38,6 +39,7 @@ export const myPageStyles = {
   },
   profileContainer: {
     maxWidth: '600px',
+    height: '540px',
     margin: '0 auto',
     padding: '20px',
   },
@@ -65,10 +67,11 @@ export const myPageStyles = {
   },
   profileText: {
     flex: 1,
+    fontFamily: 'Freesentation',
     fontSize: '18px',
     fontWeight: 'bold',
     color: '#1B4345',
-    borderBottom: '3px solid #1B4345',
+    borderBottom: '4px solid #1B4345',
     paddingBottom: '6px',
   },
   profileEditContainer: {
@@ -79,18 +82,20 @@ export const myPageStyles = {
   profileEditText: {
     flex: 1,
     border: 'none',
-    borderBottom: '3px solid #1B4345',
+    borderBottom: '4px solid #1B4345',
     backgroundColor: 'transparent',
     color: '#1B4345',
+    fontFamily: 'Freesentation',
     fontSize: '18px',
     fontWeight: 'bold',
-    padding: '8px 0',
+    padding: '4px 0',
     outline: 'none',
   },
   profileButton: {
-    marginLeft: '10px',
-    padding: '8px 12px',
-    fontSize: '14px',
+    marginLeft: '15px',
+    padding: '8px 20px',
+    fontFamily: 'Freesentation',
+    fontSize: '15px',
     fontWeight: 'bold',
     color: '#000',
     backgroundColor: 'transparent',
@@ -104,7 +109,7 @@ export const myPageStyles = {
     marginTop: '50px',
   },
   profileButtonEdit: {
-    marginRight: '60px',
+    marginRight: '100px',
     padding: '10px 30px',
     fontSize: '16px',
     fontWeight: 'bold',

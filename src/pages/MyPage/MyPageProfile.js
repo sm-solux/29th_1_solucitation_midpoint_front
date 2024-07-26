@@ -4,15 +4,14 @@ import '../../styles/global.css';
 import { myPageStyles } from '../../styles/myPageStyles';
 
 const MyPageProfile = () => {
-  const [editMode, setEditMode] = useState(false);
-  const [passwordEditMode, setPasswordEditMode] = useState(false);
-  const [passwordConfirmationMode, setPasswordConfirmationMode] = useState(false);
-  const [deleteConfirmationMode, setDeleteConfirmationMode] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [nextMode, setNextMode] = useState(null);
-  const fileInputRef = useRef(null);
-  const navigate = useNavigate();
-
+  const [state, setState] = useState({
+    editMode: false,
+    passwordEditMode: false,
+    passwordConfirmationMode: false,
+    deleteConfirmationMode: false,
+    nextMode: null,
+    errors: {},
+  });
   const [profileData, setProfileData] = useState({
     name: '김눈송',
     nickname: '솔룩션짱짱최고',
@@ -21,6 +20,9 @@ const MyPageProfile = () => {
     password: '12345678',
     profileImage: '../img/default-profile.png',
   });
+
+  const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -39,35 +41,31 @@ const MyPageProfile = () => {
   };
 
   const handleSave = () => {
-    setEditMode(false);
-    setPasswordEditMode(false);
+    setState({ ...state, editMode: false, passwordEditMode: false });
   };
 
   const handleCancel = () => {
-    setEditMode(false);
-    setPasswordEditMode(false);
+    setState({ ...state, editMode: false, passwordEditMode: false });
   };
 
   const handleDeleteAccount = () => {
-    setNextMode('delete');
-    setPasswordConfirmationMode(true);
+    setState({ ...state, nextMode: 'delete', passwordConfirmationMode: true });
   };
 
   const togglePasswordEditMode = () => {
-    setNextMode('passwordChange');
-    setPasswordConfirmationMode(true);
+    setState({ ...state, nextMode: 'passwordChange', passwordConfirmationMode: true });
   };
 
   const handlePasswordConfirmation = (confirmPassword) => {
     if (profileData.password === confirmPassword) {
-      setPasswordConfirmationMode(false);
-      if (nextMode === 'delete') {
-        setDeleteConfirmationMode(true);
-      } else if (nextMode === 'passwordChange') {
-        setPasswordEditMode(true);
+      setState({ ...state, passwordConfirmationMode: false });
+      if (state.nextMode === 'delete') {
+        setState({ ...state, deleteConfirmationMode: true });
+      } else if (state.nextMode === 'passwordChange') {
+        setState({ ...state, passwordEditMode: true });
       }
     } else {
-      setErrors({ confirmPassword: '비밀번호가 일치하지 않습니다.' });
+      setState({ ...state, errors: { confirmPassword: '비밀번호가 일치하지 않습니다.' } });
     }
   };
 
@@ -76,11 +74,11 @@ const MyPageProfile = () => {
     navigate('/');
   };
 
-  if (passwordConfirmationMode) {
+  if (state.passwordConfirmationMode) {
     return <PasswordConfirmation onConfirm={handlePasswordConfirmation} currentPassword={profileData.password} />;
   }
 
-  if (passwordEditMode) {
+  if (state.passwordEditMode) {
     return (
       <PasswordChange
         onChangePassword={(newPassword) => {
@@ -89,14 +87,13 @@ const MyPageProfile = () => {
             return;
           }
           setProfileData({ ...profileData, password: newPassword });
-          setPasswordEditMode(false);
-          setEditMode(false);
+          setState({ ...state, passwordEditMode: false, editMode: false });
         }}
       />
     );
   }
 
-  if (deleteConfirmationMode) {
+  if (state.deleteConfirmationMode) {
     return (
       <div style={myPageStyles.deleteConfirmationContainer}>
         <h2 style={myPageStyles.deleteConfirmationTitle}>미드포인트 탈퇴</h2>
@@ -118,27 +115,27 @@ const MyPageProfile = () => {
             key={field}
             field={field}
             value={profileData[field]}
-            editMode={editMode}
+            editMode={state.editMode}
             handleInputChange={handleInputChange}
             isEditable={field !== 'id' && field !== 'email'}
           />
         ))}
         <ProfilePassword
           password={profileData.password}
-          passwordEditMode={passwordEditMode}
-          editMode={editMode}
+          passwordEditMode={state.passwordEditMode}
+          editMode={state.editMode}
           togglePasswordEditMode={togglePasswordEditMode}
         />
         <ProfileImage
           profileImage={profileData.profileImage}
-          editMode={editMode}
+          editMode={state.editMode}
           handleFileChange={handleFileChange}
           handleImageClick={() => fileInputRef.current && fileInputRef.current.click()}
           fileInputRef={fileInputRef}
         />
       </div>
       <div style={myPageStyles.buttonContainer}>
-        {editMode ? (
+        {state.editMode ? (
           <>
             <button onClick={handleSave} style={myPageStyles.profileButtonEdit}>
               완료
@@ -149,7 +146,7 @@ const MyPageProfile = () => {
           </>
         ) : (
           <>
-            <button onClick={() => setEditMode(true)} style={myPageStyles.profileButtonEdit}>
+            <button onClick={() => setState({ ...state, editMode: true })} style={myPageStyles.profileButtonEdit}>
               편집
             </button>
             <button onClick={handleDeleteAccount} style={myPageStyles.profileButtonQuit}>
@@ -162,26 +159,45 @@ const MyPageProfile = () => {
   );
 };
 
-const ProfileItem = ({ field, value, editMode, handleInputChange, isEditable }) => (
-  <div style={myPageStyles.profileItem}>
-    <span style={myPageStyles.profileLabel}>
-      {field === 'name' ? '이름' : field === 'nickname' ? '닉네임' : field === 'id' ? '아이디' : '이메일'}
-    </span>
-    {editMode && isEditable ? (
-      <div style={myPageStyles.profileEditContainer}>
-        <input
-          type={field === 'email' ? 'email' : 'text'}
-          name={field}
-          style={myPageStyles.profileEditText}
-          value={value}
-          onChange={handleInputChange}
-        />
-      </div>
-    ) : (
-      <div style={myPageStyles.profileText}>{value}</div>
-    )}
-  </div>
-);
+const ProfileItem = ({ field, value, editMode, handleInputChange, isEditable }) => {
+  const placeholders = {
+    name: '이름을 입력하세요',
+    nickname: '닉네임을 입력하세요',
+    email: '이메일을 입력하세요',
+    id: '아이디를 입력하세요',
+  };
+
+  return (
+    <div style={myPageStyles.profileItem}>
+      <style>
+        {`
+          input::placeholder {
+            color: #1B4345;
+            font-family: 'Freesentation', sans-serif;
+            font-size: 20px;
+          }
+        `}
+      </style>
+      <span style={myPageStyles.profileLabel}>
+        {field === 'name' ? '이름' : field === 'nickname' ? '닉네임' : field === 'id' ? '아이디' : '이메일'}
+      </span>
+      {editMode && isEditable ? (
+        <div style={myPageStyles.profileEditContainer}>
+          <input
+            type={field === 'email' ? 'email' : 'text'}
+            name={field}
+            style={myPageStyles.profileEditText}
+            value={value}
+            onChange={handleInputChange}
+            placeholder={placeholders[field]}
+          />
+        </div>
+      ) : (
+        <div style={myPageStyles.profileText}>{value}</div>
+      )}
+    </div>
+  );
+};
 
 const ProfilePassword = ({ password, passwordEditMode, editMode, togglePasswordEditMode }) => (
   <div style={myPageStyles.profileItem}>
