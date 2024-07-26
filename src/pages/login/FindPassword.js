@@ -9,16 +9,6 @@ const inputs = [
 ];
 
 function FindPassword() {
-  const [verificationVisible, setVerificationVisible] = useState(false);
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const name = event.target.name.value;
-    const email = event.target.email.value;
-    console.log("Name:", name);
-    console.log("Email:", email);
-    setVerificationVisible(true);
-  };
 
   return (
     <div>
@@ -27,9 +17,6 @@ function FindPassword() {
         <LoginTitle text="비밀번호 찾기" />
         <FindPasswordForm
           inputs={inputs}
-          onSubmit={handleSubmit}
-          hideButton={verificationVisible}
-          showVerification={verificationVisible}
         />
       </div>
     </div>

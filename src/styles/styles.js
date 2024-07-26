@@ -460,19 +460,55 @@ export const LoginInputGroup = styled.div`
 
 export const LoginInputLabel = styled.label`
   width: 9.5rem;
-  margin-right: 0.5rem;
-  margin-left: 0.5rem;
   color: #1b4345;
 `;
 
 export const LoginInputField = styled.input`
   flex: 1;
-  padding: 10px;
+  padding: 8px;
+  padding-left: 0px;
   border: none;
-  font-size: 1rem;
+  font-size: 1.1rem;
   background-color: transparent !important;
   outline: none;
   box-shadow: none;
+  color: #1b4345;
+  font-weight: 700;
+
+  ::placeholder {
+    color: #1b4345;
+    font-size: 1.13rem;
+    font-weight: 900; 
+    letter-spacing: -0.1rem;
+  }
+
+  &::-webkit-input-placeholder {
+    color: #1b4345;
+    font-size: 1.13rem;
+    font-weight: 900;
+    letter-spacing: -0.1rem;
+  }
+
+  &::-moz-placeholder {
+    color: #1b4345;
+    font-size: 1.13rem;
+    font-weight: 900;
+    letter-spacing: -0.1rem;
+  }
+
+  &:-ms-input-placeholder {
+    color: #1b4345;
+    font-size: 1.13rem;
+    font-weight: 900;
+    letter-spacing: -0.1rem;
+  }
+
+  &::-ms-input-placeholder {
+    color: #1b4345;
+    font-size: 1.13rem;
+    font-weight: 900;
+    letter-spacing: -0.1rem;
+  }
 `;
 
 export const LoginSubmitButton = styled.button`
@@ -514,8 +550,8 @@ export const JoinInputGroup = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  margin-top: -2.45rem;
-  margin-bottom: 5.1rem;
+  margin-top: -1.5rem;
+  margin-bottom: 4.3rem;
   padding-bottom: 0.5rem;
   border-bottom: 0.25rem solid #1b4345;
   font-size: 1.25rem;
@@ -529,7 +565,7 @@ export const JoinInputLabel = styled.label`
 `;
 
 export const ProfilePictureLabel = styled.label`
-  margin-top: -1.8rem;
+  margin-top: -0.7rem;
   margin-bottom: 1rem;
   color: #1b4345;
   font-size: 1.25rem;
@@ -585,20 +621,53 @@ export const Verification = styled.div`
   margin-right: 0.8rem;
 `;
 
-export const VerificationLabel = styled.label`
-  width: 7rem;
-  color: #1b4345;
-  font-size: 1.25rem;
-  font-weight: 700;
-`;
 
 export const VerificationInput = styled.input`
   width: 65%;
   padding: 10px;
+  padding-left: 0px;
+  padding-right: 0px;
   border: none;
-  font-size: 1rem;
+  font-size: 1.1rem;
   background-color: transparent !important;
   outline: none;
+  color: #1b4345;
+  font-weight: 700;
+
+  ::placeholder {
+    color: #1b4345;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.1rem;
+  }
+
+  &::-webkit-input-placeholder {
+    color: #1b4345;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.1rem;
+  }
+
+  &::-moz-placeholder {
+    color: #1b4345;
+    font-size: 1.2rem;
+    font-weight: 900;
+    letter-spacing: -0.1rem;
+  }
+
+  &:-ms-input-placeholder {
+    color: #1b4345;
+    font-size: 1.2rem;
+    font-weight: 900;
+    letter-spacing: -0.1rem;
+  }
+
+  &::-ms-input-placeholder {
+    color: #1b4345;
+    font-size: 1.2rem;
+    font-weight: 900;
+    letter-spacing: -0.1rem;
+  }
 `;
 
 export const VerificationButton = styled.button`
