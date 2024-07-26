@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { Logo } from "../../components/CommonComponents";
 import { JoinForm, JoinTitle } from "../../components/LoginComponents";
 import { useNavigate } from "react-router-dom";

@@ -1,7 +1,7 @@
 import { React, useState } from "react";
 import { Logo } from "../../components/CommonComponents";
 import { LoginTitle, FindPasswordForm } from "../../components/LoginComponents";
-import { commonStyles, LoginText } from "../../styles/styles";
+import { commonStyles } from "../../styles/styles";
 import { useNavigate } from "react-router-dom";
 
 const inputs = [
