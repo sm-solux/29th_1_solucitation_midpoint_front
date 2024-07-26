@@ -44,7 +44,6 @@ const ReviewCard = ({ review, onReviewClick }) => {
               liked ? reviewStyles.likeButtonActive : reviewStyles.likeButton
             }
           >
-            {liked ? '♥' : '♡'}
           </button>
         </div>
         <div style={reviewStyles.placeName}>{placeName}</div>
