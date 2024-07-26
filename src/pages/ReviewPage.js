@@ -17,7 +17,7 @@ const ReviewPage = () => {
   const [clickedTags, setClickedTags] = useState([]);
   const [error, setError] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  //const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   // 해시태그 매핑 데이터
   const hashtagMap = {
@@ -34,7 +34,7 @@ const ReviewPage = () => {
     11: '혼자'
   };
 
-  //태그 출력 
+  // 태그 출력
   const predefinedTags = [
     '#식사',
     '#카페',
@@ -55,7 +55,7 @@ const ReviewPage = () => {
       const headers = accessToken ? { "Authorization": `Bearer ${accessToken}` } : {};
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts`, { headers });
 
-      // 응답 데이터를 변환하여 상태에 저장 
+      // 응답 데이터를 변환하여 상태에 저장
       const fetchedReviews = response.data.map(review => ({
         postId: review.postId,
         firstImageUrl: review.firstImageUrl,
@@ -71,7 +71,7 @@ const ReviewPage = () => {
     }
   };
 
-    useEffect(() => {
+  useEffect(() => {
     const userToken = localStorage.getItem('userToken'); // 로그인 여부를 확인하는 별도의 토큰
     const storedUser = localStorage.getItem('currentUser');
     if (userToken && storedUser) {
@@ -82,12 +82,12 @@ const ReviewPage = () => {
     }
   }, []);
 
-  /* 게시글 상세보기 API
+  // 게시글 상세보기 API
   const fetchReviewDetails = async (postId) => {
     try {
       const accessToken = localStorage.getItem('accessToken');
       const headers = accessToken ? { "Authorization": `Bearer ${accessToken}` } : {};
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/{postId}`, { headers });
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/${postId}`, { headers });
 
       console.log('Review details:', response.data); // 상세 데이터 확인
       setSelectedReview(response.data); // 받아온 상세 데이터를 상태로 설정
@@ -100,16 +100,16 @@ const ReviewPage = () => {
       }
       console.error('Error fetching review details:', error);
     }
-  };*/
+  };
 
-  /*검색에 대한 API
+  // 검색어로 게시글 검색 API
   const fetchBySearchTerm = async (text) => {
     try {
       const accessToken = localStorage.getItem('accessToken');
       const headers = accessToken ? { "Authorization": `Bearer ${accessToken}` } : {};
       const params = { query: text };
 
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/search/query?query={query}`, {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/search/query`, {
         params,
         headers,
       });
@@ -141,13 +141,14 @@ const ReviewPage = () => {
     }
   };
 
+  // 해시태그로 게시글 검색 API
   const fetchByTags = async (tags) => {
     try {
       const accessToken = localStorage.getItem('accessToken');
       const headers = accessToken ? { "Authorization": `Bearer ${accessToken}` } : {};
       const params = { purpose: tags };
 
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/search/purpose?purpose={purpose}`, {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/search/purpose`, {
         params,
         headers,
       });
@@ -178,17 +179,15 @@ const ReviewPage = () => {
       }
     }
   };
-  */
+
   useEffect(() => {
     fetchReviews(); // 컴포넌트가 마운트될 때 데이터 로드
   }, [isLoggedIn]);
 
-  //필터링된 검색어 출력
   useEffect(() => {
     setFilteredReviews(reviews);
   }, [reviews]);
 
-  /*검색에 대한 API
   useEffect(() => {
     if (searchTerm) {
       fetchBySearchTerm(searchTerm);
@@ -198,8 +197,7 @@ const ReviewPage = () => {
       setFilteredReviews(reviews);
     }
   }, [searchTerm, clickedTags]);
-  */
-  
+
   const openWriteModal = (review = null, isEditing = false) => {
     setSelectedReview(review);
     setWriteModalIsOpen(true);
@@ -211,7 +209,7 @@ const ReviewPage = () => {
   };
 
   const openReviewModal = (postId) => {
-    //fetchReviewDetails(postId); // 게시글 상세보기 출력
+    fetchReviewDetails(postId); // 게시글 상세보기 출력
   };
 
   const closeReviewModal = () => {
@@ -220,16 +218,15 @@ const ReviewPage = () => {
   };
 
   const handleWriteButtonClick = () => {
-    /* 로그인 후에 작성 가능하게
     if (isLoggedIn) {
       openWriteModal();
     } else {
       window.confirm('로그인 후 가능합니다.');
-    }*/
+    }
+    //일단 출력해서 모달 보기
     openWriteModal();
   };
 
-  /* 게시글 등록
   const addReview = async (newReview, isEditing) => {
     try {
       const accessToken = localStorage.getItem('accessToken');
@@ -248,7 +245,7 @@ const ReviewPage = () => {
 
       let response;
       if (isEditing && selectedReview) {
-        response = await axios.patch(`${process.env.REACT_APP_API_URL}/api/posts/{postId}`, formData, { headers });
+        response = await axios.patch(`${process.env.REACT_APP_API_URL}/api/posts/${selectedReview.postId}`, formData, { headers });
       } else {
         response = await axios.post(`${process.env.REACT_APP_API_URL}/api/posts`, formData, { headers });
       }
@@ -275,7 +272,7 @@ const ReviewPage = () => {
       }
       console.error('Error adding review:', error);
     }
-  };*/
+  };
 
   return (
     <div>
@@ -283,26 +280,22 @@ const ReviewPage = () => {
       <div style={{ marginTop: '120px' }}>
         <SearchBox 
           setFilteredReviews={setFilteredReviews}
-          //setSearchTerm={setSearchTerm}
+          setSearchTerm={setSearchTerm}
           clickedTags={clickedTags}
           setClickedTags={setClickedTags}
         />
       </div>
       <div style={reviewStyles.reviewContainer}>
         {error ? (
-          <p>{error}</p> //에러 출력
+          <p>{error}</p> // 에러 출력
         ) : (
-          filteredReviews.length > 0 ? (
-            filteredReviews.map((review) => (
-              <ReviewCard
-                key={review.postId}
-                review={review}
-                onReviewClick={openReviewModal}
-              />
-            ))
-          ) : (
-            <p>No reviews found</p>
-          )
+          (filteredReviews.length > 0 ? filteredReviews : reviews).map((review) => (
+            <ReviewCard
+              key={review.postId}
+              review={review}
+              onReviewClick={openReviewModal}
+            />
+          ))
         )}
       </div>
       <button
@@ -323,7 +316,6 @@ const ReviewPage = () => {
           currentUser={currentUser}
           openWriteModal={openWriteModal}
           deleteReview={(review) => {
-            // 삭제 기능 구현
             setReviews(prevReviews => prevReviews.filter(r => r.postId !== review.postId));
           }}
           setReviews={setReviews}
@@ -332,7 +324,7 @@ const ReviewPage = () => {
       <WriteModal
         isOpen={writeModalIsOpen}
         closeModal={closeWriteModal}
-        //addReview={addReview}
+        addReview={addReview}
         existingReview={selectedReview || {}}
       />
     </div>

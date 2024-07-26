@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from 'react-modal';
-import {
-  StyledModal,
+
+import writeModalStyles, {
   CloseButton,
   ProfileContainer,
   ProfileImg,
@@ -133,18 +133,20 @@ const WriteModal = ({
   };
 
   return (
-    <StyledModal
+    <Modal
       isOpen={isOpen}
       onRequestClose={handleCloseModal}
-      className="ReactModal__Content"
-      overlayClassName="ReactModal__Overlay"
+      style={{
+        overlay: writeModalStyles.overlay,
+        content: writeModalStyles.modal,
+      }}
       contentLabel='Write Review Modal'
     >
       <form onSubmit={handleAddReview}>
         <CloseButton onClick={handleCloseModal}>X</CloseButton>
         <ProfileContainer>
           <ProfileImg src='/img/default-profile.png' alt='profile' />
-          <ProfileName>{currentUser ? currentUser.name : '가상 글쓴이'}</ProfileName>
+          <ProfileName>{currentUser ? currentUser.name : 'anonymous'}</ProfileName>
         </ProfileContainer>
         <InputName
           type='text'
@@ -189,7 +191,7 @@ const WriteModal = ({
         </TagContainer>
         <SubmitButton type='submit'>게시</SubmitButton>
       </form>
-    </StyledModal>
+    </Modal>
   );
 };
 

@@ -35,27 +35,27 @@ const SearchBox = ({ setFilteredReviews, setSearchTerm, clickedTags, setClickedT
         return newTags;
       } else {
         window.confirm('태그는 2개까지 선택할 수 있습니다.');
-        //setError('태그는 최대 2개까지 선택할 수 있습니다.');
         return prevTags;
       }
     });
   };
 
+  //태그로 검색
   const fetchByTags = async (tags) => {
     try {
       const accessToken = localStorage.getItem('accessToken');
       const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
       const params = { purpose: tags };
 
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/search`, {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/search/purpose?purpose={purpose}`, {
         params,
         headers,
       });
 
       if (response.status === 200) {
         const data = response.data.map((item) => ({
-          id: item.postId,
-          image: item.firstImageUrl,
+          postId: item.postId,
+          firstImageUrl: item.firstImageUrl,
           title: item.title,
           hashtags: item.hashtags,
           likes: item.likes,
@@ -71,28 +71,29 @@ const SearchBox = ({ setFilteredReviews, setSearchTerm, clickedTags, setClickedT
           setError(`게시글 검색 중 오류가 발생하였습니다: ${error.message}`);
         }
       } else if (error.request) {
-        //setError('서버와 연결할 수 없습니다.');
+        setError('서버와 연결할 수 없습니다.');
       } else {
         setError(`오류가 발생하였습니다: ${error.message}`);
       }
     }
   };
 
+  //검색어로 검색
   const fetchBySearchTerm = async (text) => {
     try {
       const accessToken = localStorage.getItem('accessToken');
       const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
       const params = { query: text };
 
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/search/query`, {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/search/query?query={query}`, {
         params,
         headers,
       });
 
       if (response.status === 200) {
         const data = response.data.map((item) => ({
-          id: item.postId,
-          image: item.firstImageUrl,
+          postId: item.postId,
+          firstImageUrl: item.firstImageUrl,
           title: item.title,
           hashtags: item.hashtags,
           likes: item.likes,
@@ -122,12 +123,14 @@ const SearchBox = ({ setFilteredReviews, setSearchTerm, clickedTags, setClickedT
   return (
     <>
       <style>
-        {//placeholder 적용하기
-        `
+        {`
           input::placeholder {
             color: #1B4345;
             font-family: 'Freesentation', sans-serif;
-            font-size: 20px;
+            font-size: 18px;
+          }
+          input:focus::placeholder {
+            opacity: 0;
           }
         `}
       </style>
@@ -164,6 +167,7 @@ const SearchBox = ({ setFilteredReviews, setSearchTerm, clickedTags, setClickedT
           </div>
         </div>
       </div>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </>
   );
 };

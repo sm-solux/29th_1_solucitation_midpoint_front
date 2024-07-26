@@ -1,24 +1,23 @@
 import styled from 'styled-components';
-import Modal from 'react-modal';
 
-export const StyledModal = styled(Modal)`
-  &.ReactModal__Overlay {
-    background-color: rgba(1, 1, 1, 0.5);
-    z-index: 3000;
-  }
-  &.ReactModal__Content {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 620px;
-    height: 600px;
-    background-color: #f2f2ef;
-    padding: 50px;
-    border: 3px solid #1b4345;
-    border-radius: 10px;
-  }
-`;
+export const writeModalStyles = {
+  overlay: {
+    backgroundColor: 'rgba(1, 1, 1, 0.5)',
+    zIndex: 3000,
+  },
+  modal: {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '620px',
+    height: '600px',
+    backgroundColor: '#f2f2ef',
+    padding: '50px',
+    border: '3px solid #1b4345',
+    borderRadius: '10px',
+  },
+};
 
 export const CloseButton = styled.button`
   background-color: transparent;
@@ -145,3 +144,5 @@ export const SubmitButton = styled.button`
   bottom: 30px;
   right: 40px;
 `;
+
+export default writeModalStyles;

@@ -15,7 +15,8 @@ export const searchStyles = {
   },
   input: {
     padding: '15px',
-    fontSize: '16px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
     width: '550px',
     border: 'none',
     outline: 'none',
