@@ -1,5 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import '../../styles/global.css';
 import { myPageStyles } from '../../styles/myPageStyles';
 
@@ -13,16 +14,57 @@ const MyPageProfile = () => {
     errors: {},
   });
   const [profileData, setProfileData] = useState({
-    name: '김눈송',
-    nickname: '솔룩션짱짱최고',
-    id: 'soluxion',
-    email: 'soluxion@sookmyung.ac.kr',
-    password: '12345678',
+    name: '',
+    nickname: '',
+    id: '',
+    email: '',
     profileImage: '../img/default-profile.png',
+    password: '',
   });
 
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await axios.get('http://3.36.150.194:8080/api/member/profile', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        const data = response.data;
+        setProfileData({
+          name: data.name,
+          nickname: data.nickname,
+          id: data.loginId,
+          email: data.email,
+          profileImage: data.profileImage || '../img/default-profile.png',
+          password: profileData.password,
+        });
+      } catch (error) {
+        if (error.response) {
+          if (error.response.status === 401) {
+            const errorData = error.response.data;
+            if (errorData.error === 'access_token_expired') {
+              alert('Access Token이 만료되었습니다. 로그인 페이지로 이동합니다.');
+            } else if (errorData.error === 'invalid_token') {
+              alert('유효하지 않은 Access Token입니다. 로그인 페이지로 이동합니다.');
+            }
+            navigate('/login');
+          } else {
+            console.error('회원 정보를 불러오는 중 에러 발생:', error.response.data);
+          }
+        } else {
+          console.error('회원 정보를 불러오는 중 에러 발생:', error.message);
+        }
+      }
+    };
+
+    fetchProfileData();
+  }, [navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -40,8 +82,19 @@ const MyPageProfile = () => {
     }
   };
 
-  const handleSave = () => {
-    setState({ ...state, editMode: false, passwordEditMode: false });
+  //수정 예비 코드
+  const handleSave = async () => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      await axios.put('http://3.36.150.194:8080/api/member/profile', profileData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      setState({ ...state, editMode: false, passwordEditMode: false });
+    } catch (error) {
+      console.error('프로필 저장 중 에러 발생:', error);
+    }
   };
 
   const handleCancel = () => {
@@ -69,9 +122,20 @@ const MyPageProfile = () => {
     }
   };
 
-  const handleDeleteConfirm = () => {
-    alert('탈퇴 됐습니다.');
-    navigate('/');
+  //탈퇴 코드
+  const handleDeleteConfirm = async () => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      await axios.delete('http://3.36.150.194:8080/api/member/profile', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      alert('탈퇴 됐습니다.');
+      navigate('/');
+    } catch (error) {
+      console.error('계정 삭제 중 에러 발생:', error);
+    }
   };
 
   if (state.passwordConfirmationMode) {
@@ -96,62 +160,67 @@ const MyPageProfile = () => {
   if (state.deleteConfirmationMode) {
     return (
       <div style={myPageStyles.deleteConfirmationContainer}>
-        <h2 style={myPageStyles.deleteConfirmationTitle}>미드포인트 탈퇴</h2>
-        <p style={myPageStyles.deleteConfirmationMessage}>
-          정말 탈퇴하시겠습니까? 탈퇴 시 되돌릴 수 없습니다. 신중하게 결정해주세요.
-        </p>
-        <button style={myPageStyles.deleteButton} onClick={handleDeleteConfirm}>
-          탈퇴
-        </button>
+        <h2 style={myPageStyles.deleteConfirmationTitle}>계정 삭제 확인</h2>
+        <p style={myPageStyles.deleteConfirmationText}>정말로 계정을 삭제하시겠습니까?</p>
+        <button onClick={handleDeleteConfirm} style={myPageStyles.deleteConfirmationButton}>삭제</button>
+        <button onClick={() => setState({ ...state, deleteConfirmationMode: false })} style={myPageStyles.deleteConfirmationButton}>취소</button>
       </div>
     );
   }
 
   return (
     <div style={myPageStyles.profileContainer}>
-      <div style={myPageStyles.profileInfo}>
-        {['name', 'nickname', 'id', 'email'].map((field) => (
-          <ProfileItem
-            key={field}
-            field={field}
-            value={profileData[field]}
-            editMode={state.editMode}
-            handleInputChange={handleInputChange}
-            isEditable={field !== 'id' && field !== 'email'}
-          />
-        ))}
-        <ProfilePassword
-          password={profileData.password}
-          passwordEditMode={state.passwordEditMode}
-          editMode={state.editMode}
-          togglePasswordEditMode={togglePasswordEditMode}
-        />
-        <ProfileImage
-          profileImage={profileData.profileImage}
-          editMode={state.editMode}
-          handleFileChange={handleFileChange}
-          handleImageClick={() => fileInputRef.current && fileInputRef.current.click()}
-          fileInputRef={fileInputRef}
-        />
-      </div>
+      <ProfileField
+        field="name"
+        value={profileData.name}
+        editMode={state.editMode}
+        handleInputChange={handleInputChange}
+        placeholder="이름"
+      />
+      <ProfileField
+        field="nickname"
+        value={profileData.nickname}
+        editMode={state.editMode}
+        handleInputChange={handleInputChange}
+        placeholder="닉네임"
+      />
+      <ProfileField
+        field="id"
+        value={profileData.id}
+        editMode={false}
+        handleInputChange={() => {}}
+        placeholder="아이디"
+      />
+      <ProfileField
+        field="email"
+        value={profileData.email}
+        editMode={state.editMode}
+        handleInputChange={handleInputChange}
+        placeholder="이메일"
+      />
+      <ProfilePassword
+        password={profileData.password}
+        passwordEditMode={state.passwordEditMode}
+        editMode={state.editMode}
+        togglePasswordEditMode={togglePasswordEditMode}
+      />
+      <ProfileImage
+        profileImage={profileData.profileImage}
+        editMode={state.editMode}
+        handleFileChange={handleFileChange}
+        handleImageClick={() => fileInputRef.current?.click()}
+        fileInputRef={fileInputRef}
+      />
       <div style={myPageStyles.buttonContainer}>
         {state.editMode ? (
           <>
-            <button onClick={handleSave} style={myPageStyles.profileButtonEdit}>
-              완료
-            </button>
-            <button onClick={handleCancel} style={myPageStyles.profileButtonCancel}>
-              취소
-            </button>
+            <button onClick={handleSave} style={myPageStyles.profileButtonEdit}>저장</button>
+            <button onClick={handleCancel} style={myPageStyles.profileButtonCancel}>취소</button>
           </>
         ) : (
           <>
-            <button onClick={() => setState({ ...state, editMode: true })} style={myPageStyles.profileButtonEdit}>
-              편집
-            </button>
-            <button onClick={handleDeleteAccount} style={myPageStyles.profileButtonQuit}>
-              탈퇴
-            </button>
+            <button onClick={() => setState({ ...state, editMode: true })} style={myPageStyles.profileButtonEdit}>편집</button>
+            <button onClick={handleDeleteAccount} style={myPageStyles.profileButtonQuit}>계정 삭제</button>
           </>
         )}
       </div>
@@ -159,45 +228,25 @@ const MyPageProfile = () => {
   );
 };
 
-const ProfileItem = ({ field, value, editMode, handleInputChange, isEditable }) => {
-  const placeholders = {
-    name: '이름을 입력하세요',
-    nickname: '닉네임을 입력하세요',
-    email: '이메일을 입력하세요',
-    id: '아이디를 입력하세요',
-  };
-
-  return (
-    <div style={myPageStyles.profileItem}>
-      <style>
-        {`
-          input::placeholder {
-            color: #1B4345;
-            font-family: 'Freesentation', sans-serif;
-            font-size: 20px;
-          }
-        `}
-      </style>
-      <span style={myPageStyles.profileLabel}>
-        {field === 'name' ? '이름' : field === 'nickname' ? '닉네임' : field === 'id' ? '아이디' : '이메일'}
-      </span>
-      {editMode && isEditable ? (
-        <div style={myPageStyles.profileEditContainer}>
-          <input
-            type={field === 'email' ? 'email' : 'text'}
-            name={field}
-            style={myPageStyles.profileEditText}
-            value={value}
-            onChange={handleInputChange}
-            placeholder={placeholders[field]}
-          />
-        </div>
-      ) : (
-        <div style={myPageStyles.profileText}>{value}</div>
-      )}
-    </div>
-  );
-};
+const ProfileField = ({ field, value, editMode, handleInputChange, placeholder }) => (
+  <div style={myPageStyles.profileItem}>
+    <span style={myPageStyles.profileLabel}>{placeholder}</span>
+    {editMode ? (
+      <div style={myPageStyles.profileEditContainer}>
+        <input
+          type="text"
+          name={field}
+          style={myPageStyles.profileEditText}
+          value={value}
+          onChange={handleInputChange}
+          placeholder={placeholder}
+        />
+      </div>
+    ) : (
+      <div style={myPageStyles.profileText}>{value}</div>
+    )}
+  </div>
+);
 
 const ProfilePassword = ({ password, passwordEditMode, editMode, togglePasswordEditMode }) => (
   <div style={myPageStyles.profileItem}>
@@ -210,9 +259,7 @@ const ProfilePassword = ({ password, passwordEditMode, editMode, togglePasswordE
       <div style={myPageStyles.profileText}>{'*'.repeat(password.length)}</div>
     )}
     {editMode && !passwordEditMode && (
-      <button style={myPageStyles.profileButton} onClick={togglePasswordEditMode}>
-        비밀번호 변경
-      </button>
+      <button style={myPageStyles.profileButton} onClick={togglePasswordEditMode}>비밀번호 변경</button>
     )}
   </div>
 );
@@ -286,9 +333,7 @@ const PasswordConfirmation = ({ onConfirm, currentPassword }) => {
             <span style={{ color: 'red', marginLeft: '10px' }}>{errors.confirmPassword}</span>
           )}
         </div>
-        <button type="submit" style={myPageStyles.passwordButton}>
-          다음
-        </button>
+        <button type="submit" style={myPageStyles.passwordButton}>다음</button>
       </form>
     </div>
   );
@@ -360,9 +405,7 @@ const PasswordChange = ({ onChangePassword }) => {
             <span style={{ color: 'red', marginLeft: '10px' }}>{errors.confirmPassword}</span>
           )}
         </div>
-        <button type="submit" style={myPageStyles.passwordButton}>
-          변경
-        </button>
+        <button type="submit" style={myPageStyles.passwordButton}>변경</button>
       </form>
     </div>
   );
