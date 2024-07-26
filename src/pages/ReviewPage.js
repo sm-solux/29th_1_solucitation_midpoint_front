@@ -17,7 +17,7 @@ const ReviewPage = () => {
         'http://www.lampcook.com/wi_files/food_top100/top5/5_6.jpg',
         'http://www.lampcook.com/wi_files/food_top100/top5/5_7.jpg',
       ],
-      tags: ['식사', '여럿이'],
+      tags: ['#식사', '#여럿이'],
       placeName: '맛있는 식당',
       content: '아오 맛있어~아오 맛있어~아오 맛있어~너무 맛있어서 눈물이나요',
       author: 'user1',
@@ -30,7 +30,7 @@ const ReviewPage = () => {
         'http://www.lampcook.com/wi_files/food_top100/top5/5_6.jpg',
         'http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg',
       ],
-      tags: ['카페', '팀플'],
+      tags: ['#카페', '#팀플'],
       placeName: '편안한 카페',
       content: '아오 맛있어~2',
       author: 'user2',
@@ -43,7 +43,7 @@ const ReviewPage = () => {
         'http://www.lampcook.com/wi_files/food_top100/top5/5_6.jpg',
         'http://www.lampcook.com/wi_files/food_top100/top5/5_7.jpg',
       ],
-      tags: ['카페', '자연'],
+      tags: ['#카페', '#자연'],
       placeName: '편안한 카페',
       content: '아오 맛있어~3',
       author: 'user1',
@@ -56,7 +56,7 @@ const ReviewPage = () => {
         'http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg',
         'http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg',
       ],
-      tags: ['쇼핑', '산책'],
+      tags: ['#쇼핑', '#산책'],
       placeName: '편안한 카페',
       content: '아오 맛있어~4',
       author: 'user3',
@@ -68,7 +68,7 @@ const ReviewPage = () => {
         'http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg',
         'http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg',
       ],
-      tags: ['쇼핑', '산책'],
+      tags: ['#쇼핑', '#산책'],
       placeName: '편안한 카페',
       content: '아오 맛있어~4',
       author: 'user3',
@@ -81,7 +81,7 @@ const ReviewPage = () => {
         'http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg',
         'http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg',
       ],
-      tags: ['쇼핑', '산책'],
+      tags: ['#쇼핑', '#산책'],
       placeName: '편안한 카페',
       content: '아오 맛있어~4',
       author: 'user3',
@@ -90,7 +90,7 @@ const ReviewPage = () => {
     {
       id: 7,
       photos: ['http://www.lampcook.com/wi_files/food_top100/top5/5_5.jpg'],
-      tags: ['쇼핑', '산책'],
+      tags: ['#쇼핑', '#산책'],
       placeName: '편안한 카페',
       content: '아오 맛있어~4',
       author: 'user3',
@@ -99,7 +99,7 @@ const ReviewPage = () => {
     {
       id: 8,
       photos: ['http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg'],
-      tags: ['쇼핑', '산책'],
+      tags: ['#쇼핑', '#산책'],
       placeName: '편안한 카페',
       content: '아오 맛있어~4',
       author: 'user3',
@@ -108,7 +108,7 @@ const ReviewPage = () => {
     {
       id: 9,
       photos: ['http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg'],
-      tags: ['쇼핑', '산책'],
+      tags: ['#쇼핑', '#산책'],
       placeName: '편안한 카페',
       content: '아오 맛있어~4',
       author: 'user3',
@@ -122,6 +122,7 @@ const ReviewPage = () => {
   const [selectedReview, setSelectedReview] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [filteredReviews, setFilteredReviews] = useState(reviews);
+  const [clickedTags, setClickedTags] = useState([]);
 
   useEffect(() => {
     setFilteredReviews(reviews);
@@ -168,15 +169,18 @@ const ReviewPage = () => {
   };
 
   const addReview = (newReview, isEditing) => {
-    if (isEditing) {
+    if (isEditing && selectedReview) {
       const updatedReviews = reviews.map((review) =>
-        review.id === selectedReview.id ? { ...review, ...newReview } : review
+        review.id === selectedReview.id
+          ? { ...review, ...newReview, id: review.id }
+          : review
       );
       setReviews(updatedReviews);
     } else {
+      const newId = reviews.length > 0 ? reviews[reviews.length - 1].id + 1 : 1;
       setReviews((prevReviews) => [
         ...prevReviews,
-        { ...newReview, id: prevReviews.length + 1 },
+        { ...newReview, id: newId },
       ]);
     }
     closeWriteModal();
@@ -191,9 +195,14 @@ const ReviewPage = () => {
 
   return (
     <div>
-      <Logo />
+      <Logo bgColor='#F2F2F2' />
       <div style={{ marginTop: '120px' }}>
-        <SearchBox reviews={reviews} setFilteredReviews={setFilteredReviews} />
+        <SearchBox
+          reviews={reviews}
+          setFilteredReviews={setFilteredReviews}
+          clickedTags={clickedTags}
+          setClickedTags={setClickedTags}
+        />
       </div>
       <div style={reviewStyles.reviewContainer}>
         {filteredReviews.length > 0
@@ -232,13 +241,14 @@ const ReviewPage = () => {
           currentUser={currentUser}
           openWriteModal={openWriteModal}
           deleteReview={deleteReview}
+          setReviews={setReviews}
         />
       )}
       <WriteModal
         isOpen={writeModalIsOpen}
         closeModal={closeWriteModal}
         addReview={addReview}
-        existingReview={isEditing ? selectedReview : {}}
+        existingReview={selectedReview || {}}
         isEditing={isEditing}
       />
     </div>

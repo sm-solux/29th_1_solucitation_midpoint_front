@@ -19,12 +19,11 @@ const ReviewModal = ({
 
   const toggleLike = () => {
     setLiked(!liked);
-    setLikeCount(liked ? likeCount - 1 : likeCount + 1);
+    const updatedLikeCount = liked ? likeCount - 1 : likeCount + 1;
+    setLikeCount(updatedLikeCount);
     setReviews((prevReviews) =>
       prevReviews.map((r) =>
-        r.id === review.id
-          ? { ...r, likes: liked ? likeCount - 1 : likeCount + 1 }
-          : r
+        r.id === review.id ? { ...r, likes: updatedLikeCount } : r
       )
     );
   };
@@ -40,6 +39,7 @@ const ReviewModal = ({
 
   const handleDeleteClick = () => {
     if (window.confirm('삭제하시겠습니까?')) {
+      //삭제라서 일단 구현
       deleteReview(review);
       closeModal();
     }
@@ -93,7 +93,10 @@ const ReviewModal = ({
       <div style={reviewModalStyles.footer}>
         <div style={reviewModalStyles.likeSection}>
           <button
-            onClick={toggleLike}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleLike();
+            }}
             style={
               liked
                 ? reviewModalStyles.likeButtonActive

@@ -1,11 +1,13 @@
 import React from 'react';
 import { commonStyles } from '../../styles/styles'; 
 import { Logo } from '../../components/CommonComponents';
+import { useNavigate } from 'react-router-dom';
 
 const Again = () => {
+  const navigate = useNavigate();
+
   const handleRetry = () => {
-    // 다시 찾기 버튼 클릭 시 수행할 동작
-    // 예: 홈으로 이동 또는 다른 페이지로 이동
+    navigate("/home");
   };
 
   return (
