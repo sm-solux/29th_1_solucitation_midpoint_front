@@ -435,6 +435,23 @@ export const commonStyles = {
     fontWeight: "bold",
     marginBottom: "0.5rem",
   },
+  suggestionsList: {
+    listStyle: 'none',
+    margin: 0,
+    padding: 0,
+    backgroundColor: 'white',
+    border: '1px solid #ccc',
+    position: 'absolute',
+    width: '71%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    zIndex: 1000,
+  },
+  suggestionItem: {
+    padding: '10px',
+    cursor: 'pointer',
+  },
+  
 };
 
 export const LoginFormContainer = styled.form`
@@ -758,7 +775,7 @@ export const ProgressBarContainer = styled.div`
 
 export const ProgressBar = styled.div`
   height: 100%;
-  background-color: #000;
+  background-color: #000; 
   border-radius: 5px;
   position: relative;
   transition: width 0.3s ease;
@@ -767,11 +784,11 @@ export const ProgressBar = styled.div`
 export const ProgressIndicator = styled.div`
   width: 20px;
   height: 20px;
-  background-color: #000;
+  background-color: #000; 
   border-radius: 50%;
   position: absolute;
   top: -5px;
-  right: 0;
+  right: 0; 
   transform: translateX(50%);
 `;
 
@@ -783,14 +800,14 @@ export const PlaceContainer = styled.div`
 export const Left = styled.div`
   flex: 1;
   display: flex;
-  justify-content: center;
+  justify-content: center; 
   padding: 1rem;
 `;
 
 export const PlacesList = styled.ul`
   list-style: none;
   padding: 0;
-  max-height: 200px;
+  max-height: 200px; 
   overflow-y: auto;
 `;
 
@@ -817,14 +834,13 @@ export const PlaceItem = styled.div`
   div {
     display: flex;
     flex-direction: column;
-    background-color: #000;
+    background-color: #000; 
     border-radius: 8px;
     padding: 0.3rem;
     flex: 1;
 
-    h3,
-    p {
-      color: #fff;
+    h3, p {
+      color: #fff; 
     }
 
     h3 {
@@ -865,15 +881,14 @@ export const FriendItem = styled.div`
   div {
     display: flex;
     flex-direction: column;
-    background-color: #fff;
+    background-color: #fff; 
     border-radius: 8px;
     margin-left: 0.8rem;
     padding: 0.3rem;
     flex: 1;
 
-    h3,
-    p {
-      color: #000;
+    h3, p {
+      color: #000; 
     }
 
     h3 {
@@ -936,7 +951,7 @@ export const WhiteBox = styled.div`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
   width: 100%;
-  max-width: 90%;
+  max-width: 90%; 
 `;
 
 export const ShareButton = styled.button`
@@ -951,7 +966,7 @@ export const ShareButton = styled.button`
   cursor: pointer;
 
   span {
-    font-weight: 800;
+    font-weight: 800; 
   }
 
   img {
