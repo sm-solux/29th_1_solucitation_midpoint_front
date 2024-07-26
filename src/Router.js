@@ -5,6 +5,7 @@ import LoginPage from "./pages/login/LoginPage";
 import DirectLoginPage from "./pages/login/DirectLoginPage";
 import FindPassword from "./pages/login/FindPassword";
 import Join from "./pages/login/Join";
+import ResetPassword from "./pages/login/ResetPassword";
 import Home from "./pages/home/HomeMain";
 import ReviewPage from "./pages/ReviewPage";
 import MyPage from "./pages/MyPage";
@@ -36,6 +37,7 @@ function Router() {
         <Route path="/login/direct" element={<DirectLoginPage />} />
         <Route path="/login/findpassword" element={<FindPassword />} />
         <Route path="/login/join" element={<Join />} />
+        <Route path="/login/resetpassword" element={<ResetPassword/>} />
         <Route path="/home" element={<Home />} />
         <Route path="/Review" element={<ReviewPage />} />
         <Route path="/Mypage" element={<MyPage />} />

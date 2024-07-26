@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { Logo } from "../../components/CommonComponents";
 import { JoinForm, JoinTitle } from "../../components/LoginComponents";
 import { useNavigate } from "react-router-dom";
@@ -40,7 +40,7 @@ function Join() {
 
   return (
     <div>
-      <Logo />
+      <Logo bgColor="#F2F2EF"/>
       <JoinTitle text="회원가입" />
       <JoinForm
         inputs={inputs}
