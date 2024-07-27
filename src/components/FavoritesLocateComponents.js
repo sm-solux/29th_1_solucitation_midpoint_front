@@ -7,12 +7,13 @@ const FavoritesLocateComponents = () => {
   const [isAddLocationModalOpen, setIsAddLocationModalOpen] = useState(false);
 
   const [locations, setLocations] = useState([
-    { id: 1, name: '집', locate: '', icon: 'homeIcon' },
+    { id: 1, name: '집', locate: '', icon: 'homeIcon', type: 'home' },
     {
       id: 2,
       name: '직장/학교',
       locate: '서울특별시 동작구',
       icon: 'schoolIcon',
+      type: 'work',
     },
   ]);
 
@@ -81,14 +82,17 @@ const FavoritesLocateComponents = () => {
           {'                         >'}
         </div>
       ))}
-      <AddLocationModal
-        isOpen={isAddLocationModalOpen}
-        closeModal={closeAddLocationModal}
-        addLocation={handleAddLocation}
-        editLocation={handleEditLocation}
-        deleteLocation={handleDeleteLocation}
-        selectedLocation={selectedLocation}
-      />
+      {selectedLocation && (
+        <AddLocationModal
+          isOpen={isAddLocationModalOpen}
+          closeModal={closeAddLocationModal}
+          addLocation={handleAddLocation}
+          editLocation={handleEditLocation}
+          deleteLocation={handleDeleteLocation}
+          selectedLocation={selectedLocation}
+          locationType={selectedLocation.type}
+        />
+      )}
     </div>
   );
 };

@@ -269,7 +269,7 @@ export const myPageStyles = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: '800px',
-    height: '350px',
+    height: '600px',
     backgroundColor: '#F2F2EF',
     padding: "20px",
     border: '3px solid #000',
