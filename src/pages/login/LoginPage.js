@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useState, useEffect } from "react";
 import styled from "styled-components";
 import { Logo } from "../../components/CommonComponents";
 import { LoginTitle } from "../../components/LoginComponents";
@@ -30,26 +30,50 @@ function LoginPage() {
     navigate("/login/direct");
   };
 
-  // 카카오로그인 구현
-  const Rest_api_key = "REST API KEY"; //REST API KEY
-  const redirect_uri = "http://localhost:3000/auth"; //Redirect URI
-  // oauth 요청 URL
-  const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${Rest_api_key}&redirect_uri=${redirect_uri}&response_type=code`;
-  const kakaoLogin = () => {
-    window.location.href = kakaoURL;
-  };
+  const [kakaoConfig, setKakaoConfig] = useState(null);
 
+  useEffect(() => {
+    const fetchKakaoConfig = async () => {
+      try {
+        const response = await fetch(
+          "http://3.36.150.194:8080/api/auth/kakao-login-info",
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        const configData = await response.json();
+        setKakaoConfig(configData);
+      } catch (error) {
+        console.error("Failed to fetch Kakao configuration:", error);
+      }
+    };
+
+    fetchKakaoConfig();
+  }, []);
+
+  const kakaoLogin = () => {
+    if (kakaoConfig) {
+      const { clientId, redirectUri } = kakaoConfig;
+      const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
+      window.location.href = kakaoURL;
+    } else {
+      console.error("Kakao configuration is not loaded yet.");
+    }
+  };
   return (
     <div>
       <Logo />
       <div style={commonStyles.centerContainer}>
         <LoginTitle text="로그인" />
-        <LoginButton style={{ backgroundColor: "#F7E04B", color: "#21201E" }}>
-          <img
-            src="/img/kakao.png"
-            style={{ width: 19, marginRight: 8 }}
-            onClick={kakaoLogin}
-          />
+        <LoginButton
+          style={{ backgroundColor: "#F7E04B", color: "#21201E" }}
+          onClick={kakaoLogin}
+          disabled={!kakaoConfig}
+        >
+          <img src="/img/kakao.png" style={{ width: 19, marginRight: 8 }} />
           카카오계정 로그인
         </LoginButton>
         <LoginButton

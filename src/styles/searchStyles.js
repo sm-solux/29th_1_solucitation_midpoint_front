@@ -1,13 +1,12 @@
 export const searchStyles = {
   container: {
-    marginTop:'20px',
     marginBottom: '20px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: 'transparent'
+    backgroundColor: 'transparent',
   },
-    inputContainer: {
+  inputContainer: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -24,7 +23,7 @@ export const searchStyles = {
   },
   button: {
     width: '90px',
-    height:'38px',
+    height: '38px',
     padding: '5px 20px',
     fontSize: '15px',
     cursor: 'pointer',
@@ -32,7 +31,7 @@ export const searchStyles = {
     backgroundColor: '#1B4345',
     border: 'none',
     borderRadius: '5px',
-    marginRight:'20px'
+    marginLeft: '10px',
   },
   tagContainer: {
     marginTop: '15px',
@@ -47,23 +46,12 @@ export const searchStyles = {
   tag: {
     padding: '5px 10px',
     fontSize: '14px',
-    textStyle:'bold',
+    fontWeight: 'bold',
     backgroundColor: 'transparent',
     border: '2px solid #1B4345',
-    Color: '#1B4345',
+    color: '#1B4345',
     cursor: 'pointer',
     margin: '5px',
     transition: 'background-color 0.3s, color 0.3s',
-  },
-  writeButton: {
-    position: 'fixed',
-    bottom: '60px',
-    right: '100px',
-    padding: '10px 20px',
-    fontSize: '16px',
-    cursor: 'pointer',
-    color: '#FFFFFF',
-    backgroundColor: '#1B4345',
-    borderRadius: '5px',
   },
 };

@@ -1,9 +1,13 @@
 import React from 'react';
+import FavoritesLocateComponents from '../../components/FavoritesLocateComponents';
+import FavoritesFriends from '../../components/FavoritesFriends';
+import { myPageStyles } from '../../styles/myPageStyles.js';
 
 const MyPageFavorites = () => {
   return (
-    <div>
-      <h2>즐겨찾기</h2>
+    <div style={myPageStyles.favoritesContainer}>
+      <FavoritesLocateComponents />
+      <FavoritesFriends />
     </div>
   );
 };
