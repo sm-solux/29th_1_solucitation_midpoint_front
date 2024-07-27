@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { commonStyles, PlacesList, PlaceItem, FriendItem } from '../../styles/styles';
-import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import debounce from 'lodash.debounce';
 
 const HomePopup = ({ onClose }) => {
   const mapRef = useRef(null);
@@ -8,8 +9,11 @@ const HomePopup = ({ onClose }) => {
   const [showMap, setShowMap] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [places, setPlaces] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
   const [showPlacesList, setShowPlacesList] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
+  const [selectedSuggestion, setSelectedSuggestion] = useState(null);
+
   const friends = [
     { name: '친구1', address: '서울특별시 용산구 청파대로10 1층' },
     { name: '친구2', address: '서울특별시 용산구 청파대로20 2층' },
@@ -17,31 +21,89 @@ const HomePopup = ({ onClose }) => {
   ];
 
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`;
-    script.async = true;
-    script.onload = () => {
-      if (window.google && mapRef.current && showMap) {
-        const mapOptions = {
-          center: new window.google.maps.LatLng(37.5665, 126.9780),
-          zoom: 10,
-        };
-        const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
-        setMap(googleMap);
-      }
-    };
-    document.head.appendChild(script);
+    if (!window.google) {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places&language=ko`;
+      script.async = true;
+      script.onload = () => {
+        if (mapRef.current && showMap) {
+          const mapOptions = {
+            center: new window.google.maps.LatLng(37.5665, 126.9780),
+            zoom: 10,
+          };
+          const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
+          setMap(googleMap);
+        }
+      };
+      document.head.appendChild(script);
+    } else if (mapRef.current && showMap) {
+      const mapOptions = {
+        center: new window.google.maps.LatLng(37.5665, 126.9780),
+        zoom: 10,
+      };
+      const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
+      setMap(googleMap);
+    }
   }, [showMap]);
 
-  const handleSearch = () => {
-    if (searchInput.trim() !== '') {
-      const newPlace = {
-        name: searchInput,
-        address: '서울특별시 용산구 청파대로10 1층',
-        imgSrc: '/path/to/image.png',
+  const fetchSuggestions = async (value) => {
+    if (value.trim() !== '') {
+      const proxyUrl = 'https://api.allorigins.win/get?url=';
+      const targetUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${value}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&language=ko`;
+      try {
+        const response = await axios.get(proxyUrl + encodeURIComponent(targetUrl));
+        const data = JSON.parse(response.data.contents);
+        setSuggestions(data.predictions);
+      } catch (error) {
+        console.error('Error fetching suggestions:', error);
+      }
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const debouncedFetchSuggestions = debounce(fetchSuggestions, 300);
+
+  const handleSearchInputChange = (e) => {
+    const value = e.target.value;
+    setSearchInput(value);
+    debouncedFetchSuggestions(value);
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setSelectedSuggestion(suggestion);
+    setSearchInput(suggestion.description);
+    setSuggestions([]);
+  };
+
+  const handleSearch = async () => {
+    if (!selectedSuggestion) {
+      console.error('Selected suggestion not found.');
+      return;
+    }
+
+    const proxyUrl = 'https://api.allorigins.win/get?url=';
+    const targetUrl = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${selectedSuggestion.place_id}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&language=ko`;
+    try {
+      const response = await axios.get(proxyUrl + encodeURIComponent(targetUrl));
+      const data = JSON.parse(response.data.contents);
+
+      const place = {
+        name: data.result.name,
+        address: data.result.formatted_address,
+        imgSrc: data.result.photos
+          ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${data.result.photos[0].photo_reference}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`
+          : '/path/to/default/image.png',
       };
-      setPlaces([...places, newPlace]);
+
+      setPlaces([...places, place]);
       setSearchInput('');
+      setSelectedSuggestion(null);
+      setShowPlacesList(true);
+      setShowMap(false);
+      setSelectedFriend(null);
+    } catch (error) {
+      console.error('Error fetching place details:', error);
     }
   };
 
@@ -103,17 +165,30 @@ const HomePopup = ({ onClose }) => {
     <div style={commonStyles.popupContainer}>
       <div style={commonStyles.popupBox}>
         <div style={commonStyles.popupHeader}>
-          <input 
-            type="text" 
-            placeholder="검색어를 입력하세요" 
-            style={commonStyles.popupInput} 
+          <input
+            type="text"
+            placeholder="검색어를 입력하세요"
+            style={commonStyles.popupInput}
             value={searchInput}
             onFocus={handleInputFocus}
-            onChange={(e) => setSearchInput(e.target.value)}
+            onChange={handleSearchInputChange}
           />
           <button onClick={handleSearch} style={commonStyles.popupButton}>검색</button>
           <button onClick={onClose} style={commonStyles.popupCloseButton}>X</button>
         </div>
+        {suggestions.length > 0 && (
+          <ul style={commonStyles.suggestionsList}>
+            {suggestions.map((suggestion) => (
+              <li
+                key={suggestion.place_id}
+                style={commonStyles.suggestionItem}
+                onClick={() => handleSuggestionClick(suggestion)}
+              >
+                {suggestion.description}
+              </li>
+            ))}
+          </ul>
+        )}
         <div style={commonStyles.popupContent}>
           <div style={commonStyles.locationContainer} onClick={handleUseCurrentLocation}>
             <img src="/img/location.png" alt="현재 위치 사용" style={commonStyles.locationIcon} />
@@ -150,7 +225,7 @@ const HomePopup = ({ onClose }) => {
             </div>
           </div>
           {showPlacesList && (
-            <div>
+            <div style={commonStyles.placesListContainer}>
               <p style={commonStyles.currentLocationText}>검색 목록</p>
               <PlacesList>
                 {places.map((place, index) => (

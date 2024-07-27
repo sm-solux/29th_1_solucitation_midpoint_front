@@ -435,6 +435,23 @@ export const commonStyles = {
     fontWeight: "bold",
     marginBottom: "0.5rem",
   },
+  suggestionsList: {
+    listStyle: 'none',
+    margin: 0,
+    padding: 0,
+    backgroundColor: 'white',
+    border: '1px solid #ccc',
+    position: 'absolute',
+    width: '71%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    zIndex: 1000,
+  },
+  suggestionItem: {
+    padding: '10px',
+    cursor: 'pointer',
+  },
+  
 };
 
 export const LoginFormContainer = styled.form`
@@ -460,19 +477,55 @@ export const LoginInputGroup = styled.div`
 
 export const LoginInputLabel = styled.label`
   width: 9.5rem;
-  margin-right: 0.5rem;
-  margin-left: 0.5rem;
   color: #1b4345;
 `;
 
 export const LoginInputField = styled.input`
   flex: 1;
-  padding: 10px;
+  padding: 8px;
+  padding-left: 0px;
   border: none;
-  font-size: 1rem;
+  font-size: 1.1rem;
   background-color: transparent !important;
   outline: none;
   box-shadow: none;
+  color: #1b4345;
+  font-weight: 700;
+
+  ::placeholder {
+    color: #1b4345;
+    font-size: 1.13rem;
+    font-weight: 900; 
+    letter-spacing: -0.1rem;
+  }
+
+  &::-webkit-input-placeholder {
+    color: #1b4345;
+    font-size: 1.13rem;
+    font-weight: 900;
+    letter-spacing: -0.1rem;
+  }
+
+  &::-moz-placeholder {
+    color: #1b4345;
+    font-size: 1.13rem;
+    font-weight: 900;
+    letter-spacing: -0.1rem;
+  }
+
+  &:-ms-input-placeholder {
+    color: #1b4345;
+    font-size: 1.13rem;
+    font-weight: 900;
+    letter-spacing: -0.1rem;
+  }
+
+  &::-ms-input-placeholder {
+    color: #1b4345;
+    font-size: 1.13rem;
+    font-weight: 900;
+    letter-spacing: -0.1rem;
+  }
 `;
 
 export const LoginSubmitButton = styled.button`
@@ -514,8 +567,8 @@ export const JoinInputGroup = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  margin-top: -2.45rem;
-  margin-bottom: 5.1rem;
+  margin-top: -1.5rem;
+  margin-bottom: 4.3rem;
   padding-bottom: 0.5rem;
   border-bottom: 0.25rem solid #1b4345;
   font-size: 1.25rem;
@@ -529,7 +582,7 @@ export const JoinInputLabel = styled.label`
 `;
 
 export const ProfilePictureLabel = styled.label`
-  margin-top: -1.8rem;
+  margin-top: -0.7rem;
   margin-bottom: 1rem;
   color: #1b4345;
   font-size: 1.25rem;
@@ -585,20 +638,53 @@ export const Verification = styled.div`
   margin-right: 0.8rem;
 `;
 
-export const VerificationLabel = styled.label`
-  width: 7rem;
-  color: #1b4345;
-  font-size: 1.25rem;
-  font-weight: 700;
-`;
 
 export const VerificationInput = styled.input`
   width: 65%;
   padding: 10px;
+  padding-left: 0px;
+  padding-right: 0px;
   border: none;
-  font-size: 1rem;
+  font-size: 1.1rem;
   background-color: transparent !important;
   outline: none;
+  color: #1b4345;
+  font-weight: 700;
+
+  ::placeholder {
+    color: #1b4345;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.1rem;
+  }
+
+  &::-webkit-input-placeholder {
+    color: #1b4345;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.1rem;
+  }
+
+  &::-moz-placeholder {
+    color: #1b4345;
+    font-size: 1.2rem;
+    font-weight: 900;
+    letter-spacing: -0.1rem;
+  }
+
+  &:-ms-input-placeholder {
+    color: #1b4345;
+    font-size: 1.2rem;
+    font-weight: 900;
+    letter-spacing: -0.1rem;
+  }
+
+  &::-ms-input-placeholder {
+    color: #1b4345;
+    font-size: 1.2rem;
+    font-weight: 900;
+    letter-spacing: -0.1rem;
+  }
 `;
 
 export const VerificationButton = styled.button`
@@ -689,7 +775,7 @@ export const ProgressBarContainer = styled.div`
 
 export const ProgressBar = styled.div`
   height: 100%;
-  background-color: #000;
+  background-color: #000; 
   border-radius: 5px;
   position: relative;
   transition: width 0.3s ease;
@@ -698,11 +784,11 @@ export const ProgressBar = styled.div`
 export const ProgressIndicator = styled.div`
   width: 20px;
   height: 20px;
-  background-color: #000;
+  background-color: #000; 
   border-radius: 50%;
   position: absolute;
   top: -5px;
-  right: 0;
+  right: 0; 
   transform: translateX(50%);
 `;
 
@@ -714,14 +800,14 @@ export const PlaceContainer = styled.div`
 export const Left = styled.div`
   flex: 1;
   display: flex;
-  justify-content: center;
+  justify-content: center; 
   padding: 1rem;
 `;
 
 export const PlacesList = styled.ul`
   list-style: none;
   padding: 0;
-  max-height: 200px;
+  max-height: 200px; 
   overflow-y: auto;
 `;
 
@@ -748,14 +834,13 @@ export const PlaceItem = styled.div`
   div {
     display: flex;
     flex-direction: column;
-    background-color: #000;
+    background-color: #000; 
     border-radius: 8px;
     padding: 0.3rem;
     flex: 1;
 
-    h3,
-    p {
-      color: #fff;
+    h3, p {
+      color: #fff; 
     }
 
     h3 {
@@ -796,15 +881,14 @@ export const FriendItem = styled.div`
   div {
     display: flex;
     flex-direction: column;
-    background-color: #fff;
+    background-color: #fff; 
     border-radius: 8px;
     margin-left: 0.8rem;
     padding: 0.3rem;
     flex: 1;
 
-    h3,
-    p {
-      color: #000;
+    h3, p {
+      color: #000; 
     }
 
     h3 {
@@ -867,7 +951,7 @@ export const WhiteBox = styled.div`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
   width: 100%;
-  max-width: 90%;
+  max-width: 90%; 
 `;
 
 export const ShareButton = styled.button`
@@ -882,7 +966,7 @@ export const ShareButton = styled.button`
   cursor: pointer;
 
   span {
-    font-weight: 800;
+    font-weight: 800; 
   }
 
   img {
