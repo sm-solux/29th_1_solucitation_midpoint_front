@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import {
   PlaceContainer,
@@ -16,27 +17,23 @@ import {
 import { Logo } from '../../components/CommonComponents';
 
 function Midpoint() {
-  const [places, setPlaces] = useState([]);
+  const location = useLocation();
+  const { places, district } = location.state;
   const [weather, setWeather] = useState(null);
   const [selectedPlace, setSelectedPlace] = useState(null);
-  const [dongName, setDongName] = useState('');
 
   useEffect(() => {
-    // 동 이름 불러오기
-    axios.get('/api/dong-name')
-      .then(response => setDongName(response.data.name))
-      .catch(error => console.error('Error fetching dong name:', error));
+    const fetchWeatherData = async () => {
+      try {
+        const weatherResponse = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${district}&appid=${process.env.REACT_APP_OPENWEATHERMAP_API_KEY}&units=metric`);
+        setWeather(weatherResponse.data);
+      } catch (error) {
+        console.error('Error fetching weather data:', error);
+      }
+    };
 
-    // 추천 장소 불러오기
-    axios.get('/api/recommended-places')
-      .then(response => setPlaces(response.data))
-      .catch(error => console.error('Error fetching places:', error));
-
-    // 날씨 정보 불러오기
-    axios.get('/api/weather')
-      .then(response => setWeather(response.data))
-      .catch(error => console.error('Error fetching weather:', error));
-  }, []);
+    fetchWeatherData();
+  }, [district]);
 
   const handlePlaceClick = (place) => {
     setSelectedPlace(place);
@@ -53,7 +50,7 @@ function Midpoint() {
       <PlaceContainer>
         <Left>
           <WhiteBox> {/* WhiteBox로 장소 추천, 공유, 날씨 부분 묶기 */}
-            <h2>{dongName} 주변 장소 추천</h2>
+            <h2>{district} 주변 장소 추천</h2>
             <PlacesList>
               {places.map((place, index) => (
                 <PlaceItem key={index} onClick={() => handlePlaceClick(place)}>
@@ -73,9 +70,9 @@ function Midpoint() {
               </ShareButton>
               {weather && (
                 <WeatherInfo>
-                  <span>00구</span>
-                  <img src="/img/sun.png" alt="Weather" />
-                  <span>{weather.temp}°C</span>
+                  <span>{district}</span>
+                  <img src={`https://openweathermap.org/img/w/${weather.weather[0].icon}.png`} alt="Weather" />
+                  <span>{weather.main.temp}°C</span>
                 </WeatherInfo>
               )}
             </BottomSection>
@@ -87,7 +84,7 @@ function Midpoint() {
             <MapContainer>
               <iframe
                 title="map"
-                src={`https://maps.google.com/maps?q=${selectedPlace.lat},${selectedPlace.lng}&z=15&output=embed`}
+                src={`https://maps.google.com/maps?q=${selectedPlace.latitude},${selectedPlace.longitude}&z=15&output=embed`}
               />
             </MapContainer>
           )}

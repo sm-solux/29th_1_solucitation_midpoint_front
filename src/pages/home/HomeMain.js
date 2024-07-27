@@ -16,10 +16,19 @@ const Home = () => {
   const navigate = useNavigate();
 
   const fetchUserProfile = async () => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      // 로그인하지 않은 경우
+      console.error('No token found, setting default profile');
+      setUserInfo({ name: '본인', profileImage: '/img/default-profile.png', address: '' });
+      return;
+    }
+
     try {
-      const response = await axios.get('/api/member/profile', {
+      const response = await axios.get('http://3.36.150.194:8080/midpoint/api/member/profile', {
         headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
       });
 
@@ -34,12 +43,18 @@ const Home = () => {
     } catch (error) {
       console.error('Error fetching user profile:', error);
       setUserInfo({ name: '본인', profileImage: '/img/default-profile.png', address: '' });
+      if (error.response && error.response.status === 401) {
+        // 인증 오류가 발생한 경우 로그인 페이지로 리다이렉트
+        navigate('/login');
+      }
     }
   };
 
   useEffect(() => {
     fetchUserProfile();
   }, []);
+
+  const isLoggedIn = !!localStorage.getItem('accessToken'); // 로그인 여부 확인
 
   const handleAddInput = () => {
     const newFriendName = `친구 ${friendCount}`;
@@ -82,27 +97,41 @@ const Home = () => {
     }
   };
 
+  const geocodeAddress = async (address) => {
+    const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`);
+    const { lat, lng } = response.data.results[0].geometry.location;
+    return { latitude: lat, longitude: lng };
+  };
+
   const handleFindPlace = async () => {
     try {
       const addressInputs = [userInfo, ...friends];
-      const latitudes = addressInputs.map(input => input.latitude);
-      const longitudes = addressInputs.map(input => input.longitude);
+      const geocodedInputs = await Promise.all(addressInputs.map(async input => {
+        if (input.address) {  // 방어 코드 추가
+          const { latitude, longitude } = await geocodeAddress(input.address);
+          return { ...input, latitude, longitude };
+        } else {
+          return input;
+        }
+      }));
+      const latitudes = geocodedInputs.map(input => input.latitude).filter(Boolean);  // 방어 코드 추가
+      const longitudes = geocodedInputs.map(input => input.longitude).filter(Boolean);  // 방어 코드 추가
 
-      const logicResponse = await axios.post('/api/logic', {
+      const logicResponse = await axios.post('http://3.36.150.194:8080/midpoint/api/logic', {
         latitudes,
         longitudes
       });
 
       if (logicResponse.data.success) {
-        const placesResponse = await axios.get('/api/places', {
+        const placesResponse = await axios.get('http://3.36.150.194:8080/midpoint/api/places', {
           params: {
             midpoint: logicResponse.data.midpoint,
             purpose: selectedPurpose
           }
         });
 
-        if (placesResponse.data.success && placesResponse.data.places.length > 0) {
-          navigate('/midpoint');
+        if (placesResponse.data.length > 0) {
+          navigate('/midpoint', { state: { places: placesResponse.data, district: logicResponse.data.midpointDistrict } });
         } else {
           navigate('/again');
         }
@@ -117,13 +146,13 @@ const Home = () => {
 
   const purposes = [
     { label: '목적 추천 TEST', value: '/test1' },
-    { label: '맛집', value: '/restaurant' },
-    { label: '카페', value: '/cafe' },
-    { label: '산책/등산', value: '/hiking' },
-    { label: '공부', value: '/study' },
-    { label: '문화생활', value: '/culture' },
-    { label: '핫플', value: '/hotplace' },
-    { label: '친목', value: '/social' },
+    { label: '맛집', value: 'restaurant' },
+    { label: '카페', value: 'cafe' },
+    { label: '산책/등산', value: 'hiking' },
+    { label: '공부', value: 'study' },
+    { label: '문화생활', value: 'culture' },
+    { label: '핫플', value: 'hotplace' },
+    { label: '친목', value: 'social' },
   ];
 
   return (
@@ -216,6 +245,7 @@ const Home = () => {
               [popupTarget]: results
             }
           }))}
+          isLoggedIn={isLoggedIn} // 로그인 상태 전달
         />
       )}
     </div>

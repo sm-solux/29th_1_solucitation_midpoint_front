@@ -3,7 +3,7 @@ import { commonStyles, PlacesList, PlaceItem, FriendItem } from '../../styles/st
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 
-const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults }) => {
+const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLoggedIn }) => {
   const mapRef = useRef(null);
   const [map, setMap] = useState(null);
   const [showMap, setShowMap] = useState(false);
@@ -217,36 +217,38 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults }) => 
             <img src="/img/location.png" alt="현재 위치 사용" style={commonStyles.locationIcon} />
             <span>현재 위치 사용</span>
           </div>
-          <div style={commonStyles.popupSections}>
-            <div style={commonStyles.popupSection1}>
-              <p style={commonStyles.popupSectionTitle}>즐겨찾는 장소</p>
-              <div style={commonStyles.favoritePlaces}>
-                <button style={commonStyles.favoritePlace}>
-                  <img src="/img/home.png" alt="집" style={commonStyles.favoritePlaceImage} />
-                  <p>집</p>
-                </button>
-                <button style={commonStyles.favoritePlace}>
-                  <img src="/img/work.png" alt="직장/학교" style={commonStyles.favoritePlaceImage} />
-                  <p>직장/학교</p>
-                </button>
-              </div>
-            </div>
-            <div style={commonStyles.popupSection2}>
-              <p style={commonStyles.popupSectionTitle}>즐겨찾는 친구</p>
-              <div style={commonStyles.favoriteFriends}>
-                {friends.map((friend, index) => (
-                  <button
-                    key={index}
-                    style={commonStyles.favoriteFriend}
-                    onClick={() => handleFriendClick(friend)}
-                  >
-                    <img src="/img/pprofile.png" alt={friend.name} style={commonStyles.favoriteFriendImage} />
-                    <p>{friend.name}</p>
+          {isLoggedIn && (
+            <div style={commonStyles.popupSections}>
+              <div style={commonStyles.popupSection1}>
+                <p style={commonStyles.popupSectionTitle}>즐겨찾는 장소</p>
+                <div style={commonStyles.favoritePlaces}>
+                  <button style={commonStyles.favoritePlace}>
+                    <img src="/img/home.png" alt="집" style={commonStyles.favoritePlaceImage} />
+                    <p>집</p>
                   </button>
-                ))}
+                  <button style={commonStyles.favoritePlace}>
+                    <img src="/img/work.png" alt="직장/학교" style={commonStyles.favoritePlaceImage} />
+                    <p>직장/학교</p>
+                  </button>
+                </div>
+              </div>
+              <div style={commonStyles.popupSection2}>
+                <p style={commonStyles.popupSectionTitle}>즐겨찾는 친구</p>
+                <div style={commonStyles.favoriteFriends}>
+                  {friends.map((friend, index) => (
+                    <button
+                      key={index}
+                      style={commonStyles.favoriteFriend}
+                      onClick={() => handleFriendClick(friend)}
+                    >
+                      <img src="/img/pprofile.png" alt={friend.name} style={commonStyles.favoriteFriendImage} />
+                      <p>{friend.name}</p>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+          )}
           {showPlacesList && (
             <div style={commonStyles.placesListContainer}>
               <p style={commonStyles.currentLocationText}>검색 목록</p>
