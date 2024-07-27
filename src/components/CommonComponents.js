@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import { commonStyles } from "../styles/styles";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -46,6 +47,60 @@ function Logo({ exist = true, bgColor = "transparent" }) {
     return isActive ? activeLinkStyle : linkStyle;
   };
 
+  //로그아웃 부분
+    const handleLogout = async () => {
+    const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    if (!accessToken || !refreshToken) {
+      console.error("No tokens found for logout.");
+      setIsLoggedIn(false);
+      navigate("/home");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://3.36.150.194:8080/api/member/logout",
+        {},
+        {
+          headers: {
+            "Authorization": `Bearer ${accessToken}`,
+            "logout-token": `Bearer ${refreshToken}`,
+          },
+        }
+      );
+      console.log("Logout Successful:", response.data.message);
+      
+      localStorage.removeItem("accessToken"); //로그아웃 3번방법 3번
+      localStorage.removeItem("refreshToken");
+      setIsLoggedIn(false);
+      navigate("/home");
+    } catch (error) {
+      if (error.response) {
+        const { status, data } = error.response;
+        if (status === 401) {
+          if (data.error === "access_token_expired") { //accesstoken 재발금 받는 부분은 미구현
+            console.error("The access token has expired.");
+          } else if (data.error === "invalid_token") {
+            console.error("The access token is invalid.");
+          }
+        } else {
+          console.error("Logout failed:", data.message || error.message);
+        }
+      } else {
+        console.error("Logout failed:", error.message);
+      }
+      setIsLoggedIn(false);
+      navigate("/home");
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    setIsLoggedIn(!!token);
+  }, []);
+
   return (
     <header style={commonStyles.header(bgColor)}>
       <div style={commonStyles.logo_div}>
@@ -60,8 +115,8 @@ function Logo({ exist = true, bgColor = "transparent" }) {
           <div style={commonStyles.linkContainer} key={link.name}>
             {link.name === "logout" ? (
               <span
-                style={getLinkStyle(link.path)}
-                onClick={() => setIsLoggedIn(false)}
+                style={getLinkStyle(link)}
+                onClick={handleLogout}
               >
                 {link.label}
               </span>
@@ -76,6 +131,8 @@ function Logo({ exist = true, bgColor = "transparent" }) {
     </header>
   );
 }
+
+export default Logo;
 
 // 4분 타이머
 const Timer = ({ isActive, resetTimer }) => {
