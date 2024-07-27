@@ -134,7 +134,7 @@ const MyPageProfile = () => {
       alert('탈퇴 됐습니다.');
       navigate('/');
     } catch (error) {
-      console.error('계정 삭제 중 에러 발생:', error);
+      console.error('탈퇴 중 에러 발생:', error);
     }
   };
 
@@ -160,9 +160,9 @@ const MyPageProfile = () => {
   if (state.deleteConfirmationMode) {
     return (
       <div style={myPageStyles.deleteConfirmationContainer}>
-        <h2 style={myPageStyles.deleteConfirmationTitle}>계정 삭제 확인</h2>
-        <p style={myPageStyles.deleteConfirmationText}>정말로 계정을 삭제하시겠습니까?</p>
-        <button onClick={handleDeleteConfirm} style={myPageStyles.deleteConfirmationButton}>삭제</button>
+        <h2 style={myPageStyles.deleteConfirmationTitle}>미드포인트 탈퇴 </h2>
+        <p style={myPageStyles.deleteConfirmationText}>정말 탈퇴하시겠습니까? 탈퇴 시 되돌릴 수 없습니다. 신중하게 결정해주세요.</p>
+        <button onClick={handleDeleteConfirm} style={myPageStyles.deleteConfirmationButton}>탈퇴</button>
         <button onClick={() => setState({ ...state, deleteConfirmationMode: false })} style={myPageStyles.deleteConfirmationButton}>취소</button>
       </div>
     );
@@ -220,7 +220,7 @@ const MyPageProfile = () => {
         ) : (
           <>
             <button onClick={() => setState({ ...state, editMode: true })} style={myPageStyles.profileButtonEdit}>편집</button>
-            <button onClick={handleDeleteAccount} style={myPageStyles.profileButtonQuit}>계정 삭제</button>
+            <button onClick={handleDeleteAccount} style={myPageStyles.profileButtonQuit}>탈퇴</button>
           </>
         )}
       </div>
