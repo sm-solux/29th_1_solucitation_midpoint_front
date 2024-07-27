@@ -22,7 +22,6 @@ const LoginButton = styled.button`
 `;
 
 function LoginPage() {
-  // 회원가입 및 자체로그인 navigate
   const navigate = useNavigate();
   const onClick = () => {
     navigate("/login/join");
