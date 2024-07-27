@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   commonStyles,
   LoginFormContainer,
@@ -483,7 +483,7 @@ const FindPasswordForm = ({ inputs, onSubmit }) => {
   const [verificationCode, setVerificationCode] = useState("");
 
   const toResetPassword = () => {
-    navigate("/login/resetpassword");
+    navigate(`/login/resetpassword`);
   };
 
   const handleInputChange = (event) => {
@@ -505,6 +505,7 @@ const FindPasswordForm = ({ inputs, onSubmit }) => {
         "http://3.36.150.194:8080/api/auth/verify-email",
         { email, name }
       );
+
       alert(response.data.message);
       setHideButton(true);
       setVerificationVisible(true);
@@ -564,13 +565,19 @@ const FindPasswordForm = ({ inputs, onSubmit }) => {
 
   const verify = async (event) => {
     event.preventDefault();
-    console.log(verificationCode);
     try {
       const response = await axios.post(
         "http://3.36.150.194:8080/api/auth/reset-pw/verify-code",
         { email: email, code: verificationCode }
       );
-      console.log("Verification successful:", response.data);
+
+      localStorage.setItem(
+        "tokenForResetPassword",
+        response.data["X-Reset-Password-Token"]
+      );
+
+      console.log(response.data["X-Reset-Password-Token"]);
+
       setIsTimerActive(false);
       alert("인증 완료되었습니다😊");
     } catch (error) {
@@ -666,14 +673,9 @@ const FindPasswordForm = ({ inputs, onSubmit }) => {
 };
 
 // 비밀번호 재설정 폼
-const ResetPasswordForm = ({
-  inputs,
-  values,
-  setValues,
-  buttonText,
-  tokenForResetPassword,
-}) => {
+const ResetPasswordForm = ({ inputs, values, setValues, buttonText }) => {
   const [errors, setErrors] = useState({});
+  const [tokenForResetPassword, setTokenForResetPassword] = useState("");
   const navigate = useNavigate();
 
   // 입력값 검증 함수
@@ -763,6 +765,27 @@ const ResetPasswordForm = ({
       }
     }
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("tokenForResetPassword");
+    if (token) {
+      try {
+        setTokenForResetPassword(token);
+      } catch (e) {
+        console.error("토큰 파싱 중 오류 발생:", e);
+        navigate("/login");
+      }
+    } else {
+      navigate("/login");
+    }
+
+    // 10분 후 로컬 스토리지에서 토큰 제거
+    const timer = setTimeout(() => {
+      localStorage.removeItem("tokenForResetPassword");
+    }, 10 * 60 * 1000);
+
+    return () => clearTimeout(timer);
+  }, [navigate]);
 
   return (
     <LoginFormContainer onSubmit={resetPassword}>
