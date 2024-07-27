@@ -1,26 +1,36 @@
-import React from "react";
+import { React, useState } from "react";
 import styled from "styled-components";
 import { Logo } from "../../components/CommonComponents";
 import { LoginTitle, LoginForm } from "../../components/LoginComponents";
 import { commonStyles, LoginText } from "../../styles/styles";
 import { Navigate, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const inputs = [
-  { label: "닉네임 또는 이메일", type: "id", id: "id", required: true },
+  {
+    label: "아이디 또는 이메일",
+    type: "text",
+    id: "identifier",
+    required: true,
+  },
   { label: "비밀번호", type: "password", id: "password", required: true },
 ];
 
 function DirectLoginPage() {
   const navigate = useNavigate();
-  const handleSubmit = () => {
-    navigate('/home')
+
+  const handleLoginSuccess = (data) => {
+    navigate("/home");
   };
+
   const toFindPassword = () => {
     navigate("/login/findpassword");
   };
+
   const toJoin = () => {
     navigate("/login/join");
   };
+
   return (
     <div>
       <Logo />
@@ -29,7 +39,7 @@ function DirectLoginPage() {
         <LoginForm
           inputs={inputs}
           buttonText="로그인"
-          onSubmit={handleSubmit}
+          onLoginSuccess={handleLoginSuccess}
         />
         <div
           style={{
