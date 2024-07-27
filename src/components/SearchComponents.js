@@ -6,18 +6,7 @@ const SearchBox = ({ setFilteredReviews, setSearchTerm, clickedTags, setClickedT
   const [searchText, setSearchText] = useState('');
   const [error, setError] = useState(null);
 
-  const tags = [
-    { id: 1, name: '식사' },
-    { id: 2, name: '카페' },
-    { id: 3, name: '공부' },
-    { id: 4, name: '문화생활' },
-    { id: 5, name: '쇼핑' },
-    { id: 6, name: '자연' },
-    { id: 7, name: '산책' },
-    { id: 8, name: '친목' },
-    { id: 9, name: '여럿이' },
-    { id: 10, name: '혼자' },
-  ];
+  const tags = ['식사', '카페', '공부', '문화생활', '쇼핑', '자연', '산책', '친목', '여럿이', '혼자'];
 
   const handleInputChange = (e) => {
     setSearchText(e.target.value);
@@ -25,12 +14,12 @@ const SearchBox = ({ setFilteredReviews, setSearchTerm, clickedTags, setClickedT
 
   const handleTagClick = (tag) => {
     setClickedTags((prevTags) => {
-      if (prevTags.includes(tag.id)) {
-        const newTags = prevTags.filter((t) => t !== tag.id);
+      if (prevTags.includes(tag)) {
+        const newTags = prevTags.filter((t) => t !== tag);
         fetchByTags(newTags);
         return newTags;
       } else if (prevTags.length < 2) {
-        const newTags = [...prevTags, tag.id];
+        const newTags = [...prevTags, tag];
         fetchByTags(newTags);
         return newTags;
       } else {
@@ -40,53 +29,13 @@ const SearchBox = ({ setFilteredReviews, setSearchTerm, clickedTags, setClickedT
     });
   };
 
-  //태그로 검색
-  const fetchByTags = async (tags) => {
-    try {
-      const accessToken = localStorage.getItem('accessToken');
-      const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
-      const params = { purpose: tags };
-
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/search/purpose?purpose={purpose}`, {
-        params,
-        headers,
-      });
-
-      if (response.status === 200) {
-        const data = response.data.map((item) => ({
-          postId: item.postId,
-          firstImageUrl: item.firstImageUrl,
-          title: item.title,
-          hashtags: item.hashtags,
-          likes: item.likes,
-        }));
-        setFilteredReviews(data);
-        setError(null);
-      }
-    } catch (error) {
-      if (error.response) {
-        if (error.response.status === 400) {
-          setError('최소 하나 이상의 해시태그를 선택해야 합니다.');
-        } else if (error.response.status === 500) {
-          setError(`게시글 검색 중 오류가 발생하였습니다: ${error.message}`);
-        }
-      } else if (error.request) {
-        setError('서버와 연결할 수 없습니다.');
-      } else {
-        setError(`오류가 발생하였습니다: ${error.message}`);
-      }
-    }
-  };
-
   //검색어로 검색
   const fetchBySearchTerm = async (text) => {
     try {
       const accessToken = localStorage.getItem('accessToken');
       const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
-      const params = { query: text };
-
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/search/query?query={query}`, {
-        params,
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/search/query`, {
+        params: { query: text },
         headers,
       });
 
@@ -116,7 +65,51 @@ const SearchBox = ({ setFilteredReviews, setSearchTerm, clickedTags, setClickedT
     }
   };
 
+  //태그로 검색
+  const fetchByTags = async (tagNames) => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
+      console.log('Fetching by tags:', tagNames);
+
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/search/purpose`, {
+        params: { purpose: tagNames },
+        headers,
+        paramsSerializer: params => {
+          return Object.keys(params).map(key => {
+            return `${encodeURIComponent(key)}=${encodeURIComponent(params[key].join(','))}`;
+          }).join('&');
+        }
+      });
+
+      if (response.status === 200) {
+        const data = response.data.map((item) => ({
+          postId: item.postId,
+          firstImageUrl: item.firstImageUrl,
+          title: item.title,
+          hashtags: item.hashtags,
+          likes: item.likes,
+        }));
+        setFilteredReviews(data);
+        setError(null);
+      }
+    } catch (error) {
+      if (error.response) {
+        if (error.response.status === 400) {
+          setError('최소 하나 이상의 해시태그를 선택해야 합니다.');
+        } else if (error.response.status === 500) {
+          setError(`게시글 검색 중 오류가 발생하였습니다: ${error.message}`);
+        }
+      } else if (error.request) {
+        setError('서버와 연결할 수 없습니다.');
+      } else {
+        setError(`오류가 발생하였습니다: ${error.message}`);
+      }
+    }
+  };
+
   const handleSearch = () => {
+    setSearchTerm(searchText);
     fetchBySearchTerm(searchText);
   };
 
@@ -151,17 +144,17 @@ const SearchBox = ({ setFilteredReviews, setSearchTerm, clickedTags, setClickedT
           <div style={searchStyles.searchTagList}>
             {tags.map((tag) => (
               <div
-                key={tag.id}
+                key={tag}
                 style={{
                   ...searchStyles.searchTag,
-                  backgroundColor: clickedTags.includes(tag.id) ? '#1B4345' : 'transparent',
-                  color: clickedTags.includes(tag.id) ? '#fff' : '#1B4345',
+                  backgroundColor: clickedTags.includes(tag) ? '#1B4345' : 'transparent',
+                  color: clickedTags.includes(tag) ? '#fff' : '#1B4345',
                   borderColor: '#1B4345',
                   cursor: 'pointer',
                 }}
                 onClick={() => handleTagClick(tag)}
               >
-                {tag.name}
+                {tag}
               </div>
             ))}
           </div>

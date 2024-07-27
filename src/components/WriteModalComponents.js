@@ -17,49 +17,54 @@ import writeModalStyles, {
 
 Modal.setAppElement('#root');
 
+const predefinedTags = [
+  '#식사',
+  '#카페',
+  '#공부',
+  '#문화생활',
+  '#쇼핑',
+  '#자연',
+  '#산책',
+  '#친목',
+  '#여럿이',
+  '#혼자',
+];
+
+const tagIdMap = {
+  '#식사': 1,
+  '#카페': 2,
+  '#공부': 3,
+  '#문화생활': 4,
+  '#쇼핑': 5,
+  '#자연': 6,
+  '#산책': 7,
+  '#친목': 8,
+  '#여럿이': 9,
+  '#어린이': 10,
+  '#혼자': 11,
+};
+
 const WriteModal = ({
   isOpen,
   closeModal,
   addReview,
-  existingReview,
+  existingReview = {},
   isEditing,
+  currentUser
 }) => {
-  const [currentUser, setCurrentUser] = useState(null);
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
-      setCurrentUser(JSON.parse(storedUser));
-    }
-  }, []);
-
   const [placeName, setPlaceName] = useState('');
   const [content, setContent] = useState('');
   const [selectedFiles, setSelectedFiles] = useState([null, null, null]);
-  const fileInputRefs = [useRef(null), useRef(null), useRef(null)];
-  const [selectedTags, setSelectedTags] = useState([]);
   const [photoURLs, setPhotoURLs] = useState([null, null, null]);
-
-  const predefinedTags = [
-    '#식사',
-    '#카페',
-    '#공부',
-    '#문화생활',
-    '#쇼핑',
-    '#자연',
-    '#산책',
-    '#친목',
-    '#여럿이',
-    '#혼자',
-  ];
+  const [selectedTags, setSelectedTags] = useState([]);
+  const fileInputRefs = [useRef(null), useRef(null), useRef(null)];
 
   useEffect(() => {
-    if (existingReview && Object.keys(existingReview).length > 0) {
+    if (Object.keys(existingReview).length > 0) {
       setPlaceName(existingReview.title || '');
       setContent(existingReview.content || '');
-      setSelectedFiles([null, null, null]);
       setPhotoURLs(existingReview.images || [null, null, null]);
-      setSelectedTags(existingReview.postHashtags ? existingReview.postHashtags.map(tagId => predefinedTags[tagId - 1]) : []);
+      setSelectedTags(existingReview.postHashtags ? existingReview.postHashtags.map(tagId => Object.keys(tagIdMap).find(key => tagIdMap[key] === tagId)) : []);
     }
   }, [existingReview]);
 
@@ -72,9 +77,7 @@ const WriteModal = ({
   }, [photoURLs]);
 
   const handleIconClick = (index) => {
-    if (fileInputRefs[index].current) {
-      fileInputRefs[index].current.click();
-    }
+    fileInputRefs[index]?.current?.click();
   };
 
   const handleFileChange = (index, e) => {
@@ -95,27 +98,49 @@ const WriteModal = ({
 
   const handleTagClick = (tag) => {
     if (selectedTags.includes(tag)) {
-      const newTags = selectedTags.filter((t) => t !== tag);
-      setSelectedTags(newTags);
+      setSelectedTags(selectedTags.filter((t) => t !== tag));
     } else if (selectedTags.length < 2) {
-      const newTags = [...selectedTags, tag];
-      setSelectedTags(newTags);
+      setSelectedTags([...selectedTags, tag]);
     }
+  };
+
+  const validateForm = () => {
+    if (!placeName.trim()) {
+      alert('제목을 입력해 주세요.');
+      return false;
+    }
+
+    if (!content.trim()) {
+      alert('내용을 입력해 주세요.');
+      return false;
+    }
+
+    if (selectedTags.length < 2) {
+      alert('태그를 2개 선택해 주세요.');
+      return false;
+    }
+
+    const validPhotos = selectedFiles.filter(file => file !== null);
+    if (validPhotos.length < 1) {
+      alert('최소 한 장의 사진을 업로드해 주세요.');
+      return false;
+    }
+
+    return true;
   };
 
   const handleAddReview = (e) => {
     e.preventDefault();
 
-    if (selectedTags.length < 2) {
-      alert('태그를 2개 선택해 주세요.');
-      return;
-    }
+    if (!validateForm()) return;
+
+    const tags = selectedTags.map(tag => tagIdMap[tag]);
 
     const newReview = {
       placeName,
       content,
       photos: selectedFiles.filter(file => file !== null),
-      tags: selectedTags,
+      tags,
       author: currentUser,
     };
 
