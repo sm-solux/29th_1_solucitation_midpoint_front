@@ -82,35 +82,8 @@ const MyPagePosts = () => {
       tags: ['#쇼핑', '#산책'],
       placeName: '편안한 카페',
       content: '아오 맛있어~4',
-      author: 'user3',
+      author: 'user1',
       likes: 7,
-    },
-    {
-      id: 7,
-      photos: ['http://www.lampcook.com/wi_files/food_top100/top5/5_5.jpg'],
-      tags: ['#쇼핑', '#산책'],
-      placeName: '편안한 카페',
-      content: '아오 맛있어~4',
-      author: 'user3',
-      likes: 1,
-    },
-    {
-      id: 8,
-      photos: ['http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg'],
-      tags: ['#쇼핑', '#산책'],
-      placeName: '편안한 카페',
-      content: '아오 맛있어~4',
-      author: 'user3',
-      likes: 2,
-    },
-    {
-      id: 9,
-      photos: ['http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg'],
-      tags: ['#쇼핑', '#산책'],
-      placeName: '편안한 카페',
-      content: '아오 맛있어~4',
-      author: 'user3',
-      likes: 2,
     },
   ];
 
@@ -185,7 +158,7 @@ const MyPagePosts = () => {
           closeModal={closeReviewModal}
           currentUser={currentUser}
           openWriteModal={openWriteModal}
-          deleteReview={deleteReview} // Pass deleteReview function
+          deleteReview={deleteReview}
         />
       )}
       <WriteModal

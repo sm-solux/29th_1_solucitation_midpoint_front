@@ -47,7 +47,6 @@ const ReviewModal = ({
   const photos = Array.isArray(review.images) ? review.images : [];
   const handleDeleteClick = () => {
     if (window.confirm('삭제하시겠습니까?')) {
-      //삭제라서 일단 구현
       deleteReview(review);
       closeModal();
     }
@@ -109,7 +108,6 @@ const ReviewModal = ({
                 : reviewModalStyles.likeButton
             }
           >
-            {liked ? '♥' : '♡'}
           </button>
           <span style={reviewModalStyles.like}>좋아요 {likeCount}</span>
         </div>
