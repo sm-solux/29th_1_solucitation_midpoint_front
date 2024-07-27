@@ -3,16 +3,15 @@ import { commonStyles, PlacesList, PlaceItem, FriendItem } from '../../styles/st
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 
-const HomePopup = ({ onClose }) => {
+const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults }) => {
   const mapRef = useRef(null);
   const [map, setMap] = useState(null);
   const [showMap, setShowMap] = useState(false);
-  const [searchInput, setSearchInput] = useState('');
-  const [places, setPlaces] = useState([]);
-  const [suggestions, setSuggestions] = useState([]);
   const [showPlacesList, setShowPlacesList] = useState(false);
-  const [selectedFriend, setSelectedFriend] = useState(null);
+  const [searchInput, setSearchInput] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
+  const [selectedFriend, setSelectedFriend] = useState(null);
 
   const friends = [
     { name: '친구1', address: '서울특별시 용산구 청파대로10 1층' },
@@ -21,29 +20,33 @@ const HomePopup = ({ onClose }) => {
   ];
 
   useEffect(() => {
-    if (!window.google) {
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places&language=ko`;
-      script.async = true;
-      script.onload = () => {
-        if (mapRef.current && showMap) {
-          const mapOptions = {
-            center: new window.google.maps.LatLng(37.5665, 126.9780),
-            zoom: 10,
-          };
-          const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
-          setMap(googleMap);
-        }
-      };
-      document.head.appendChild(script);
-    } else if (mapRef.current && showMap) {
-      const mapOptions = {
-        center: new window.google.maps.LatLng(37.5665, 126.9780),
-        zoom: 10,
-      };
-      const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
-      setMap(googleMap);
-    }
+    const loadGoogleMaps = () => {
+      if (!window.google) {
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places&language=ko`;
+        script.async = true;
+        script.onload = () => {
+          if (mapRef.current && showMap) {
+            const mapOptions = {
+              center: new window.google.maps.LatLng(37.5665, 126.9780),
+              zoom: 10,
+            };
+            const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
+            setMap(googleMap);
+          }
+        };
+        document.head.appendChild(script);
+      } else if (mapRef.current && showMap) {
+        const mapOptions = {
+          center: new window.google.maps.LatLng(37.5665, 126.9780),
+          zoom: 10,
+        };
+        const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
+        setMap(googleMap);
+      }
+    };
+
+    loadGoogleMaps();
   }, [showMap]);
 
   const fetchSuggestions = async (value) => {
@@ -70,6 +73,11 @@ const HomePopup = ({ onClose }) => {
     debouncedFetchSuggestions(value);
   };
 
+  const handleSearchInputFocus = () => {
+    setShowPlacesList(true);
+    setShowMap(false);
+  };
+
   const handleSuggestionClick = (suggestion) => {
     setSelectedSuggestion(suggestion);
     setSearchInput(suggestion.description);
@@ -77,44 +85,48 @@ const HomePopup = ({ onClose }) => {
   };
 
   const handleSearch = async () => {
-    if (!selectedSuggestion) {
-      console.error('Selected suggestion not found.');
+    if (!selectedSuggestion && !searchInput) {
+      console.error('Selected suggestion or search input not found.');
       return;
     }
 
-    const proxyUrl = 'https://api.allorigins.win/get?url=';
-    const targetUrl = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${selectedSuggestion.place_id}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&language=ko`;
-    try {
-      const response = await axios.get(proxyUrl + encodeURIComponent(targetUrl));
-      const data = JSON.parse(response.data.contents);
+    if (selectedSuggestion) {
+      const proxyUrl = 'https://api.allorigins.win/get?url=';
+      const targetUrl = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${selectedSuggestion.place_id}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&language=ko`;
+      try {
+        const response = await axios.get(proxyUrl + encodeURIComponent(targetUrl));
+        const data = JSON.parse(response.data.contents);
 
-      const place = {
-        name: data.result.name,
-        address: data.result.formatted_address,
-        imgSrc: data.result.photos
-          ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${data.result.photos[0].photo_reference}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`
-          : '/path/to/default/image.png',
-      };
+        const place = {
+          name: data.result.name,
+          address: data.result.formatted_address,
+          imgSrc: data.result.photos
+            ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${data.result.photos[0].photo_reference}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`
+            : '/path/to/default/image.png',
+        };
 
-      setPlaces([...places, place]);
-      setSearchInput('');
-      setSelectedSuggestion(null);
-      setShowPlacesList(true);
-      setShowMap(false);
-      setSelectedFriend(null);
-    } catch (error) {
-      console.error('Error fetching place details:', error);
+        const updatedResults = [place, ...searchResults]; // 맨 위로 추가
+        setSearchResults(updatedResults);
+        setSearchInput('');
+        setSelectedSuggestion(null);
+        setShowMap(false);
+        setShowPlacesList(false);
+        onClose(place.address, updatedResults);
+      } catch (error) {
+        console.error('Error fetching place details:', error);
+      }
+    } else {
+      onClose(searchInput, searchResults);
     }
   };
 
   const handleUseCurrentLocation = () => {
     setShowMap(true);
     setShowPlacesList(false);
-    setSelectedFriend(null);
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        async (position) => {
           const { latitude, longitude } = position.coords;
           const currentLocation = { lat: latitude, lng: longitude };
 
@@ -138,6 +150,23 @@ const HomePopup = ({ onClose }) => {
             });
             setMap(googleMap);
           }
+
+          try {
+            const proxyUrl = 'https://api.allorigins.win/get?url=';
+            const targetUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&language=ko`;
+            const response = await axios.get(proxyUrl + encodeURIComponent(targetUrl));
+            const data = JSON.parse(response.data.contents);
+
+            if (data.results && data.results.length > 0) {
+              const currentAddress = data.results[0].formatted_address;
+              setSearchInput(currentAddress);
+              setSelectedSuggestion({ description: currentAddress, place_id: data.results[0].place_id });
+            } else {
+              alert('현재 위치의 주소를 찾을 수 없습니다.');
+            }
+          } catch (error) {
+            console.error('Error fetching current location address:', error);
+          }
         },
         (error) => {
           console.error('Error getting current position:', error);
@@ -149,16 +178,10 @@ const HomePopup = ({ onClose }) => {
     }
   };
 
-  const handleInputFocus = () => {
-    setShowPlacesList(true);
-    setShowMap(false);
-    setSelectedFriend(null);
-  };
-
   const handleFriendClick = (friend) => {
     setSelectedFriend(friend);
-    setShowPlacesList(false);
-    setShowMap(false);
+    setAddress(friend.address);
+    onClose(friend.address, searchResults);
   };
 
   return (
@@ -170,11 +193,11 @@ const HomePopup = ({ onClose }) => {
             placeholder="검색어를 입력하세요"
             style={commonStyles.popupInput}
             value={searchInput}
-            onFocus={handleInputFocus}
+            onFocus={handleSearchInputFocus}
             onChange={handleSearchInputChange}
           />
           <button onClick={handleSearch} style={commonStyles.popupButton}>검색</button>
-          <button onClick={onClose} style={commonStyles.popupCloseButton}>X</button>
+          <button onClick={() => onClose()} style={commonStyles.popupCloseButton}>X</button>
         </div>
         {suggestions.length > 0 && (
           <ul style={commonStyles.suggestionsList}>
@@ -228,7 +251,7 @@ const HomePopup = ({ onClose }) => {
             <div style={commonStyles.placesListContainer}>
               <p style={commonStyles.currentLocationText}>검색 목록</p>
               <PlacesList>
-                {places.map((place, index) => (
+                {searchResults.map((place, index) => (
                   <PlaceItem key={index}>
                     <img src={place.imgSrc} alt={place.name} />
                     <div>
