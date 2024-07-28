@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import axios from 'axios';
 import { Logo } from '../components/CommonComponents';
 import SearchBox from '../components/SearchComponents';
 import ReviewCard from '../components/ReviewComponents';
@@ -6,156 +7,136 @@ import ReviewModal from '../components/ReviewModalComponents';
 import WriteModal from '../components/WriteModalComponents';
 import { reviewStyles } from '../styles/reviewStyles';
 
+const useAuth = () => {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const userToken = localStorage.getItem('userToken');
+    const storedUser = localStorage.getItem('currentUser');
+    if (userToken && storedUser) {
+      setIsLoggedIn(true);
+      setCurrentUser(JSON.parse(storedUser));
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []);
+
+  return { currentUser, isLoggedIn };
+};
+
+const hashtagMap = {
+  1: '#식사',
+  2: '#카페',
+  3: '#공부',
+  4: '#문화생활',
+  5: '#쇼핑',
+  6: '#자연',
+  7: '#산책',
+  8: '#친목',
+  9: '#여럿이',
+  10: '#혼자',
+};
+
+//리뷰 불러오기
+const useFetchReviews = (isLoggedIn) => {
+  const [reviews, setReviews] = useState([]);
+  const [filteredReviews, setFilteredReviews] = useState([]);
+  const [error, setError] = useState('');
+
+  const fetchReviews = async () => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      const headers = accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : {};
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/posts`,
+        { headers }
+      );
+
+      const fetchedReviews = response.data.map((review) => ({
+        postId: review.postId,
+        firstImageUrl: review.firstImageUrl,
+        title: review.title,
+        hashtags: review.hashtags.map((tagId) => hashtagMap[tagId]),
+        likes: isLoggedIn ? review.likes : false,
+      }));
+
+      setReviews(fetchedReviews);
+      setFilteredReviews(fetchedReviews);
+    } catch (error) {
+      setError('게시글 조회 중 오류가 발생하였습니다.');
+      console.error('Fetch reviews error:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchReviews();
+  }, []);
+
+  return {
+    reviews,
+    filteredReviews,
+    setFilteredReviews,
+    error,
+    setError,
+    setReviews,
+  };
+};
+
 const ReviewPage = () => {
-  const currentUser = 'user1';
-
-  const initialReviews = [
-    {
-      id: 1,
-      photos: [
-        'http://www.lampcook.com/wi_files/food_top100/top5/5_5.jpg',
-        'http://www.lampcook.com/wi_files/food_top100/top5/5_6.jpg',
-        'http://www.lampcook.com/wi_files/food_top100/top5/5_7.jpg',
-      ],
-      tags: ['#식사', '#여럿이'],
-      placeName: '맛있는 식당',
-      content: '아오 맛있어~아오 맛있어~아오 맛있어~너무 맛있어서 눈물이나요',
-      author: 'user1',
-      likes: 0,
-    },
-    {
-      id: 2,
-      photos: [
-        'http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg',
-        'http://www.lampcook.com/wi_files/food_top100/top5/5_6.jpg',
-        'http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg',
-      ],
-      tags: ['#카페', '#팀플'],
-      placeName: '편안한 카페',
-      content: '아오 맛있어~2',
-      author: 'user2',
-      likes: 3,
-    },
-    {
-      id: 3,
-      photos: [
-        'http://www.lampcook.com/wi_files/food_top100/top5/5_7.jpg',
-        'http://www.lampcook.com/wi_files/food_top100/top5/5_6.jpg',
-        'http://www.lampcook.com/wi_files/food_top100/top5/5_7.jpg',
-      ],
-      tags: ['#카페', '#자연'],
-      placeName: '편안한 카페',
-      content: '아오 맛있어~3',
-      author: 'user1',
-      likes: 4,
-    },
-    {
-      id: 4,
-      photos: [
-        'http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg',
-        'http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg',
-        'http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg',
-      ],
-      tags: ['#쇼핑', '#산책'],
-      placeName: '편안한 카페',
-      content: '아오 맛있어~4',
-      author: 'user3',
-      likes: 2,
-    },
-    {
-      id: 5,
-      photos: [
-        'http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg',
-        'http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg',
-      ],
-      tags: ['#쇼핑', '#산책'],
-      placeName: '편안한 카페',
-      content: '아오 맛있어~4',
-      author: 'user3',
-      likes: 2,
-    },
-    {
-      id: 6,
-      photos: [
-        'http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg',
-        'http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg',
-        'http://www.lampcook.com/wi_files/food_top100/top5/5_9.jpg',
-      ],
-      tags: ['#쇼핑', '#산책'],
-      placeName: '편안한 카페',
-      content: '아오 맛있어~4',
-      author: 'user3',
-      likes: 7,
-    },
-    {
-      id: 7,
-      photos: ['http://www.lampcook.com/wi_files/food_top100/top5/5_5.jpg'],
-      tags: ['#쇼핑', '#산책'],
-      placeName: '편안한 카페',
-      content: '아오 맛있어~4',
-      author: 'user3',
-      likes: 1,
-    },
-    {
-      id: 8,
-      photos: ['http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg'],
-      tags: ['#쇼핑', '#산책'],
-      placeName: '편안한 카페',
-      content: '아오 맛있어~4',
-      author: 'user3',
-      likes: 2,
-    },
-    {
-      id: 9,
-      photos: ['http://www.lampcook.com/wi_files/food_top100/top5/5_8.jpg'],
-      tags: ['#쇼핑', '#산책'],
-      placeName: '편안한 카페',
-      content: '아오 맛있어~4',
-      author: 'user3',
-      likes: 2,
-    },
-  ];
-
+  const { currentUser, isLoggedIn } = useAuth();
+  const {
+    reviews,
+    filteredReviews,
+    setFilteredReviews,
+    error,
+    setError,
+    setReviews,
+  } = useFetchReviews(isLoggedIn);
   const [writeModalIsOpen, setWriteModalIsOpen] = useState(false);
   const [reviewModalIsOpen, setReviewModalIsOpen] = useState(false);
-  const [reviews, setReviews] = useState(initialReviews);
   const [selectedReview, setSelectedReview] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [filteredReviews, setFilteredReviews] = useState(reviews);
   const [clickedTags, setClickedTags] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    setFilteredReviews(reviews);
-  }, [reviews]);
+  //게시글 상세보기
+  const fetchReviewDetails = useCallback(async (postId) => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      const headers = accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : {};
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/posts/${postId}`,
+        { headers }
+      );
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop !==
-        document.documentElement.offsetHeight
-      )
-        return;
-      loadMoreReviews();
-    };
+      // response data 받기
+      const fetchedReviewDetails = {
+        nickname: response.data.nickname,
+        title: response.data.title,
+        content: response.data.content,
+        createDate: response.data.createDate,
+        postHashtags: response.data.postHashtags.map(
+          (tagId) => hashtagMap[tagId]
+        ),
+        images: response.data.images,
+        likeCnt: response.data.likeCnt,
+      };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [reviews]);
+      setSelectedReview(fetchedReviewDetails);
+      setReviewModalIsOpen(true); // Open review modal
+    } catch (error) {
+      setError('해당 게시글 조회 중 오류가 발생하였습니다.');
+      console.error('Fetch review details error:', error);
+    }
+  }, []);
 
-  const loadMoreReviews = () => {
-    const newReviews = [];
-    setReviews((prevReviews) => [...prevReviews, ...newReviews]);
-  };
-
-  const openWriteModal = (review = null, isEditing = false) => {
+  const openWriteModal = (review = null) => {
     setSelectedReview(review);
-    setIsEditing(isEditing);
     setWriteModalIsOpen(true);
-  };
-
-  const openReviewModal = (review) => {
-    setSelectedReview(review);
-    setReviewModalIsOpen(true);
   };
 
   const closeWriteModal = () => {
@@ -163,34 +144,104 @@ const ReviewPage = () => {
     setSelectedReview(null);
   };
 
+  const openReviewModal = (postId) => {
+    fetchReviewDetails(postId);
+  };
+
   const closeReviewModal = () => {
     setReviewModalIsOpen(false);
     setSelectedReview(null);
   };
 
-  const addReview = (newReview, isEditing) => {
-    if (isEditing && selectedReview) {
-      const updatedReviews = reviews.map((review) =>
-        review.id === selectedReview.id
-          ? { ...review, ...newReview, id: review.id }
-          : review
-      );
-      setReviews(updatedReviews);
-    } else {
-      const newId = reviews.length > 0 ? reviews[reviews.length - 1].id + 1 : 1;
-      setReviews((prevReviews) => [
-        ...prevReviews,
-        { ...newReview, id: newId },
-      ]);
-    }
-    closeWriteModal();
+  const handleWriteButtonClick = () => {
+    openWriteModal();
   };
 
-  const deleteReview = (reviewToDelete) => {
-    const updatedReviews = reviews.filter(
-      (review) => review.id !== reviewToDelete.id
-    );
-    setReviews(updatedReviews);
+  const addReview = async (newReview, isEditing) => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      const headers = { Authorization: `Bearer ${accessToken}` };
+
+      const formData = new FormData();
+      formData.append(
+        'postDto',
+        JSON.stringify({
+          title: newReview.placeName,
+          content: newReview.content,
+          postHashtag: newReview.tags,
+        })
+      );
+      newReview.photos.forEach((photo) => formData.append('postImages', photo));
+
+      //제대로 되나 확인 코드
+      console.log(
+        'postDto:',
+        JSON.stringify({
+          title: newReview.placeName,
+          content: newReview.content,
+          postHashtag: newReview.tags,
+        })
+      );
+
+      console.log('');
+
+      let response;
+      if (isEditing && selectedReview) {
+        response = await axios.patch(
+          `${process.env.REACT_APP_API_URL}/api/posts/${selectedReview.postId}`,
+          formData,
+          { headers }
+        );
+      } else {
+        response = await axios.post(
+          `${process.env.REACT_APP_API_URL}/api/posts`,
+          formData,
+          { headers }
+        );
+      }
+
+      setReviews((prevReviews) => {
+        if (isEditing && selectedReview) {
+          return prevReviews.map((review) =>
+            review.postId === selectedReview.postId ? response.data : review
+          );
+        }
+        return [...prevReviews, response.data];
+      });
+      alert(
+        isEditing
+          ? '게시글을 성공적으로 수정하였습니다.'
+          : '게시글을 성공적으로 등록하였습니다.'
+      );
+    } catch (error) {
+      if (error.response) {
+        if (error.response.status === 400) {
+          const errorMessage = error.response.data.errors
+            ? error.response.data.errors
+                .map((err) => `${err.field}: ${err.message}`)
+                .join(', ')
+            : error.response.data;
+          setError(errorMessage);
+        } else if (error.response.status === 401) {
+          setError('해당 서비스를 이용하기 위해서는 로그인이 필요합니다.');
+        } else if (error.response.status === 404) {
+          setError('해당 게시글이 존재하지 않습니다.');
+        } else if (error.response.status === 403) {
+          setError(
+            '해당 게시글을 수정할 권한이 없습니다. 본인이 작성한 글만 수정할 수 있습니다.'
+          );
+        } else {
+          setError(
+            `게시글 등록 과정에서 오류가 발생하였습니다: ${error.response.data}`
+          );
+        }
+      } else {
+        setError(
+          `게시글 등록 과정에서 오류가 발생하였습니다: ${error.message}`
+        );
+      }
+      console.error('Error adding review:', error);
+    }
   };
 
   return (
@@ -198,35 +249,28 @@ const ReviewPage = () => {
       <Logo bgColor='#F2F2F2' />
       <div style={{ marginTop: '120px' }}>
         <SearchBox
-          reviews={reviews}
           setFilteredReviews={setFilteredReviews}
+          setSearchTerm={setSearchTerm}
           clickedTags={clickedTags}
           setClickedTags={setClickedTags}
         />
       </div>
       <div style={reviewStyles.reviewContainer}>
-        {filteredReviews.length > 0
-          ? filteredReviews.map((review) => (
+        {error ? (
+          <p>{error}</p>
+        ) : (
+          (filteredReviews.length > 0 ? filteredReviews : reviews).map(
+            (review) => (
               <ReviewCard
-                key={review.id}
+                key={review.postId}
                 review={review}
                 onReviewClick={openReviewModal}
-                currentUser={currentUser}
               />
-            ))
-          : reviews.map((review) => (
-              <ReviewCard
-                key={review.id}
-                review={review}
-                onReviewClick={openReviewModal}
-                currentUser={currentUser}
-              />
-            ))}
+            )
+          )
+        )}
       </div>
-      <button
-        onClick={() => openWriteModal(null, false)}
-        style={reviewStyles.writeButton}
-      >
+      <button onClick={handleWriteButtonClick} style={reviewStyles.writeButton}>
         <img
           src='/img/WriteButtonIcon.png'
           alt='write button'
@@ -240,7 +284,11 @@ const ReviewPage = () => {
           closeModal={closeReviewModal}
           currentUser={currentUser}
           openWriteModal={openWriteModal}
-          deleteReview={deleteReview}
+          deleteReview={(review) => {
+            setReviews((prevReviews) =>
+              prevReviews.filter((r) => r.postId !== review.postId)
+            );
+          }}
           setReviews={setReviews}
         />
       )}
@@ -249,7 +297,7 @@ const ReviewPage = () => {
         closeModal={closeWriteModal}
         addReview={addReview}
         existingReview={selectedReview || {}}
-        isEditing={isEditing}
+        currentUser={currentUser}
       />
     </div>
   );

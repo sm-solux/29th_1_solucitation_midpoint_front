@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
+import axios from "axios";
 import { commonStyles } from "../styles/styles";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -47,8 +47,41 @@ function Logo({ exist = true, bgColor = "transparent" }) {
     return isActive ? activeLinkStyle : linkStyle;
   };
 
+  // 새로운 액세스 토큰 발급 함수
+  const refreshAccessToken = async (refreshToken) => {
+    try {
+      const response = await axios.post(
+        "http://3.36.150.194:8080/api/auth/refresh-token",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${refreshToken}`,
+          },
+        }
+      );
+      localStorage.setItem("accessToken", response.data.accessToken);
+      localStorage.setItem("refreshToken", response.data.refreshToken);
+      return response.data.accessToken;
+    } catch (error) {
+      console.error(
+        "Failed to refresh access token:",
+        error.response.data.message
+      );
+      if (
+        error.response.data.error === "refresh_token_expired" ||
+        error.response.data.error === "invalid_token"
+      ) {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        setIsLoggedIn(false);
+        navigate("/login");
+      }
+      throw error;
+    }
+  };
+
   //로그아웃 부분
-    const handleLogout = async () => {
+  const handleLogout = async () => {
     const accessToken = localStorage.getItem("accessToken");
     const refreshToken = localStorage.getItem("refreshToken");
 
@@ -65,13 +98,13 @@ function Logo({ exist = true, bgColor = "transparent" }) {
         {},
         {
           headers: {
-            "Authorization": `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
             "logout-token": `Bearer ${refreshToken}`,
           },
         }
       );
       console.log("Logout Successful:", response.data.message);
-      
+
       localStorage.removeItem("accessToken"); //로그아웃 3번방법 3번
       localStorage.removeItem("refreshToken");
       setIsLoggedIn(false);
@@ -80,7 +113,32 @@ function Logo({ exist = true, bgColor = "transparent" }) {
       if (error.response) {
         const { status, data } = error.response;
         if (status === 401) {
-          if (data.error === "access_token_expired") { //accesstoken 재발금 받는 부분은 미구현
+          if (status === 401 && data.error === "access_token_expired") {
+            try {
+              const newAccessToken = await refreshAccessToken(refreshToken);
+              const retryResponse = await axios.post(
+                "http://3.36.150.194:8080/api/member/logout",
+                {},
+                {
+                  headers: {
+                    Authorization: `Bearer ${newAccessToken}`,
+                    "logout-token": `Bearer ${refreshToken}`,
+                  },
+                }
+              );
+              console.log("Logout Successful:", retryResponse.data.message);
+              localStorage.removeItem("accessToken");
+              localStorage.removeItem("refreshToken");
+              setIsLoggedIn(false);
+              navigate("/home");
+            } catch (retryError) {
+              console.error(
+                "Retry logout failed:",
+                retryError.response.data.message || retryError.message
+              );
+              setIsLoggedIn(false);
+              navigate("/home");
+            }
             console.error("The access token has expired.");
           } else if (data.error === "invalid_token") {
             console.error("The access token is invalid.");
@@ -114,10 +172,7 @@ function Logo({ exist = true, bgColor = "transparent" }) {
         {links.map((link) => (
           <div style={commonStyles.linkContainer} key={link.name}>
             {link.name === "logout" ? (
-              <span
-                style={getLinkStyle(link)}
-                onClick={handleLogout}
-              >
+              <span style={getLinkStyle(link)} onClick={handleLogout}>
                 {link.label}
               </span>
             ) : (

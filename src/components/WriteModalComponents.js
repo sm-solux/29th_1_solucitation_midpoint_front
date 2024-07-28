@@ -1,45 +1,75 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from 'react-modal';
-import { writeModalStyles } from '../styles/writeModalStyles';
+
+import writeModalStyles, {
+  CloseButton,
+  ProfileContainer,
+  ProfileImg,
+  ProfileName,
+  InputName,
+  Textarea,
+  ImgContainer,
+  AddImg,
+  TagContainer,
+  TagButton,
+  SubmitButton,
+} from '../styles/writeModalStyles';
 
 Modal.setAppElement('#root');
+
+const predefinedTags = [
+  '#식사',
+  '#카페',
+  '#공부',
+  '#문화생활',
+  '#쇼핑',
+  '#자연',
+  '#산책',
+  '#친목',
+  '#여럿이',
+  '#혼자',
+];
+
+const tagIdMap = {
+  '#식사': 1,
+  '#카페': 2,
+  '#공부': 3,
+  '#문화생활': 4,
+  '#쇼핑': 5,
+  '#자연': 6,
+  '#산책': 7,
+  '#친목': 8,
+  '#여럿이': 9,
+  '#혼자': 10,
+};
 
 const WriteModal = ({
   isOpen,
   closeModal,
   addReview,
-  existingReview,
+  existingReview = {},
   isEditing,
+  currentUser,
 }) => {
-  const currentUser = { name: 'user1' };
-
   const [placeName, setPlaceName] = useState('');
   const [content, setContent] = useState('');
   const [selectedFiles, setSelectedFiles] = useState([null, null, null]);
-  const fileInputRefs = [useRef(null), useRef(null), useRef(null)];
-  const [selectedTags, setSelectedTags] = useState([]);
   const [photoURLs, setPhotoURLs] = useState([null, null, null]);
-
-  const predefinedTags = [
-    '#식사',
-    '#카페',
-    '#공부',
-    '#문화생활',
-    '#쇼핑',
-    '#자연',
-    '#산책',
-    '#친목',
-    '#여럿이',
-    '#혼자',
-  ];
+  const [selectedTags, setSelectedTags] = useState([]);
+  const fileInputRefs = [useRef(null), useRef(null), useRef(null)];
 
   useEffect(() => {
-    if (existingReview && Object.keys(existingReview).length > 0) {
-      setPlaceName(existingReview.placeName || '');
+    if (Object.keys(existingReview).length > 0) {
+      setPlaceName(existingReview.title || '');
       setContent(existingReview.content || '');
-      setSelectedFiles([null, null, null]);
-      setPhotoURLs(existingReview.photos || [null, null, null]);
-      setSelectedTags(existingReview.tags || []);
+      setPhotoURLs(existingReview.images || [null, null, null]);
+      setSelectedTags(
+        existingReview.postHashtags
+          ? existingReview.postHashtags.map((tagId) =>
+              Object.keys(tagIdMap).find((key) => tagIdMap[key] === tagId)
+            )
+          : []
+      );
     }
   }, [existingReview]);
 
@@ -52,9 +82,7 @@ const WriteModal = ({
   }, [photoURLs]);
 
   const handleIconClick = (index) => {
-    if (fileInputRefs[index].current) {
-      fileInputRefs[index].current.click();
-    }
+    fileInputRefs[index]?.current?.click();
   };
 
   const handleFileChange = (index, e) => {
@@ -75,28 +103,50 @@ const WriteModal = ({
 
   const handleTagClick = (tag) => {
     if (selectedTags.includes(tag)) {
-      const newTags = selectedTags.filter((t) => t !== tag);
-      setSelectedTags(newTags);
+      setSelectedTags(selectedTags.filter((t) => t !== tag));
     } else if (selectedTags.length < 2) {
-      const newTags = [...selectedTags, tag];
-      setSelectedTags(newTags);
+      setSelectedTags([...selectedTags, tag]);
     }
+  };
+
+  const validateForm = () => {
+    if (!placeName.trim()) {
+      alert('제목을 입력해 주세요.');
+      return false;
+    }
+
+    if (!content.trim()) {
+      alert('내용을 입력해 주세요.');
+      return false;
+    }
+
+    if (selectedTags.length < 2) {
+      alert('태그를 2개 선택해 주세요.');
+      return false;
+    }
+
+    const validPhotos = selectedFiles.filter((file) => file !== null);
+    if (validPhotos.length < 1) {
+      alert('최소 한 장의 사진을 업로드해 주세요.');
+      return false;
+    }
+
+    return true;
   };
 
   const handleAddReview = (e) => {
     e.preventDefault();
 
-    if (selectedTags.length < 2) {
-      alert('태그를 2개 선택해 주세요.');
-      return;
-    }
+    if (!validateForm()) return;
+
+    const tags = selectedTags.map((tag) => tagIdMap[tag]);
 
     const newReview = {
       placeName,
       content,
-      photos: photoURLs.filter((url) => url !== null),
-      tags: selectedTags,
-      author: currentUser.name,
+      photos: selectedFiles.filter((file) => file !== null),
+      tags,
+      author: currentUser,
     };
 
     addReview(newReview, isEditing);
@@ -123,37 +173,30 @@ const WriteModal = ({
       contentLabel='Write Review Modal'
     >
       <form onSubmit={handleAddReview}>
-        <button onClick={handleCloseModal} style={writeModalStyles.closeButton}>
-          X
-        </button>
-        <div style={writeModalStyles.profileContainer}>
-          <img
-            src='/img/default-profile.png'
-            alt='profile'
-            style={writeModalStyles.profileImg}
-          />
-          <span style={writeModalStyles.profileName}>{currentUser.name}</span>
-        </div>
-        <input
+        <CloseButton onClick={handleCloseModal}>X</CloseButton>
+        <ProfileContainer>
+          <ProfileImg src='/img/default-profile.png' alt='profile' />
+          <ProfileName>
+            {currentUser ? currentUser.name : 'anonymous'}
+          </ProfileName>
+        </ProfileContainer>
+        <InputName
           type='text'
           placeholder='글제목'
           value={placeName}
           onChange={(e) => setPlaceName(e.target.value)}
-          style={writeModalStyles.inputName}
         />
-        <textarea
+        <Textarea
           placeholder='내용을 입력하세요'
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          style={writeModalStyles.textarea}
         />
-        <div style={writeModalStyles.imgContainer}>
+        <ImgContainer>
           {photoURLs.map((url, index) => (
             <span key={index}>
-              <img
+              <AddImg
                 src={url || '/img/addPhoto.png'}
                 onClick={() => handleIconClick(index)}
-                style={writeModalStyles.addImg}
                 alt={url ? `Image ${index + 1}` : `Upload ${index + 1}`}
               />
               <input
@@ -164,28 +207,21 @@ const WriteModal = ({
               />
             </span>
           ))}
-        </div>
-        <div>태그 (2개 필수)</div>
-        <div style={writeModalStyles.tagContainer}>
+        </ImgContainer>
+        <div style={{ fontWeight: 'bold' }}>태그 (2개 필수)</div>
+        <TagContainer>
           {predefinedTags.map((tag) => (
-            <button
+            <TagButton
               type='button'
               key={tag}
               onClick={() => handleTagClick(tag)}
-              style={{
-                ...writeModalStyles.tagButton,
-                ...(selectedTags.includes(tag)
-                  ? writeModalStyles.selectedTagButton
-                  : {}),
-              }}
+              selected={selectedTags.includes(tag)}
             >
               {tag}
-            </button>
+            </TagButton>
           ))}
-        </div>
-        <button type='submit' style={writeModalStyles.button}>
-          게시
-        </button>
+        </TagContainer>
+        <SubmitButton type='submit'>게시</SubmitButton>
       </form>
     </Modal>
   );

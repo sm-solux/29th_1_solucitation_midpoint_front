@@ -1,30 +1,70 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import '../../styles/global.css';
 import { myPageStyles } from '../../styles/myPageStyles';
-import { Timer } from '../../components/CommonComponents';
 
 const MyPageProfile = () => {
-  const [editMode, setEditMode] = useState(false);
-  const [passwordEditMode, setPasswordEditMode] = useState(false);
-  const [passwordConfirmationMode, setPasswordConfirmationMode] = useState(false);
-  const [deleteConfirmationMode, setDeleteConfirmationMode] = useState(false);
-  const [showTimer, setShowTimer] = useState(false);
-  const [resetTimer, setResetTimer] = useState(false);
-  const [verificationCode, setVerificationCode] = useState('');
-  const [isEmailVerified, setIsEmailVerified] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [nextMode, setNextMode] = useState(null); // 추가: 다음 모드를 저장하는 상태
+  const [state, setState] = useState({
+    editMode: false,
+    passwordEditMode: false,
+    passwordConfirmationMode: false,
+    deleteConfirmationMode: false,
+    nextMode: null,
+    errors: {},
+  });
+  const [profileData, setProfileData] = useState({
+    name: '',
+    nickname: '',
+    id: '',
+    email: '',
+    profileImage: '../img/default-profile.png',
+    password: '',
+  });
+
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
-  const [profileData, setProfileData] = useState({
-    name: '김눈송',
-    nickname: '솔룩션짱짱최고',
-    email: 'soluxion@sookmyung.ac.kr',
-    password: '12345678',
-    profileImage: '../img/default-profile.png',
-  });
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await axios.get('http://3.36.150.194:8080/api/member/profile', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        const data = response.data;
+        setProfileData({
+          name: data.name,
+          nickname: data.nickname,
+          id: data.loginId,
+          email: data.email,
+          profileImage: data.profileImage || '../img/default-profile.png',
+          password: profileData.password,
+        });
+      } catch (error) {
+        if (error.response) {
+          if (error.response.status === 401) {
+            const errorData = error.response.data;
+            if (errorData.error === 'access_token_expired') {
+              alert('Access Token이 만료되었습니다. 로그인 페이지로 이동합니다.');
+            } else if (errorData.error === 'invalid_token') {
+              alert('유효하지 않은 Access Token입니다. 로그인 페이지로 이동합니다.');
+            }
+            navigate('/login');
+          } else {
+            console.error('회원 정보를 불러오는 중 에러 발생:', error.response.data);
+          }
+        } else {
+          console.error('회원 정보를 불러오는 중 에러 발생:', error.message);
+        }
+      }
+    };
+
+    fetchProfileData();
+  }, [navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -42,86 +82,67 @@ const MyPageProfile = () => {
     }
   };
 
-  const toggleEditMode = () => {
-    setEditMode(true);
-  };
-
-  const handleSave = () => {
-    if (!isEmailVerified) {
-      alert('이메일을 인증하지 않았습니다.');
-      return;
+  //수정 예비 코드
+  const handleSave = async () => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      await axios.put('http://3.36.150.194:8080/api/member/profile', profileData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      setState({ ...state, editMode: false, passwordEditMode: false });
+    } catch (error) {
+      console.error('프로필 저장 중 에러 발생:', error);
     }
-    setEditMode(false);
-    setPasswordEditMode(false);
-    setShowTimer(false);
   };
 
   const handleCancel = () => {
-    setEditMode(false);
-    setPasswordEditMode(false);
-    setShowTimer(false);
+    setState({ ...state, editMode: false, passwordEditMode: false });
   };
 
   const handleDeleteAccount = () => {
-    setNextMode('delete'); // 추가: 다음 모드를 'delete'로 설정
-    setPasswordConfirmationMode(true);
-  };
-
-  const handleImageClick = () => {
-    if (editMode && fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+    setState({ ...state, nextMode: 'delete', passwordConfirmationMode: true });
   };
 
   const togglePasswordEditMode = () => {
-    setNextMode('passwordChange'); // 추가: 다음 모드를 'passwordChange'로 설정
-    setPasswordConfirmationMode(true);
-  };
-
-  const handleRequestVerification = () => {
-    setShowTimer(true);
-    setResetTimer(true);
-    setTimeout(() => setResetTimer(false), 1000);
-  };
-
-  const handleVerificationCodeChange = (e) => {
-    setVerificationCode(e.target.value);
-  };
-
-  const handleVerification = () => {
-    if (verificationCode === '123456') {
-      setIsEmailVerified(true);
-      alert('이메일 인증이 완료되었습니다.');
-    } else {
-      alert('인증 코드가 올바르지 않습니다.');
-    }
+    setState({ ...state, nextMode: 'passwordChange', passwordConfirmationMode: true });
   };
 
   const handlePasswordConfirmation = (confirmPassword) => {
     if (profileData.password === confirmPassword) {
-      setPasswordConfirmationMode(false);
-      if (nextMode === 'delete') {
-        setDeleteConfirmationMode(true); // 탈퇴 모드로 전환
-      } else if (nextMode === 'passwordChange') {
-        setPasswordEditMode(true); // 비밀번호 변경 모드로 전환
+      setState({ ...state, passwordConfirmationMode: false });
+      if (state.nextMode === 'delete') {
+        setState({ ...state, deleteConfirmationMode: true });
+      } else if (state.nextMode === 'passwordChange') {
+        setState({ ...state, passwordEditMode: true });
       }
     } else {
-      setErrors({ confirmPassword: '비밀번호가 일치하지 않습니다.' });
+      setState({ ...state, errors: { confirmPassword: '비밀번호가 일치하지 않습니다.' } });
     }
   };
 
-  const handleDeleteConfirm = () => {
-    alert('탈퇴 됐습니다.');
-    navigate('/'); //로고가 바뀌는 것은 하지 못했음.
+  //탈퇴 코드
+  const handleDeleteConfirm = async () => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      await axios.delete('http://3.36.150.194:8080/api/member/profile', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      alert('탈퇴 됐습니다.');
+      navigate('/');
+    } catch (error) {
+      console.error('탈퇴 중 에러 발생:', error);
+    }
   };
 
-  if (passwordConfirmationMode) {
-    return (
-      <PasswordConfirmation onConfirm={handlePasswordConfirmation} currentPassword={profileData.password} />
-    );
+  if (state.passwordConfirmationMode) {
+    return <PasswordConfirmation onConfirm={handlePasswordConfirmation} currentPassword={profileData.password} />;
   }
 
-  if (passwordEditMode) {
+  if (state.passwordEditMode) {
     return (
       <PasswordChange
         onChangePassword={(newPassword) => {
@@ -130,129 +151,76 @@ const MyPageProfile = () => {
             return;
           }
           setProfileData({ ...profileData, password: newPassword });
-          setPasswordEditMode(false);
-          setEditMode(false);
+          setState({ ...state, passwordEditMode: false, editMode: false });
         }}
       />
     );
   }
 
-  if (deleteConfirmationMode) {
+  if (state.deleteConfirmationMode) {
     return (
       <div style={myPageStyles.deleteConfirmationContainer}>
-        <h2 style={myPageStyles.deleteConfirmationTitle}>미드포인트 탈퇴</h2>
-        <p style={myPageStyles.deleteConfirmationMessage}>
-          정말 탈퇴하시겠습니까? 탈퇴 시 되돌릴 수 없습니다. 신중하게 결정해주세요.
-        </p>
-        <button
-          style={myPageStyles.deleteButton}
-          onClick={handleDeleteConfirm}
-        >
-          탈퇴
-        </button>
+        <h2 style={myPageStyles.deleteConfirmationTitle}>미드포인트 탈퇴 </h2>
+        <p style={myPageStyles.deleteConfirmationText}>정말 탈퇴하시겠습니까? 탈퇴 시 되돌릴 수 없습니다. 신중하게 결정해주세요.</p>
+        <button onClick={handleDeleteConfirm} style={myPageStyles.deleteConfirmationButton}>탈퇴</button>
+        <button onClick={() => setState({ ...state, deleteConfirmationMode: false })} style={myPageStyles.deleteConfirmationButton}>취소</button>
       </div>
     );
   }
 
   return (
     <div style={myPageStyles.profileContainer}>
-      {['name', 'nickname', 'email'].map((field) => (
-        <div key={field} style={myPageStyles.profileItem}>
-          <span style={myPageStyles.profileLabel}>
-            {field === 'name' ? '이름' : field === 'nickname' ? '닉네임' : '이메일'}
-          </span>
-          {editMode ? (
-            <div style={myPageStyles.profileEditContainer}>
-              <input
-                type={field === 'email' ? 'email' : 'text'}
-                name={field}
-                style={myPageStyles.profileEditText}
-                value={profileData[field]}
-                onChange={handleInputChange}
-              />
-              {field === 'email' && (
-                <button style={myPageStyles.profileButton} onClick={handleRequestVerification}>인증요청</button>
-              )}
-            </div>
-          ) : (
-            <div style={myPageStyles.profileText}>{profileData[field]}</div>
-          )}
-        </div>
-      ))}
-      <div style={myPageStyles.profileItem}>
-        <span style={myPageStyles.profileLabel}>비밀번호</span>
-        {passwordEditMode ? (
-          <div style={myPageStyles.profileEditContainer}>
-            <input
-              type="password"
-              name="password"
-              style={myPageStyles.profileEditText}
-              value={profileData.password}
-              onChange={handleInputChange}
-            />
-          </div>
-        ) : (
-          <div style={myPageStyles.profileText}>
-            {'*'.repeat(profileData.password.length)}
-          </div>
-        )}
-        {editMode && !passwordEditMode && (
-          <button style={myPageStyles.profileButton} onClick={togglePasswordEditMode}>
-            비밀번호 변경
-          </button>
-        )}
-      </div>
-      <div style={myPageStyles.profilePictureItem}>
-        <div style={myPageStyles.profileLabel}>프로필 사진</div>
-        <div>
-          <img
-            src={profileData.profileImage}
-            alt="프로필 사진"
-            style={{ width: '100px', height: '100px', borderRadius: '50%', marginTop: '10px', cursor: editMode ? 'pointer' : 'default' }}
-            onClick={handleImageClick}
-          />
-          <input
-            type="file"
-            name="profileImage"
-            style={{ display: 'none' }}
-            ref={fileInputRef}
-            onChange={handleFileChange}
-          />
-        </div>
-      </div>
-      {showTimer && (
-        <div style={myPageStyles.verificationContainer}>
-          <span style={myPageStyles.profileLabel}>인증 코드</span>
-          <input
-            type="text"
-            name="verificationCode"
-            style={myPageStyles.profileEditText}
-            value={verificationCode}
-            onChange={handleVerificationCodeChange}
-          />
-          <Timer isActive={true} resetTimer={resetTimer} />
-          <button style={myPageStyles.profileButton} onClick={handleRequestVerification}>재전송</button>
-          <button style={myPageStyles.profileButton} onClick={handleVerification}>인증확인</button>
-        </div>
-      )}
+      <ProfileField
+        field="name"
+        value={profileData.name}
+        editMode={state.editMode}
+        handleInputChange={handleInputChange}
+        placeholder="이름"
+      />
+      <ProfileField
+        field="nickname"
+        value={profileData.nickname}
+        editMode={state.editMode}
+        handleInputChange={handleInputChange}
+        placeholder="닉네임"
+      />
+      <ProfileField
+        field="id"
+        value={profileData.id}
+        editMode={false}
+        handleInputChange={() => {}}
+        placeholder="아이디"
+      />
+      <ProfileField
+        field="email"
+        value={profileData.email}
+        editMode={state.editMode}
+        handleInputChange={handleInputChange}
+        placeholder="이메일"
+      />
+      <ProfilePassword
+        password={profileData.password}
+        passwordEditMode={state.passwordEditMode}
+        editMode={state.editMode}
+        togglePasswordEditMode={togglePasswordEditMode}
+      />
+      <ProfileImage
+        profileImage={profileData.profileImage}
+        editMode={state.editMode}
+        handleFileChange={handleFileChange}
+        handleImageClick={() => fileInputRef.current?.click()}
+        fileInputRef={fileInputRef}
+      />
       <div style={myPageStyles.buttonContainer}>
-        {editMode ? (
+        {state.editMode ? (
           <>
-            <button onClick={handleSave} style={myPageStyles.profileButtonEdit}>
-              완료
-            </button>
-            <button onClick={handleCancel} style={myPageStyles.profileButtonCancel}>
-              취소
-            </button>
+            <button onClick={handleSave} style={myPageStyles.profileButtonEdit}>저장</button>
+            <button onClick={handleCancel} style={myPageStyles.profileButtonCancel}>취소</button>
           </>
         ) : (
           <>
-            <button onClick={toggleEditMode} style={myPageStyles.profileButtonEdit}>
-              편집
-            </button>
-            <button onClick={handleDeleteAccount} style={myPageStyles.profileButtonQuit}>
-              탈퇴
-            </button>
+            <button onClick={() => setState({ ...state, editMode: true })} style={myPageStyles.profileButtonEdit}>편집</button>
+            <button onClick={handleDeleteAccount} style={myPageStyles.profileButtonQuit}>탈퇴</button>
           </>
         )}
       </div>
@@ -260,9 +228,69 @@ const MyPageProfile = () => {
   );
 };
 
-export default MyPageProfile;
+const ProfileField = ({ field, value, editMode, handleInputChange, placeholder }) => (
+  <div style={myPageStyles.profileItem}>
+    <span style={myPageStyles.profileLabel}>{placeholder}</span>
+    {editMode ? (
+      <div style={myPageStyles.profileEditContainer}>
+        <input
+          type="text"
+          name={field}
+          style={myPageStyles.profileEditText}
+          value={value}
+          onChange={handleInputChange}
+          placeholder={placeholder}
+        />
+      </div>
+    ) : (
+      <div style={myPageStyles.profileText}>{value}</div>
+    )}
+  </div>
+);
 
-//비밀번호 확인하는 부분
+const ProfilePassword = ({ password, passwordEditMode, editMode, togglePasswordEditMode }) => (
+  <div style={myPageStyles.profileItem}>
+    <span style={myPageStyles.profileLabel}>비밀번호</span>
+    {passwordEditMode ? (
+      <div style={myPageStyles.profileEditContainer}>
+        <input type="password" name="password" style={myPageStyles.profileEditText} value={password} readOnly />
+      </div>
+    ) : (
+      <div style={myPageStyles.profileText}>{'*'.repeat(password.length)}</div>
+    )}
+    {editMode && !passwordEditMode && (
+      <button style={myPageStyles.profileButton} onClick={togglePasswordEditMode}>비밀번호 변경</button>
+    )}
+  </div>
+);
+
+const ProfileImage = ({ profileImage, editMode, handleFileChange, handleImageClick, fileInputRef }) => (
+  <div style={myPageStyles.profilePictureItem}>
+    <div style={myPageStyles.profileLabel}>프로필 사진</div>
+    <div>
+      <img
+        src={profileImage}
+        alt="프로필 사진"
+        style={{
+          width: '100px',
+          height: '100px',
+          borderRadius: '50%',
+          marginTop: '10px',
+          cursor: editMode ? 'pointer' : 'default',
+        }}
+        onClick={handleImageClick}
+      />
+      <input
+        type="file"
+        name="profileImage"
+        style={{ display: 'none' }}
+        ref={fileInputRef}
+        onChange={handleFileChange}
+      />
+    </div>
+  </div>
+);
+
 const PasswordConfirmation = ({ onConfirm, currentPassword }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState({});
@@ -311,7 +339,6 @@ const PasswordConfirmation = ({ onConfirm, currentPassword }) => {
   );
 };
 
-//비밀번호 변경 하는 부분
 const PasswordChange = ({ onChangePassword }) => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -383,3 +410,5 @@ const PasswordChange = ({ onChangePassword }) => {
     </div>
   );
 };
+
+export default MyPageProfile;

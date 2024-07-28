@@ -1,60 +1,159 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { searchStyles } from '../styles/searchStyles';
 
 const SearchBox = ({
-  reviews,
   setFilteredReviews,
+  setSearchTerm,
   clickedTags,
   setClickedTags,
 }) => {
   const [searchText, setSearchText] = useState('');
+  const [error, setError] = useState(null);
+
   const tags = [
-    '식사',
-    '카페',
-    '공부',
-    '문화생활',
-    '쇼핑',
-    '자연',
-    '산책',
-    '친목',
-    '여럿이',
-    '혼자',
+    { id: 1, name: '식사' },
+    { id: 2, name: '카페' },
+    { id: 3, name: '공부' },
+    { id: 4, name: '문화생활' },
+    { id: 5, name: '쇼핑' },
+    { id: 6, name: '자연' },
+    { id: 7, name: '산책' },
+    { id: 8, name: '친목' },
+    { id: 9, name: '여럿이' },
+    { id: 10, name: '혼자' },
   ];
+
+  const hashtagMap = {
+    1: '#식사',
+    2: '#카페',
+    3: '#공부',
+    4: '#문화생활',
+    5: '#쇼핑',
+    6: '#자연',
+    7: '#산책',
+    8: '#친목',
+    9: '#여럿이',
+    10: '#혼자',
+  };
 
   const handleInputChange = (e) => {
     setSearchText(e.target.value);
   };
 
-  const handleTagClick = (tag) => {
+  const handleTagClick = (tagId) => {
     setClickedTags((prevTags) => {
-      let newTags;
-      if (prevTags.includes(tag)) {
-        newTags = prevTags.filter((t) => t !== tag);
+      if (prevTags.includes(tagId)) {
+        const newTags = prevTags.filter((id) => id !== tagId);
+        fetchByTags(newTags);
+        return newTags;
       } else if (prevTags.length < 2) {
-        newTags = [...prevTags, tag];
+        const newTags = [...prevTags, tagId];
+        fetchByTags(newTags);
+        return newTags;
       } else {
-        newTags = prevTags;
+        window.confirm('태그는 2개까지 선택할 수 있습니다.');
+        return prevTags;
       }
-      handleFiltering(newTags, searchText);
-      return newTags;
     });
   };
 
-  const handleFiltering = (tags, text) => {
-    const filtered = reviews.filter((review) => {
-      const hasTag =
-        tags.length === 0 ||
-        tags.some((tag) => review.tags.includes(`#${tag}`));
-      const matchesSearch =
-        text === '' ||
-        review.content.toLowerCase().includes(text.toLowerCase());
-      return hasTag && matchesSearch;
-    });
-    setFilteredReviews(filtered);
+  // 검색어로 검색
+  const fetchBySearchTerm = async (text) => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      const headers = accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : {};
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/posts/search/query`,
+        {
+          params: { query: text },
+          headers,
+        }
+      );
+
+      if (response.status === 200) {
+        const data = response.data.map((item) => ({
+          postId: item.postId,
+          firstImageUrl: item.firstImageUrl,
+          title: item.title,
+          hashtags: item.hashtags.map((tagId) => hashtagMap[tagId]),
+          likes: item.likes,
+        }));
+        setFilteredReviews(data);
+        setError(null);
+      }
+    } catch (error) {
+      if (error.response) {
+        if (error.response.status === 400) {
+          setError('검색어를 입력해주세요.');
+        } else if (error.response.status === 500) {
+          setError(`게시글 검색 중 오류가 발생하였습니다: ${error.message}`);
+        }
+      } else if (error.request) {
+        setError('서버와 연결할 수 없습니다.');
+      } else {
+        setError(`오류가 발생하였습니다: ${error.message}`);
+      }
+    }
+  };
+
+  // 태그로 검색
+  const fetchByTags = async (tagIds) => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      const headers = accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : {};
+      console.log('Fetching by tags:', tagIds);
+
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/posts/search/purpose`,
+        {
+          params: { purpose: tagIds },
+          headers,
+          paramsSerializer: (params) => {
+            return Object.keys(params)
+              .map((key) => {
+                return `${encodeURIComponent(key)}=${encodeURIComponent(
+                  params[key].join(',')
+                )}`;
+              })
+              .join('&');
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        const data = response.data.map((item) => ({
+          postId: item.postId,
+          firstImageUrl: item.firstImageUrl,
+          title: item.title,
+          hashtags: item.hashtags.map((tagId) => hashtagMap[tagId]),
+          likes: item.likes,
+        }));
+        setFilteredReviews(data);
+        setError(null);
+      }
+    } catch (error) {
+      if (error.response) {
+        if (error.response.status === 400) {
+          setError('최소 하나 이상의 해시태그를 선택해야 합니다.');
+        } else if (error.response.status === 500) {
+          setError(`게시글 검색 중 오류가 발생하였습니다: ${error.message}`);
+        }
+      } else if (error.request) {
+        setError('서버와 연결할 수 없습니다.');
+      } else {
+        setError(`오류가 발생하였습니다: ${error.message}`);
+      }
+    }
   };
 
   const handleSearch = () => {
-    handleFiltering(clickedTags, searchText);
+    setSearchTerm(searchText);
+    fetchBySearchTerm(searchText);
   };
 
   return (
@@ -62,49 +161,51 @@ const SearchBox = ({
       <style>
         {`
           input::placeholder {
-            color: #999;
+            color: #1B4345;
+            font-family: 'Freesentation', sans-serif;
+            font-size: 18px;
           }
-
           input:focus::placeholder {
-            color: transparent;
+            opacity: 0;
           }
         `}
       </style>
-      <div style={searchStyles.container}>
+      <div style={searchStyles.searchContainer}>
         <div style={searchStyles.inputContainer}>
           <input
             type='text'
             style={searchStyles.input}
-            placeholder={'검색어를 입력하세요'}
+            placeholder='검색어를 입력하세요'
             value={searchText}
             onChange={handleInputChange}
           />
-          <button style={searchStyles.button} onClick={handleSearch}>
+          <button style={searchStyles.searchButton} onClick={handleSearch}>
             검색
           </button>
         </div>
-        <div style={searchStyles.tagContainer}>
-          <div style={searchStyles.tagList}>
-            {tags.map((tag, index) => (
+        <div style={searchStyles.searchTagContainer}>
+          <div style={searchStyles.searchTagList}>
+            {tags.map((tag) => (
               <div
-                key={index}
+                key={tag.id}
                 style={{
-                  ...searchStyles.tag,
-                  backgroundColor: clickedTags.includes(tag)
+                  ...searchStyles.searchTag,
+                  backgroundColor: clickedTags.includes(tag.id)
                     ? '#1B4345'
                     : 'transparent',
-                  color: clickedTags.includes(tag) ? '#fff' : '#1B4345',
+                  color: clickedTags.includes(tag.id) ? '#fff' : '#1B4345',
                   borderColor: '#1B4345',
                   cursor: 'pointer',
                 }}
-                onClick={() => handleTagClick(tag)}
+                onClick={() => handleTagClick(tag.id)}
               >
-                {tag}
+                {tag.name}
               </div>
             ))}
           </div>
         </div>
       </div>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </>
   );
 };

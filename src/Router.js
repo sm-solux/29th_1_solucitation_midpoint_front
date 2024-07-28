@@ -6,6 +6,7 @@ import DirectLoginPage from "./pages/login/DirectLoginPage";
 import FindPassword from "./pages/login/FindPassword";
 import Join from "./pages/login/Join";
 import ResetPassword from "./pages/login/ResetPassword";
+import KakaoRedirect from "./pages/login/KakaoRedirect";
 import Home from "./pages/home/HomeMain";
 import ReviewPage from "./pages/ReviewPage";
 import MyPage from "./pages/MyPage";
@@ -38,6 +39,7 @@ function Router() {
         <Route path="/login/findpassword" element={<FindPassword />} />
         <Route path="/login/join" element={<Join />} />
         <Route path="/login/resetpassword" element={<ResetPassword/>} />
+        <Route path="/oauth2/callback" element={<KakaoRedirect/>} />
         <Route path="/home" element={<Home />} />
         <Route path="/Review" element={<ReviewPage />} />
         <Route path="/Mypage" element={<MyPage />} />
