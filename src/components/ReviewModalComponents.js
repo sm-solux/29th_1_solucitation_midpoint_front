@@ -9,10 +9,11 @@ const ReviewModal = ({
   currentUser,
   openWriteModal,
   deleteReview,
-  setReviews,
+  toggleLike,
 }) => {
-  const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(review.likeCnt || 0);
+  const [liked, setLiked] = useState(review.likes);
+  const [likeCount, setLikeCount] = useState(review.likeCnt);
+  const [error, setError] = useState(null);
   const isCurrentUser = currentUser && currentUser === review.nickname;
 
   useEffect(() => {
@@ -20,27 +21,18 @@ const ReviewModal = ({
     setLikeCount(review.likeCnt);
   }, [review]);
 
-  if (!review) return null;
-
-  const toggleLike = () => {
-    setLiked(!liked);
-    const updatedLikeCount = liked ? likeCount - 1 : likeCount + 1;
-    setLikeCount(updatedLikeCount);
-    setReviews((prevReviews) =>
-      prevReviews.map((r) =>
-        r.postId === review.postId ? { ...r, likeCnt: updatedLikeCount } : r
-      )
-    );
+  const handleToggleLike = async () => {
+    try {
+      await toggleLike(review.postId); // review.postId를 직접 전달
+      setLiked(!liked);
+      setLikeCount(liked ? likeCount - 1 : likeCount + 1);
+    } catch (error) {
+      setError('좋아요 상태를 변경하는 중 오류가 발생하였습니다.');
+    }
   };
 
   const handleEditClick = () => {
     openWriteModal(review, true);
-    /*
-    const editData = {
-      ...review,
-      author: currentUser,
-    };
-    openWriteModal(editData, true);*/
     closeModal();
   };
 
@@ -95,18 +87,22 @@ const ReviewModal = ({
       </div>
       <div style={reviewModalStyles.footer}>
         <div style={reviewModalStyles.likeSection}>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleLike();
-            }}
-            style={
-              liked
-                ? reviewModalStyles.likeButtonActive
-                : reviewModalStyles.likeButton
-            }
-          ></button>
-          <span style={reviewModalStyles.like}>좋아요 {likeCount}</span>
+          <button onClick={handleToggleLike} style={reviewModalStyles.likeButton}>
+            {liked ? (
+              <img
+                src={`${process.env.PUBLIC_URL}/img/activeLiked.png`}
+                alt="Active Liked Icon"
+                style={reviewModalStyles.icon}
+              />
+            ) : (
+              <img
+                src={`${process.env.PUBLIC_URL}/img/Liked.png`}
+                alt="Like Icon"
+                style={reviewModalStyles.icon}
+              />
+            )}
+          </button>
+          <span style={reviewModalStyles.like}>좋아요 {likeCount.toString()}</span>
         </div>
         <div style={reviewModalStyles.tags}>
           {review.postHashtags.map((tag, index) => (
@@ -132,6 +128,7 @@ const ReviewModal = ({
           </div>
         )}
       </div>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </Modal>
   );
 };
