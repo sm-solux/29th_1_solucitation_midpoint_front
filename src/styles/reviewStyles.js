@@ -16,7 +16,7 @@ export const reviewStyles = {
     backgroundColor: 'transparent',
   },
   photoContainer: {
-    width: '50',
+    width: '50px',
     height: '50',
     overflow: 'hidden',
     display: 'flex',
@@ -25,8 +25,8 @@ export const reviewStyles = {
     margin: '10px 10px',
   },
   photo: {
-    maxWidth: '100%',
-    maxHeight: '100%',
+    width: '250px',
+    height: '250px',
     objectFit: 'cover',
   },
   details: {
@@ -45,24 +45,32 @@ export const reviewStyles = {
   tag: {
     padding: '5px 10px',
     color: 'white',
-    backgroundColor: '#EC5640',
+    backgroundColor: '#EC5630',
     fontSize: '14px',
   },
-  likeButtonActive: {
-    color: '#1B4345',
-    fontSize: '23px',
-    border: 'none',
-  },
   likeButton: {
-    color: '#1B4345',
+    width: '25px',
+    height: '25px',
+    padding: '13px',
+    backgroundPosition: 'center',
+    backgroundImage: 'url(/img/Liked.png)',
     border: 'none',
-    fontSize: '20px',
+    cursor: 'pointer',
+  },
+  likeButtonActive: {
+    width: '25px',
+    height: '25px',
+    padding: '13px',
+    backgroundPosition: 'center',
+    backgroundImage: 'url(/img/activeLiked.png)',
+    border: 'none',
+    cursor: 'pointer',
   },
   like: {
-    marginLeft: 'auto',
-    fontSize: '1.5em',
+    fontSize: '15px',
     color: '#1B4345',
     cursor: 'pointer',
+    marginLeft: '10px',
   },
   placeName: {
     marginTop: '10px',

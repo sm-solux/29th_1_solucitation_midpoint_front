@@ -1,5 +1,6 @@
 export const searchStyles = {
-  container: {
+  
+  searchContainer: {
     marginBottom: '20px',
     display: 'flex',
     flexDirection: 'column',
@@ -10,41 +11,41 @@ export const searchStyles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: '10px',
+    marginBottom: '5px',
   },
   input: {
-    padding: '10px',
-    fontSize: '16px',
+    padding: '15px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
     width: '550px',
     border: 'none',
     outline: 'none',
     textAlign: 'center',
     borderRadius: '5px',
   },
-  button: {
+  searchButton: {
     width: '90px',
-    height: '38px',
-    padding: '5px 20px',
-    fontSize: '15px',
+    height: '45px',
+    fontFamily: 'Freesentation',
+    fontSize: '20px',
     cursor: 'pointer',
     color: '#FFFFFF',
     backgroundColor: '#1B4345',
     border: 'none',
     borderRadius: '5px',
-    marginLeft: '10px',
   },
-  tagContainer: {
+  searchTagContainer: {
     marginTop: '15px',
     justifyContent: 'center',
   },
-  tagList: {
+  searchTagList: {
     display: 'flex',
     flexWrap: 'wrap',
     marginBottom: '10px',
     justifyContent: 'center',
   },
-  tag: {
-    padding: '5px 10px',
+  searchTag: {
+    padding: '4px 15px',
     fontSize: '14px',
     fontWeight: 'bold',
     backgroundColor: 'transparent',
