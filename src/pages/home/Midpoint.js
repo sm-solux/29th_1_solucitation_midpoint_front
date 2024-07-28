@@ -15,14 +15,21 @@ import {
   WhiteBox // 추가된 스타일 컴포넌트
 } from '../../styles/styles';
 import { Logo } from '../../components/CommonComponents';
+import { useNavigate } from 'react-router-dom';
 
 function Midpoint() {
   const location = useLocation();
-  const { places, district } = location.state;
+  const { places = [], district = '' } = location.state || {};
   const [weather, setWeather] = useState(null);
   const [selectedPlace, setSelectedPlace] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (!district) {
+      console.error('District 정보가 없습니다.');
+      return;
+    }
+  
     const fetchWeatherData = async () => {
       try {
         const weatherResponse = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${district}&appid=${process.env.REACT_APP_OPENWEATHERMAP_API_KEY}&units=metric`);
@@ -31,9 +38,9 @@ function Midpoint() {
         console.error('Error fetching weather data:', error);
       }
     };
-
+  
     fetchWeatherData();
-  }, [district]);
+  }, [district, navigate]);
 
   const handlePlaceClick = (place) => {
     setSelectedPlace(place);

@@ -1,9 +1,10 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Logo } from "../../components/CommonComponents";
 import { LoginTitle } from "../../components/LoginComponents";
 import { commonStyles, LoginText } from "../../styles/styles";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const LoginButton = styled.button`
   font-size: 1.25rem;
@@ -38,12 +39,17 @@ function LoginPage() {
         const response = await fetch(
           "http://3.36.150.194:8080/api/auth/kakao-login-info",
           {
-            method: 'POST',
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
           }
         );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
         const configData = await response.json();
         setKakaoConfig(configData);
       } catch (error) {
@@ -60,9 +66,11 @@ function LoginPage() {
       const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
       window.location.href = kakaoURL;
     } else {
-      console.error("Kakao configuration is not loaded yet.");
+      console.error("카카오 설정이 아직 로드되지 않았습니다.");
     }
   };
+
+  
   return (
     <div>
       <Logo />
@@ -73,7 +81,11 @@ function LoginPage() {
           onClick={kakaoLogin}
           disabled={!kakaoConfig}
         >
-          <img src="/img/kakao.png" style={{ width: 19, marginRight: 8 }} />
+          <img
+            src="/img/kakao.png"
+            style={{ width: 19, marginRight: 8 }}
+            alt="Kakao Logo"
+          />
           카카오계정 로그인
         </LoginButton>
         <LoginButton
