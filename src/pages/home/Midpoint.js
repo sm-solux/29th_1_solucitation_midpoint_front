@@ -12,7 +12,8 @@ import {
   ShareButton,
   WeatherInfo,
   MapContainer,
-  commonStyles
+  commonStyles,
+  WhiteBox // styles.js에서 WhiteBox를 가져옵니다.
 } from '../../styles/styles';
 import { Logo } from '../../components/CommonComponents';
 import { useNavigate } from 'react-router-dom';

@@ -944,7 +944,15 @@ export const MapContainer = styled.div`
   }
 `;
 
-
+export const WhiteBox = styled.div`
+  background-color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 90%; 
+`;
 
 export const ShareButton = styled.button`
   display: flex;
