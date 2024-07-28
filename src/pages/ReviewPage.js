@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import axios from 'axios';
 import { Logo } from '../components/CommonComponents';
 import SearchBox from '../components/SearchComponents';
@@ -114,11 +114,8 @@ const ReviewPage = () => {
         { headers }
       );
 
-      console.log("Response data:", response.data); // 응답 데이터 로깅
-
-      // response data 받기
       const fetchedReviewDetails = {
-        postId: postId, // postId를 직접 설정
+        postId: postId, 
         nickname: response.data.nickname,
         title: response.data.title,
         content: response.data.content,
@@ -131,9 +128,8 @@ const ReviewPage = () => {
         likes: response.data.likes,
       };
 
-      console.log("Fetched review details:", fetchedReviewDetails); // fetchedReviewDetails 로깅
       setSelectedReview(fetchedReviewDetails);
-      setReviewModalIsOpen(true); // Open review modal
+      setReviewModalIsOpen(true);
     } catch (error) {
       setError('해당 게시글 조회 중 오류가 발생하였습니다.');
       console.error('Fetch review details error:', error);
@@ -151,9 +147,7 @@ const ReviewPage = () => {
   };
 
   const openReviewModal = async (postId) => {
-    console.log("Opening review modal for postId:", postId); // postId 로깅
     await fetchReviewDetails(postId);
-    console.log("Selected review after fetching details:", selectedReview); // selectedReview 로깅
   };
 
   const closeReviewModal = () => {
@@ -209,7 +203,7 @@ const ReviewPage = () => {
           ? '게시글을 성공적으로 수정하였습니다.'
           : '게시글을 성공적으로 등록하였습니다.'
       );
-      window.location.reload(); // 페이지 새로 고침
+      window.location.reload(); // 등록 후 페이지 새로 고침
     } catch (error) {
       if (error.response) {
         if (error.response.status === 400) {
@@ -340,7 +334,7 @@ const ReviewPage = () => {
           review={selectedReview}
           closeModal={closeReviewModal}
           currentUser={currentUser}
-          openWriteModal={() => openWriteModal(selectedReview)}
+          openWriteModal={openWriteModal}
           deleteReview={(review) => {
             setReviews((prevReviews) =>
               prevReviews.filter((r) => r.postId !== review.postId)
@@ -354,7 +348,7 @@ const ReviewPage = () => {
         isOpen={writeModalIsOpen}
         closeModal={closeWriteModal}
         addReview={addReview}
-        existingReview={{}} //writeButton 눌렀을 때 빈 내용 전달
+        existingReview={{}} // writeButton 때
         currentUser={currentUser}
       />
     </div>

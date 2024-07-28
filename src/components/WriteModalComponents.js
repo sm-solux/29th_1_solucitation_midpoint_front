@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from 'react-modal';
-
+import axios from 'axios';
 import writeModalStyles, {
   CloseButton,
   ProfileContainer,
@@ -56,7 +56,36 @@ const WriteModal = ({
   const [selectedFiles, setSelectedFiles] = useState([null, null, null]);
   const [photoURLs, setPhotoURLs] = useState([null, null, null]);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [profileData, setProfileData] = useState({
+    nickname: '',
+    profileImage: '../img/default-profile.png',
+  });
   const fileInputRefs = [useRef(null), useRef(null), useRef(null)];
+
+  useEffect(() => {
+    if (isOpen) {
+      const fetchProfileData = async () => {
+        try {
+          const accessToken = localStorage.getItem('accessToken');
+          const response = await axios.get('http://3.36.150.194:8080/api/member/profile', {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+
+          const data = response.data;
+          setProfileData({
+            nickname: data.nickname,
+            profileImage: data.profileImage || '../img/default-profile.png',
+          });
+        } catch (error) {
+          console.error('프로필 정보를 불러오는 중 에러 발생:', error);
+        }
+      };
+
+      fetchProfileData();
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (Object.keys(existingReview).length > 0) {
@@ -134,7 +163,7 @@ const WriteModal = ({
     return true;
   };
 
-  const handleAddReview = (e) => {
+  const handleAddReview = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) return;
@@ -149,8 +178,8 @@ const WriteModal = ({
       author: currentUser,
     };
 
-    addReview(newReview, isEditing);
-    handleCloseModal();
+    await addReview(newReview, isEditing);
+    window.location.reload(); // 페이지 새로 고침
   };
 
   const handleCloseModal = () => {
@@ -175,10 +204,8 @@ const WriteModal = ({
       <form onSubmit={handleAddReview}>
         <CloseButton onClick={handleCloseModal}>X</CloseButton>
         <ProfileContainer>
-          <ProfileImg src='/img/default-profile.png' alt='profile' />
-          <ProfileName>
-            {currentUser ? currentUser.name : 'anonymous'}
-          </ProfileName>
+          <ProfileImg src={profileData.profileImage} alt='profile' />
+          <ProfileName>{profileData.nickname}</ProfileName>
         </ProfileContainer>
         <InputName
           type='text'
