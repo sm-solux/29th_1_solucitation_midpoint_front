@@ -39,6 +39,7 @@ const hashtagMap = {
   11: '#혼자',
 };
 
+//리뷰 불러오기
 const useFetchReviews = (isLoggedIn) => {
   const [reviews, setReviews] = useState([]);
   const [filteredReviews, setFilteredReviews] = useState([]);
@@ -47,8 +48,13 @@ const useFetchReviews = (isLoggedIn) => {
   const fetchReviews = async () => {
     try {
       const accessToken = localStorage.getItem('accessToken');
-      const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts`, { headers });
+      const headers = accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : {};
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/posts`,
+        { headers }
+      );
 
       const fetchedReviews = response.data.map((review) => ({
         postId: review.postId,
@@ -70,26 +76,59 @@ const useFetchReviews = (isLoggedIn) => {
     fetchReviews();
   }, []);
 
-  return { reviews, filteredReviews, setFilteredReviews, error, setError, setReviews };
+  return {
+    reviews,
+    filteredReviews,
+    setFilteredReviews,
+    error,
+    setError,
+    setReviews,
+  };
 };
 
 const ReviewPage = () => {
   const { currentUser, isLoggedIn } = useAuth();
-  const { reviews, filteredReviews, setFilteredReviews, error, setError, setReviews } = useFetchReviews(isLoggedIn);
+  const {
+    reviews,
+    filteredReviews,
+    setFilteredReviews,
+    error,
+    setError,
+    setReviews,
+  } = useFetchReviews(isLoggedIn);
   const [writeModalIsOpen, setWriteModalIsOpen] = useState(false);
   const [reviewModalIsOpen, setReviewModalIsOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
   const [clickedTags, setClickedTags] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
+  //게시글 상세보기
   const fetchReviewDetails = useCallback(async (postId) => {
     try {
       const accessToken = localStorage.getItem('accessToken');
-      const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/${postId}`, { headers });
+      const headers = accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : {};
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/posts/${postId}`,
+        { headers }
+      );
 
-      setSelectedReview(response.data);
-      setReviewModalIsOpen(true);
+      // response data 받기
+      const fetchedReviewDetails = {
+        nickname: response.data.nickname,
+        title: response.data.title,
+        content: response.data.content,
+        createDate: response.data.createDate,
+        postHashtags: response.data.postHashtags.map(
+          (tagId) => hashtagMap[tagId]
+        ),
+        images: response.data.images,
+        likeCnt: response.data.likeCnt,
+      };
+
+      setSelectedReview(fetchedReviewDetails);
+      setReviewModalIsOpen(true); // Open review modal
     } catch (error) {
       setError('해당 게시글 조회 중 오류가 발생하였습니다.');
       console.error('Fetch review details error:', error);
@@ -125,39 +164,63 @@ const ReviewPage = () => {
       const headers = { Authorization: `Bearer ${accessToken}` };
 
       const formData = new FormData();
-      formData.append('postDto', JSON.stringify({
-        title: newReview.placeName,
-        content: newReview.content,
-        postHashtag: newReview.tags,
-      }));
+      formData.append(
+        'postDto',
+        JSON.stringify({
+          title: newReview.placeName,
+          content: newReview.content,
+          postHashtag: newReview.tags,
+        })
+      );
       newReview.photos.forEach((photo) => formData.append('postImages', photo));
 
       //제대로 되나 확인 코드
-      console.log("postDto:", JSON.stringify({
-        title: newReview.placeName,
-        content: newReview.content,
-        postHashtag: newReview.tags,
-      }));
+      console.log(
+        'postDto:',
+        JSON.stringify({
+          title: newReview.placeName,
+          content: newReview.content,
+          postHashtag: newReview.tags,
+        })
+      );
+
+      console.log('');
 
       let response;
       if (isEditing && selectedReview) {
-        response = await axios.patch(`${process.env.REACT_APP_API_URL}/api/posts/${selectedReview.postId}`, formData, { headers });
+        response = await axios.patch(
+          `${process.env.REACT_APP_API_URL}/api/posts/${selectedReview.postId}`,
+          formData,
+          { headers }
+        );
       } else {
-        response = await axios.post(`${process.env.REACT_APP_API_URL}/api/posts`, formData, { headers });
+        response = await axios.post(
+          `${process.env.REACT_APP_API_URL}/api/posts`,
+          formData,
+          { headers }
+        );
       }
 
       setReviews((prevReviews) => {
         if (isEditing && selectedReview) {
-          return prevReviews.map((review) => (review.postId === selectedReview.postId ? response.data : review));
+          return prevReviews.map((review) =>
+            review.postId === selectedReview.postId ? response.data : review
+          );
         }
         return [...prevReviews, response.data];
       });
-      alert(isEditing ? '게시글을 성공적으로 수정하였습니다.' : '게시글을 성공적으로 등록하였습니다.');
+      alert(
+        isEditing
+          ? '게시글을 성공적으로 수정하였습니다.'
+          : '게시글을 성공적으로 등록하였습니다.'
+      );
     } catch (error) {
       if (error.response) {
         if (error.response.status === 400) {
           const errorMessage = error.response.data.errors
-            ? error.response.data.errors.map((err) => `${err.field}: ${err.message}`).join(', ')
+            ? error.response.data.errors
+                .map((err) => `${err.field}: ${err.message}`)
+                .join(', ')
             : error.response.data;
           setError(errorMessage);
         } else if (error.response.status === 401) {
@@ -165,12 +228,18 @@ const ReviewPage = () => {
         } else if (error.response.status === 404) {
           setError('해당 게시글이 존재하지 않습니다.');
         } else if (error.response.status === 403) {
-          setError('해당 게시글을 수정할 권한이 없습니다. 본인이 작성한 글만 수정할 수 있습니다.');
+          setError(
+            '해당 게시글을 수정할 권한이 없습니다. 본인이 작성한 글만 수정할 수 있습니다.'
+          );
         } else {
-          setError(`게시글 등록 과정에서 오류가 발생하였습니다: ${error.response.data}`);
+          setError(
+            `게시글 등록 과정에서 오류가 발생하였습니다: ${error.response.data}`
+          );
         }
       } else {
-        setError(`게시글 등록 과정에서 오류가 발생하였습니다: ${error.message}`);
+        setError(
+          `게시글 등록 과정에서 오류가 발생하였습니다: ${error.message}`
+        );
       }
       console.error('Error adding review:', error);
     }
@@ -178,7 +247,7 @@ const ReviewPage = () => {
 
   return (
     <div>
-      <Logo bgColor="#F2F2F2" />
+      <Logo bgColor='#F2F2F2' />
       <div style={{ marginTop: '120px' }}>
         <SearchBox
           setFilteredReviews={setFilteredReviews}
@@ -191,19 +260,18 @@ const ReviewPage = () => {
         {error ? (
           <p>{error}</p>
         ) : (
-          (filteredReviews.length > 0 ? filteredReviews : reviews).map((review) => (
-            <ReviewCard
-              key={review.postId}
-              review={review}
-              onReviewClick={openReviewModal}
-            />
-          ))
+          (filteredReviews.length > 0 ? filteredReviews : reviews).map(
+            (review) => (
+              <ReviewCard
+                key={review.postId}
+                review={review}
+                onReviewClick={openReviewModal}
+              />
+            )
+          )
         )}
       </div>
-      <button
-        onClick={handleWriteButtonClick}
-        style={reviewStyles.writeButton}
-      >
+      <button onClick={handleWriteButtonClick} style={reviewStyles.writeButton}>
         <img
           src='/img/WriteButtonIcon.png'
           alt='write button'
@@ -218,7 +286,9 @@ const ReviewPage = () => {
           currentUser={currentUser}
           openWriteModal={openWriteModal}
           deleteReview={(review) => {
-            setReviews((prevReviews) => prevReviews.filter((r) => r.postId !== review.postId));
+            setReviews((prevReviews) =>
+              prevReviews.filter((r) => r.postId !== review.postId)
+            );
           }}
           setReviews={setReviews}
         />

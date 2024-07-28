@@ -107,8 +107,7 @@ const ReviewModal = ({
                 ? reviewModalStyles.likeButtonActive
                 : reviewModalStyles.likeButton
             }
-          >
-          </button>
+          ></button>
           <span style={reviewModalStyles.like}>좋아요 {likeCount}</span>
         </div>
         <div style={reviewModalStyles.tags}>

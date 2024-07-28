@@ -16,7 +16,7 @@ export const reviewStyles = {
     backgroundColor: 'transparent',
   },
   photoContainer: {
-    width: '50',
+    width: '50px',
     height: '50',
     overflow: 'hidden',
     display: 'flex',
@@ -25,8 +25,8 @@ export const reviewStyles = {
     margin: '10px 10px',
   },
   photo: {
-    maxWidth: '100%',
-    maxHeight: '100%',
+    width: '250px',
+    height: '250px',
     objectFit: 'cover',
   },
   details: {

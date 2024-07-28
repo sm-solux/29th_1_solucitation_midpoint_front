@@ -2,11 +2,41 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { searchStyles } from '../styles/searchStyles';
 
-const SearchBox = ({ setFilteredReviews, setSearchTerm, clickedTags, setClickedTags }) => {
+const SearchBox = ({
+  setFilteredReviews,
+  setSearchTerm,
+  clickedTags,
+  setClickedTags,
+}) => {
   const [searchText, setSearchText] = useState('');
   const [error, setError] = useState(null);
 
-  const tags = ['식사', '카페', '공부', '문화생활', '쇼핑', '자연', '산책', '친목', '여럿이', '혼자'];
+  const tags = [
+    '식사',
+    '카페',
+    '공부',
+    '문화생활',
+    '쇼핑',
+    '자연',
+    '산책',
+    '친목',
+    '여럿이',
+    '혼자',
+  ];
+
+  const hashtagMap = {
+    1: '#식사',
+    2: '#카페',
+    3: '#공부',
+    4: '#문화생활',
+    5: '#쇼핑',
+    6: '#자연',
+    7: '#산책',
+    8: '#친목',
+    9: '#여럿이',
+    10: '#어린이',
+    11: '#혼자',
+  };
 
   const handleInputChange = (e) => {
     setSearchText(e.target.value);
@@ -33,18 +63,23 @@ const SearchBox = ({ setFilteredReviews, setSearchTerm, clickedTags, setClickedT
   const fetchBySearchTerm = async (text) => {
     try {
       const accessToken = localStorage.getItem('accessToken');
-      const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/search/query`, {
-        params: { query: text },
-        headers,
-      });
+      const headers = accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : {};
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/posts/search/query`,
+        {
+          params: { query: text },
+          headers,
+        }
+      );
 
       if (response.status === 200) {
         const data = response.data.map((item) => ({
           postId: item.postId,
           firstImageUrl: item.firstImageUrl,
           title: item.title,
-          hashtags: item.hashtags,
+          hashtags: item.hashtags.map((tagId) => hashtagMap[tagId]),
           likes: item.likes,
         }));
         setFilteredReviews(data);
@@ -69,18 +104,27 @@ const SearchBox = ({ setFilteredReviews, setSearchTerm, clickedTags, setClickedT
   const fetchByTags = async (tagNames) => {
     try {
       const accessToken = localStorage.getItem('accessToken');
-      const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
+      const headers = accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : {};
       console.log('Fetching by tags:', tagNames);
 
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/search/purpose`, {
-        params: { purpose: tagNames },
-        headers,
-        paramsSerializer: params => {
-          return Object.keys(params).map(key => {
-            return `${encodeURIComponent(key)}=${encodeURIComponent(params[key].join(','))}`;
-          }).join('&');
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/posts/search/purpose`,
+        {
+          params: { purpose: tagNames },
+          headers,
+          paramsSerializer: (params) => {
+            return Object.keys(params)
+              .map((key) => {
+                return `${encodeURIComponent(key)}=${encodeURIComponent(
+                  params[key].join(',')
+                )}`;
+              })
+              .join('&');
+          },
         }
-      });
+      );
 
       if (response.status === 200) {
         const data = response.data.map((item) => ({
@@ -147,7 +191,9 @@ const SearchBox = ({ setFilteredReviews, setSearchTerm, clickedTags, setClickedT
                 key={tag}
                 style={{
                   ...searchStyles.searchTag,
-                  backgroundColor: clickedTags.includes(tag) ? '#1B4345' : 'transparent',
+                  backgroundColor: clickedTags.includes(tag)
+                    ? '#1B4345'
+                    : 'transparent',
                   color: clickedTags.includes(tag) ? '#fff' : '#1B4345',
                   borderColor: '#1B4345',
                   cursor: 'pointer',
