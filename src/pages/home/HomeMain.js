@@ -237,6 +237,20 @@ const Home = () => {
       {isPopupOpen && (
         <HomePopup
           onClose={handlePopupClose}
+          setAddress={(address) => {
+            if (popupTarget === 'user') {
+              setUserInfo({ ...userInfo, address });
+            } else {
+              const updatedFriends = friends.map((friend, index) => {
+                if (index === popupTarget) {
+                  return { ...friend, address };
+                }
+                return friend;
+              });
+              setFriends(updatedFriends);
+            }
+            setIsPopupOpen(false);
+          }}
           searchResults={popupTarget === 'user' ? searchResults.user : searchResults.friends[popupTarget] || []}
           setSearchResults={(results) => setSearchResults(prev => ({
             ...prev,
