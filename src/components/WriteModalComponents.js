@@ -12,7 +12,7 @@ import writeModalStyles, {
   AddImg,
   TagContainer,
   TagButton,
-  SubmitButton
+  SubmitButton,
 } from '../styles/writeModalStyles';
 
 Modal.setAppElement('#root');
@@ -40,8 +40,7 @@ const tagIdMap = {
   '#산책': 7,
   '#친목': 8,
   '#여럿이': 9,
-  '#어린이': 10,
-  '#혼자': 11,
+  '#혼자': 10,
 };
 
 const WriteModal = ({
@@ -50,7 +49,7 @@ const WriteModal = ({
   addReview,
   existingReview = {},
   isEditing,
-  currentUser
+  currentUser,
 }) => {
   const [placeName, setPlaceName] = useState('');
   const [content, setContent] = useState('');
@@ -64,7 +63,13 @@ const WriteModal = ({
       setPlaceName(existingReview.title || '');
       setContent(existingReview.content || '');
       setPhotoURLs(existingReview.images || [null, null, null]);
-      setSelectedTags(existingReview.postHashtags ? existingReview.postHashtags.map(tagId => Object.keys(tagIdMap).find(key => tagIdMap[key] === tagId)) : []);
+      setSelectedTags(
+        existingReview.postHashtags
+          ? existingReview.postHashtags.map((tagId) =>
+              Object.keys(tagIdMap).find((key) => tagIdMap[key] === tagId)
+            )
+          : []
+      );
     }
   }, [existingReview]);
 
@@ -120,7 +125,7 @@ const WriteModal = ({
       return false;
     }
 
-    const validPhotos = selectedFiles.filter(file => file !== null);
+    const validPhotos = selectedFiles.filter((file) => file !== null);
     if (validPhotos.length < 1) {
       alert('최소 한 장의 사진을 업로드해 주세요.');
       return false;
@@ -134,12 +139,12 @@ const WriteModal = ({
 
     if (!validateForm()) return;
 
-    const tags = selectedTags.map(tag => tagIdMap[tag]);
+    const tags = selectedTags.map((tag) => tagIdMap[tag]);
 
     const newReview = {
       placeName,
       content,
-      photos: selectedFiles.filter(file => file !== null),
+      photos: selectedFiles.filter((file) => file !== null),
       tags,
       author: currentUser,
     };
@@ -171,7 +176,9 @@ const WriteModal = ({
         <CloseButton onClick={handleCloseModal}>X</CloseButton>
         <ProfileContainer>
           <ProfileImg src='/img/default-profile.png' alt='profile' />
-          <ProfileName>{currentUser ? currentUser.name : 'anonymous'}</ProfileName>
+          <ProfileName>
+            {currentUser ? currentUser.name : 'anonymous'}
+          </ProfileName>
         </ProfileContainer>
         <InputName
           type='text'

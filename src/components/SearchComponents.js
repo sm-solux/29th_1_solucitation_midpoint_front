@@ -12,16 +12,16 @@ const SearchBox = ({
   const [error, setError] = useState(null);
 
   const tags = [
-    '식사',
-    '카페',
-    '공부',
-    '문화생활',
-    '쇼핑',
-    '자연',
-    '산책',
-    '친목',
-    '여럿이',
-    '혼자',
+    { id: 1, name: '식사' },
+    { id: 2, name: '카페' },
+    { id: 3, name: '공부' },
+    { id: 4, name: '문화생활' },
+    { id: 5, name: '쇼핑' },
+    { id: 6, name: '자연' },
+    { id: 7, name: '산책' },
+    { id: 8, name: '친목' },
+    { id: 9, name: '여럿이' },
+    { id: 10, name: '혼자' },
   ];
 
   const hashtagMap = {
@@ -34,22 +34,21 @@ const SearchBox = ({
     7: '#산책',
     8: '#친목',
     9: '#여럿이',
-    10: '#어린이',
-    11: '#혼자',
+    10: '#혼자',
   };
 
   const handleInputChange = (e) => {
     setSearchText(e.target.value);
   };
 
-  const handleTagClick = (tag) => {
+  const handleTagClick = (tagId) => {
     setClickedTags((prevTags) => {
-      if (prevTags.includes(tag)) {
-        const newTags = prevTags.filter((t) => t !== tag);
+      if (prevTags.includes(tagId)) {
+        const newTags = prevTags.filter((id) => id !== tagId);
         fetchByTags(newTags);
         return newTags;
       } else if (prevTags.length < 2) {
-        const newTags = [...prevTags, tag];
+        const newTags = [...prevTags, tagId];
         fetchByTags(newTags);
         return newTags;
       } else {
@@ -59,7 +58,7 @@ const SearchBox = ({
     });
   };
 
-  //검색어로 검색
+  // 검색어로 검색
   const fetchBySearchTerm = async (text) => {
     try {
       const accessToken = localStorage.getItem('accessToken');
@@ -100,19 +99,19 @@ const SearchBox = ({
     }
   };
 
-  //태그로 검색
-  const fetchByTags = async (tagNames) => {
+  // 태그로 검색
+  const fetchByTags = async (tagIds) => {
     try {
       const accessToken = localStorage.getItem('accessToken');
       const headers = accessToken
         ? { Authorization: `Bearer ${accessToken}` }
         : {};
-      console.log('Fetching by tags:', tagNames);
+      console.log('Fetching by tags:', tagIds);
 
       const response = await axios.get(
         `${process.env.REACT_APP_API_URL}/api/posts/search/purpose`,
         {
-          params: { purpose: tagNames },
+          params: { purpose: tagIds },
           headers,
           paramsSerializer: (params) => {
             return Object.keys(params)
@@ -131,7 +130,7 @@ const SearchBox = ({
           postId: item.postId,
           firstImageUrl: item.firstImageUrl,
           title: item.title,
-          hashtags: item.hashtags,
+          hashtags: item.hashtags.map((tagId) => hashtagMap[tagId]),
           likes: item.likes,
         }));
         setFilteredReviews(data);
@@ -188,19 +187,19 @@ const SearchBox = ({
           <div style={searchStyles.searchTagList}>
             {tags.map((tag) => (
               <div
-                key={tag}
+                key={tag.id}
                 style={{
                   ...searchStyles.searchTag,
-                  backgroundColor: clickedTags.includes(tag)
+                  backgroundColor: clickedTags.includes(tag.id)
                     ? '#1B4345'
                     : 'transparent',
-                  color: clickedTags.includes(tag) ? '#fff' : '#1B4345',
+                  color: clickedTags.includes(tag.id) ? '#fff' : '#1B4345',
                   borderColor: '#1B4345',
                   cursor: 'pointer',
                 }}
-                onClick={() => handleTagClick(tag)}
+                onClick={() => handleTagClick(tag.id)}
               >
-                {tag}
+                {tag.name}
               </div>
             ))}
           </div>

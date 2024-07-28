@@ -73,9 +73,7 @@ const ReviewModal = ({
         />
         <div style={reviewModalStyles.profileInfo}>
           <div style={reviewModalStyles.profileName}>{review.nickname}</div>
-          <div style={reviewModalStyles.date}>
-            {new Date(review.createDate).toLocaleDateString()}
-          </div>
+          <div style={reviewModalStyles.date}>{review.createDate}</div>
         </div>
       </div>
       <div style={reviewModalStyles.contentContainer}>
