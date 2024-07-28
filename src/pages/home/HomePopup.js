@@ -107,7 +107,6 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
 
         const updatedResults = [place, ...searchResults]; // 맨 위로 추가
         setSearchResults(updatedResults);
-        setAddress(data.result.formatted_address);
         setSearchInput('');
         setSelectedSuggestion(null);
         setShowMap(false);
@@ -117,7 +116,6 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
         console.error('Error fetching place details:', error);
       }
     } else {
-      setAddress(searchInput);
       onClose(searchInput, searchResults);
     }
   };

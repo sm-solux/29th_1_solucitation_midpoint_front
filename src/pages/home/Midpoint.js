@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import styled from 'styled-components';
 import {
   PlaceContainer,
   Left,
@@ -11,14 +12,21 @@ import {
   ShareButton,
   WeatherInfo,
   MapContainer,
-  commonStyles,
-  WhiteBox // 추가된 스타일 컴포넌트
+  commonStyles
 } from '../../styles/styles';
 import { Logo } from '../../components/CommonComponents';
 
+const WhiteBox = styled.div`
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+`;
+
 function Midpoint() {
   const location = useLocation();
-  const { places, district } = location.state;
+  const { places, district, midpoint } = location.state;
   const [weather, setWeather] = useState(null);
   const [selectedPlace, setSelectedPlace] = useState(null);
 
@@ -37,7 +45,6 @@ function Midpoint() {
 
   const handlePlaceClick = (place) => {
     setSelectedPlace(place);
-    // 여기에서 선택된 장소의 지도 정보를 가져옵니다.
   };
 
   const handleKakaoShare = () => {
@@ -49,12 +56,12 @@ function Midpoint() {
       <Logo />
       <PlaceContainer>
         <Left>
-          <WhiteBox> {/* WhiteBox로 장소 추천, 공유, 날씨 부분 묶기 */}
+          <WhiteBox>
             <h2>{district} 주변 장소 추천</h2>
             <PlacesList>
               {places.map((place, index) => (
                 <PlaceItem key={index} onClick={() => handlePlaceClick(place)}>
-                  <img src={place.image} alt={place.name} />
+                  <img src={place.image || '/img/default-image.png'} alt={place.name} />
                   <div>
                     <h3>{place.name}</h3>
                     <p>{place.address}</p>
@@ -80,11 +87,21 @@ function Midpoint() {
         </Left>
 
         <Right>
+          {midpoint && (
+            <MapContainer>
+              <iframe
+                title="map"
+                src={`https://maps.google.com/maps?q=${midpoint.latitude},${midpoint.longitude}&z=15&output=embed`}
+                style={{ width: '100%', height: '100%', border: 'none' }}
+              />
+            </MapContainer>
+          )}
           {selectedPlace && (
             <MapContainer>
               <iframe
                 title="map"
                 src={`https://maps.google.com/maps?q=${selectedPlace.latitude},${selectedPlace.longitude}&z=15&output=embed`}
+                style={{ width: '100%', height: '100%', border: 'none' }}
               />
             </MapContainer>
           )}

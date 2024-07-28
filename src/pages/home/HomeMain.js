@@ -25,7 +25,7 @@ const Home = () => {
     }
 
     try {
-      const response = await axios.get('http://3.36.150.194:8080/midpoint/api/member/profile', {
+      const response = await axios.get('http://3.36.150.194:8080/api/member/profile', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -91,6 +91,7 @@ const Home = () => {
 
   const handlePurposeChange = (event) => {
     const selectedValue = event.target.value;
+    console.log('Selected Purpose:', selectedValue); // 선택된 값 출력
     setSelectedPurpose(selectedValue);
     if (selectedValue === '/test1') {
       navigate('/test1');
@@ -107,35 +108,66 @@ const Home = () => {
     try {
       const addressInputs = [userInfo, ...friends];
       const geocodedInputs = await Promise.all(addressInputs.map(async input => {
-        if (input.address) {  // 방어 코드 추가
+        if (input.address) {
           const { latitude, longitude } = await geocodeAddress(input.address);
           return { ...input, latitude, longitude };
         } else {
           return input;
         }
       }));
-      const latitudes = geocodedInputs.map(input => input.latitude).filter(Boolean);  // 방어 코드 추가
-      const longitudes = geocodedInputs.map(input => input.longitude).filter(Boolean);  // 방어 코드 추가
+      const latitudes = geocodedInputs.map(input => input.latitude).filter(Boolean);
+      const longitudes = geocodedInputs.map(input => input.longitude).filter(Boolean);
 
-      const logicResponse = await axios.post('http://3.36.150.194:8080/midpoint/api/logic', {
+      console.log('Geocoded Inputs:', geocodedInputs);
+      console.log('Latitudes:', latitudes);
+      console.log('Longitudes:', longitudes);
+
+      const logicResponse = await axios.post('http://3.36.150.194:8080/api/logic', {
         latitudes,
         longitudes
       });
 
-      if (logicResponse.data.success) {
-        const placesResponse = await axios.get('http://3.36.150.194:8080/midpoint/api/places', {
+      console.log('Logic Response:', logicResponse.data);
+
+      // 성공 여부를 `success` 필드 또는 좌표 존재 여부로 판단
+      const isSuccess = logicResponse.data.success || (logicResponse.data.latitude && logicResponse.data.longitude);
+
+      if (isSuccess) {
+        const latitude = logicResponse.data.latitude.toFixed(6);
+        const longitude = logicResponse.data.longitude.toFixed(6);
+        const category = selectedPurpose || 'restaurant'; // 한글 카테고리 URL 인코딩
+        const radius = 1000;
+
+        console.log('Places Request Params:', { latitude, longitude, category, radius });
+
+        const placesResponse = await axios.get('http://3.36.150.194:8080/api/places', {
           params: {
-            midpoint: logicResponse.data.midpoint,
-            purpose: selectedPurpose
+            latitude,
+            longitude,
+            category,
+            radius
           }
         });
 
+        console.log('Places Response:', placesResponse.data);
+
         if (placesResponse.data.length > 0) {
-          navigate('/midpoint', { state: { places: placesResponse.data, district: logicResponse.data.midpointDistrict } });
+          const places = placesResponse.data.map(place => ({
+            name: place.name,
+            address: place.address,
+            latitude: place.latitude,
+            longitude: place.longitude,
+            types: JSON.parse(place.types),
+            placeID: place.placeID
+          }));
+
+          navigate('/midpoint', { state: { places, district: logicResponse.data.midpointDistrict, midpoint: logicResponse.data } });
         } else {
+          console.log('No places found');
           navigate('/again');
         }
       } else {
+        console.log('Logic calculation failed');
         navigate('/again');
       }
     } catch (error) {
@@ -148,7 +180,8 @@ const Home = () => {
     { label: '목적 추천 TEST', value: '/test1' },
     { label: '맛집', value: 'restaurant' },
     { label: '카페', value: 'cafe' },
-    { label: '산책/등산', value: 'hiking' },
+    { label: '산책', value: 'walk' },
+    { label: '등산', value: 'hiking' },
     { label: '공부', value: 'study' },
     { label: '문화생활', value: 'culture' },
     { label: '핫플', value: 'hotplace' },
