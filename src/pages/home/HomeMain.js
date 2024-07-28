@@ -1,26 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { commonStyles } from '../../styles/styles';
 import { Logo } from '../../components/CommonComponents';
 import HomePopup from './HomePopup';
 import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../../contexts/AppContext';
 
 const Home = () => {
-  const [userInfo, setUserInfo] = useState({ name: '본인', profileImage: '/img/default-profile.png', address: '' });
-  const [friends, setFriends] = useState([]);
-  const [selectedPurpose, setSelectedPurpose] = useState('');
+  const { userInfo, setUserInfo, friends, setFriends, selectedPurpose, setSelectedPurpose } = useContext(AppContext);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupTarget, setPopupTarget] = useState(null); // 팝업이 열린 대상
-  const [friendCount, setFriendCount] = useState(1);
+  const [friendCount, setFriendCount] = useState(friends.length + 1);
   const [searchResults, setSearchResults] = useState({ user: [], friends: {} });
   const navigate = useNavigate();
 
   const fetchUserProfile = async () => {
     const token = localStorage.getItem('accessToken');
     if (!token) {
-      // 로그인하지 않은 경우
       console.error('No token found, setting default profile');
-      setUserInfo({ name: '본인', profileImage: '/img/default-profile.png', address: '' });
       return;
     }
 
@@ -42,9 +39,7 @@ const Home = () => {
       }
     } catch (error) {
       console.error('Error fetching user profile:', error);
-      setUserInfo({ name: '본인', profileImage: '/img/default-profile.png', address: '' });
       if (error.response && error.response.status === 401) {
-        // 인증 오류가 발생한 경우 로그인 페이지로 리다이렉트
         navigate('/login');
       }
     }
@@ -52,7 +47,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchUserProfile();
-  }, []);
+  }, []); // 빈 배열을 의존성으로 설정해 처음 마운트될 때만 실행
 
   const isLoggedIn = !!localStorage.getItem('accessToken'); // 로그인 여부 확인
 
@@ -91,7 +86,6 @@ const Home = () => {
 
   const handlePurposeChange = (event) => {
     const selectedValue = event.target.value;
-    console.log('Selected Purpose:', selectedValue); // 선택된 값 출력
     setSelectedPurpose(selectedValue);
     if (selectedValue === '/test1') {
       navigate('/test1');
@@ -118,27 +112,18 @@ const Home = () => {
       const latitudes = geocodedInputs.map(input => input.latitude).filter(Boolean);
       const longitudes = geocodedInputs.map(input => input.longitude).filter(Boolean);
 
-      console.log('Geocoded Inputs:', geocodedInputs);
-      console.log('Latitudes:', latitudes);
-      console.log('Longitudes:', longitudes);
-
       const logicResponse = await axios.post('http://3.36.150.194:8080/api/logic', {
         latitudes,
         longitudes
       });
 
-      console.log('Logic Response:', logicResponse.data);
-
-      // 성공 여부를 `success` 필드 또는 좌표 존재 여부로 판단
       const isSuccess = logicResponse.data.success || (logicResponse.data.latitude && logicResponse.data.longitude);
 
       if (isSuccess) {
         const latitude = logicResponse.data.latitude.toFixed(6);
         const longitude = logicResponse.data.longitude.toFixed(6);
-        const category = selectedPurpose || 'restaurant'; // 한글 카테고리 URL 인코딩
+        const category = selectedPurpose || 'restaurant';
         const radius = 1000;
-
-        console.log('Places Request Params:', { latitude, longitude, category, radius });
 
         const placesResponse = await axios.get('http://3.36.150.194:8080/api/places', {
           params: {
@@ -148,8 +133,6 @@ const Home = () => {
             radius
           }
         });
-
-        console.log('Places Response:', placesResponse.data);
 
         if (placesResponse.data.length > 0) {
           const places = placesResponse.data.map(place => ({
@@ -163,11 +146,9 @@ const Home = () => {
 
           navigate('/midpoint', { state: { places, district: logicResponse.data.midpointDistrict, midpoint: logicResponse.data } });
         } else {
-          console.log('No places found');
           navigate('/again');
         }
       } else {
-        console.log('Logic calculation failed');
         navigate('/again');
       }
     } catch (error) {

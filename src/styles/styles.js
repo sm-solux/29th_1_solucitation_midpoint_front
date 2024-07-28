@@ -273,7 +273,7 @@ export const commonStyles = {
   },
   resultOptionText: {
     marginTop: "1rem",
-    fontSize: "1.5rem",
+    fontSize: "1.7rem",
     fontWeight: "600",
   },
   resultButton: {
