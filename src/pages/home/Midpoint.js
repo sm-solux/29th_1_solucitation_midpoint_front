@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom'; // useNavigate 사용
 import axios from 'axios';
 import {
   PlaceContainer,
@@ -21,6 +21,7 @@ import { Logo } from '../../components/CommonComponents';
 
 function Midpoint() {
   const location = useLocation();
+  const navigate = useNavigate(); // useNavigate 사용
   const { places, midpoint } = location.state;
   const [weather, setWeather] = useState(null);
   const [selectedPlaces, setSelectedPlaces] = useState([]);
@@ -60,7 +61,7 @@ function Midpoint() {
     fetchMidpointDistrict();
   }, [midpoint]);
 
-  const handlePlaceClick = (place) => {
+  const handlePlaceClick = async (place) => {
     if (selecting) {
       setSelectedPlaces((prevSelectedPlaces) => {
         if (prevSelectedPlaces.includes(place)) {
@@ -71,6 +72,20 @@ function Midpoint() {
       });
     } else {
       setSelectedPlaces([place]);
+
+      // place 객체 구조 확인을 위한 콘솔 로그
+      console.log('Selected place:', place);
+
+      // placeID를 통해 구글 리뷰 URL을 가져오는 API 호출
+      try {
+        const response = await axios.get(`http://3.36.150.194:8080/api/reviews?placeId=${place.placeID}`);
+        const googleReviewUrl = response.data.url;
+
+        // 구글 리뷰 페이지로 리디렉션
+        window.open(googleReviewUrl, '_blank');
+      } catch (error) {
+        console.error('Error fetching Google review URL:', error);
+      }
     }
   };
 
