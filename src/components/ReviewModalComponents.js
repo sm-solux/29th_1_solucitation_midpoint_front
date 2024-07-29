@@ -1,20 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
+import axios from 'axios';
 import { reviewModalStyles } from '../styles/reviewModalStyles';
 
 const ReviewModal = ({
   isOpen,
   review,
   closeModal,
-  currentUser,
   openWriteModal,
   deleteReview,
   toggleLike,
 }) => {
   const [liked, setLiked] = useState(review.likes);
   const [likeCount, setLikeCount] = useState(review.likeCnt);
+  const [profileData, setProfileData] = useState(null);
   const [error, setError] = useState(null);
-  const isCurrentUser = currentUser && currentUser === review.nickname;
+
+  useEffect(() => {
+    if (isOpen) {
+      const fetchProfileData = async () => {
+        try {
+          const accessToken = localStorage.getItem('accessToken');
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/member/profile`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+
+          const data = response.data;
+          setProfileData({
+            nickname: data.nickname,
+            profileImage: data.profileImage || '../img/default-profile.png',
+          });
+        } catch (error) {
+          console.error('프로필 정보를 불러오는 중 에러 발생:', error);
+          setError('프로필 정보를 불러오는 중 에러 발생');
+        }
+      };
+
+      fetchProfileData();
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     setLiked(review.likes);
@@ -36,13 +62,47 @@ const ReviewModal = ({
     closeModal();
   };
 
-  const photos = Array.isArray(review.images) ? review.images : [];
-  const handleDeleteClick = () => {
+  const handleDeleteClick = async () => {
     if (window.confirm('삭제하시겠습니까?')) {
-      deleteReview(review);
-      closeModal();
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        await axios.delete(`${process.env.REACT_APP_API_URL}/api/posts/${review.postId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        deleteReview(review);
+        closeModal();
+        window.location.reload();
+      } catch (error) {
+        if (error.response) {
+          switch (error.response.status) {
+            case 401:
+              setError('로그인이 필요합니다.');
+              break;
+            case 404:
+              setError('해당 게시글이 존재하지 않습니다.');
+              break;
+            case 403:
+              setError('해당 게시글을 삭제할 권한이 없습니다. 본인이 작성한 글만 삭제할 수 있습니다.');
+              break;
+            case 500:
+              setError('게시글 삭제 중 오류가 발생하였습니다.');
+              break;
+            default:
+              setError(`오류가 발생하였습니다: ${error.message}`);
+          }
+        } else if (error.request) {
+          setError('서버와 연결할 수 없습니다.');
+        } else {
+          setError(`오류가 발생하였습니다: ${error.message}`);
+        }
+      }
     }
   };
+
+  const photos = Array.isArray(review.images) ? review.images : [];
+  const isCurrentUser = profileData && profileData.nickname === review.nickname;
 
   return (
     <Modal
@@ -52,15 +112,15 @@ const ReviewModal = ({
         overlay: reviewModalStyles.overlay,
         content: reviewModalStyles.modal,
       }}
-      contentLabel='Review Modal'
+      contentLabel="Review Modal"
     >
       <button onClick={closeModal} style={reviewModalStyles.closeButton}>
         X
       </button>
       <div style={reviewModalStyles.profileContainer}>
         <img
-          src='/img/default-profile.png'
-          alt='profile'
+          src={profileData?.profileImage || '/img/default-profile.png'}
+          alt="profile"
           style={reviewModalStyles.profileImg}
         />
         <div style={reviewModalStyles.profileInfo}>
@@ -117,13 +177,13 @@ const ReviewModal = ({
               onClick={handleEditClick}
               style={reviewModalStyles.editButton}
             >
-              <img src='/img/ReviewEditIcon.png' alt='edit' />
+              <img src="/img/ReviewEditIcon.png" alt="edit" />
             </button>
             <button
               onClick={handleDeleteClick}
               style={reviewModalStyles.delButton}
             >
-              <img src='/img/ReviewDelIcon.png' alt='delete' />
+              <img src="/img/ReviewDelIcon.png" alt="delete" />
             </button>
           </div>
         )}

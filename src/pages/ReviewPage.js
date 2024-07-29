@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React, { useState, useEffect, useCallback,} from 'react';
 import axios from 'axios';
 import { Logo } from '../components/CommonComponents';
 import SearchBox from '../components/SearchComponents';
@@ -61,7 +61,6 @@ const useFetchReviews = (isLoggedIn) => {
         title: review.title,
         hashtags: review.hashtags.map((tagId) => hashtagMap[tagId]),
         likes: isLoggedIn ? review.likes : false,
-        likeCnt: review.likeCnt // likeCnt 추가
       }));
 
       setReviews(fetchedReviews);
@@ -235,6 +234,7 @@ const ReviewPage = () => {
     }
   };
 
+  //좋아요 표시에 대한 API
   const toggleLike = async (postId) => {
     const accessToken = localStorage.getItem('accessToken');
 
