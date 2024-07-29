@@ -190,8 +190,12 @@ const SearchBox = ({
   };
 
   const handleSearch = () => {
-    setSearchTerm(searchText);
-    fetchBySearchTerm(searchText);
+    if (searchText.trim() === '') {
+      fetchAllPosts();
+    } else {
+      setSearchTerm(searchText);
+      fetchBySearchTerm(searchText);
+    }
   };
 
   useEffect(() => {
