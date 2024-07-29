@@ -135,33 +135,28 @@ const ReviewPage = () => {
     }
   }, []);
 
-  const openWriteModal = (review = null, editing = false) => {
-    console.log('openWriteModal called', { review, editing });
+  const openWriteModal = (review = null, isEditing = false) => {
     setSelectedReview(review);
-    setIsEditing(editing);
+    setIsEditing(isEditing);
     setWriteModalIsOpen(true);
   };
 
   const closeWriteModal = () => {
-    console.log('closeWriteModal called');
     setWriteModalIsOpen(false);
     setSelectedReview(null);
-    setIsEditing(false);
   };
 
   const openReviewModal = async (postId) => {
-    console.log('openReviewModal called', { postId });
     await fetchReviewDetails(postId);
+    setReviewModalIsOpen(true);
   };
 
   const closeReviewModal = () => {
-    console.log('closeReviewModal called');
     setReviewModalIsOpen(false);
     setSelectedReview(null);
   };
 
   const handleWriteButtonClick = () => {
-    console.log('handleWriteButtonClick called');
     openWriteModal();
   };
 
@@ -330,7 +325,7 @@ const ReviewPage = () => {
           )
         )}
       </div>
-      <button onClick={handleWriteButtonClick} style={reviewStyles.writeButton}>
+      <button onClick={() => openWriteModal(null,false)} style={reviewStyles.writeButton}>
         <img
           src='/img/WriteButtonIcon.png'
           alt='write button'
@@ -357,8 +352,7 @@ const ReviewPage = () => {
         isOpen={writeModalIsOpen}
         closeModal={closeWriteModal}
         addReview={addReview}
-        existingReview={isEditing ? selectedReview : {}}
-        currentUser={currentUser}
+        existingReview={selectedReview || {}}
         isEditing={isEditing}
       />
     </div>

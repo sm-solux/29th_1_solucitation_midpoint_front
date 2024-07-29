@@ -10,6 +10,7 @@ const ReviewModal = ({
   openWriteModal,
   deleteReview,
   toggleLike,
+  setReviews,
 }) => {
   const [liked, setLiked] = useState(review.likes);
   const [likeCount, setLikeCount] = useState(review.likeCnt);
