@@ -18,8 +18,8 @@ const MyPageProfile = () => {
     nickname: '',
     id: '',
     email: '',
-    profileImage: '../img/default-profile.png',
-    password: '',
+    profileImage: '',
+    password: '********',
   });
 
   const fileInputRef = useRef(null);
