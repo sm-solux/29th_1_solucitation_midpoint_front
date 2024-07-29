@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { commonStyles, PlacesList, PlaceItem, FriendItem } from '../../styles/styles';
+import { commonStyles, SearchList, SearchItem, FriendItem } from '../../styles/styles';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 
@@ -252,17 +252,17 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
           {showPlacesList && (
             <div style={commonStyles.placesListContainer}>
               <p style={commonStyles.currentLocationText}>검색 목록</p>
-              <PlacesList>
+              <SearchList>
                 {searchResults.map((place, index) => (
-                  <PlaceItem key={index}>
+                  <SearchItem key={index}>
                     <img src={place.imgSrc} alt={place.name} />
                     <div>
                       <h3>{place.name}</h3>
                       <p>{place.address}</p>
                     </div>
-                  </PlaceItem>
+                  </SearchItem>
                 ))}
-              </PlacesList>
+              </SearchList>
             </div>
           )}
           {showMap && (
