@@ -47,7 +47,7 @@ const WriteModal = ({
   isOpen,
   closeModal,
   addReview,
-  existingReview = {},
+  existingReview,
   isEditing,
   currentUser,
 }) => {
@@ -92,13 +92,16 @@ const WriteModal = ({
     if (isEditing && existingReview) {
       setPlaceName(existingReview.title || '');
       setContent(existingReview.content || '');
-      setPhotoURLs(existingReview.images || [null, null, null]);
+
+      // 최대 3개의 이미지를 할당
+      const initialPhotoURLs = [null, null, null];
+      for (let i = 0; i < existingReview.images.length && i < 3; i++) {
+        initialPhotoURLs[i] = existingReview.images[i];
+      }
+      setPhotoURLs(initialPhotoURLs);
+
       setSelectedTags(
-        existingReview.postHashtags
-          ? existingReview.postHashtags.map((tag) =>
-              Object.keys(tagIdMap).find((key) => tagIdMap[key] === tag)
-            )
-          : []
+        existingReview.postHashtags || []
       );
     } else {
       setPlaceName('');

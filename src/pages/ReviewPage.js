@@ -97,11 +97,10 @@ const ReviewPage = () => {
   const [writeModalIsOpen, setWriteModalIsOpen] = useState(false);
   const [reviewModalIsOpen, setReviewModalIsOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
   const [clickedTags, setClickedTags] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
-
-  // 게시글 상세보기
+  // 게시글 상세보기  
   const fetchReviewDetails = useCallback(async (postId) => {
     try {
       const accessToken = localStorage.getItem('accessToken');
@@ -135,11 +134,17 @@ const ReviewPage = () => {
     }
   }, []);
 
-  const openWriteModal = (review = null, isEditing = false) => {
-    setSelectedReview(review);
-    setIsEditing(isEditing);
-    setWriteModalIsOpen(true);
+  const openWriteModal = (review, isEditing) => {
+    // 먼저 모달을 닫습니다.
+    setWriteModalIsOpen(false);
+    // 모달을 닫은 후에 다시 열기 전에 필요한 데이터를 설정합니다.
+    setTimeout(() => {
+      setSelectedReview(review);
+      setIsEditing(isEditing);
+      setWriteModalIsOpen(true);
+    }, 0);
   };
+
 
   const closeWriteModal = () => {
     setWriteModalIsOpen(false);
@@ -157,7 +162,7 @@ const ReviewPage = () => {
   };
 
   const handleWriteButtonClick = () => {
-    openWriteModal();
+    openWriteModal(null, false);
   };
 
   const addReview = async (newReview, isEditing) => {
@@ -187,16 +192,14 @@ const ReviewPage = () => {
       } else {
         response = await axios.post(
           `${process.env.REACT_APP_API_URL}/api/posts`,
-          formData,
-          { headers }
+          formData, { headers }
         );
       }
 
       setReviews((prevReviews) => {
         if (isEditing && selectedReview) {
-          return prevReviews.map((review) =>
-            review.postId === selectedReview.postId ? response.data : review
-          );
+          return prevReviews.map((review) => (
+            review.postId === selectedReview.postId ? response.data : review));
         }
         return [...prevReviews, response.data];
       });
@@ -211,8 +214,8 @@ const ReviewPage = () => {
         if (error.response.status === 400) {
           const errorMessage = error.response.data.errors
             ? error.response.data.errors
-                .map((err) => `${err.field}: ${err.message}`)
-                .join(', ')
+              .map((err) => `${err.field}: ${err.message}`)
+              .join(', ')
             : error.response.data;
           setError(errorMessage);
         } else if (error.response.status === 401) {
@@ -220,24 +223,17 @@ const ReviewPage = () => {
         } else if (error.response.status === 404) {
           setError('해당 게시글이 존재하지 않습니다.');
         } else if (error.response.status === 403) {
-          setError(
-            '해당 게시글을 수정할 권한이 없습니다. 본인이 작성한 글만 수정할 수 있습니다.'
-          );
+          setError('해당 게시글을 수정할 권한이 없습니다. 본인이 작성한 글만 수정할 수 있습니다.');
         } else {
-          setError(
-            `게시글 등록 과정에서 오류가 발생하였습니다: ${error.response.data}`
-          );
+          setError(`게시글 등록 과정에서 오류가 발생하였습니다: ${error.response.data}`);
         }
       } else {
-        setError(
-          `게시글 등록 과정에서 오류가 발생하였습니다: ${error.message}`
-        );
+        setError(`게시글 등록 과정에서 오류가 발생하였습니다: ${error.message}`);
       }
       console.error('Error adding review:', error);
     }
   };
 
-  //좋아요 표시에 대한 API
   const toggleLike = async (postId) => {
     console.log('toggleLike called', { postId });
     const accessToken = localStorage.getItem('accessToken');
@@ -251,17 +247,12 @@ const ReviewPage = () => {
       const headers = { Authorization: `Bearer ${accessToken}` };
 
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/posts/${postId}/likes`,
-        {},
-        { headers }
-      );
+        `${process.env.REACT_APP_API_URL}/api/posts/${postId}/likes`, {}, { headers });
 
       if (response.status === 200) {
         setReviews((prevReviews) =>
           prevReviews.map((review) =>
-            review.postId === postId
-              ? { ...review, likes: !review.likes, likeCnt: review.likes ? review.likeCnt - 1 : review.likeCnt + 1 }
-              : review
+            review.postId === postId ? { ...review, likes: !review.likes, likeCnt: review.likes ? review.likeCnt - 1 : review.likeCnt + 1 } : review
           )
         );
 
@@ -284,9 +275,7 @@ const ReviewPage = () => {
             setError(error.response.data);
             break;
           case 500:
-            setError(
-              `좋아요 상태를 변경하는 중 오류가 발생하였습니다: ${error.message}`
-            );
+            setError(`좋아요 상태를 변경하는 중 오류가 발생하였습니다: ${error.message}`);
             break;
           default:
             setError(`오류가 발생하였습니다: ${error.message}`);
@@ -314,23 +303,13 @@ const ReviewPage = () => {
         {error ? (
           <p>{error}</p>
         ) : (
-          (filteredReviews.length > 0 ? filteredReviews : reviews).map(
-            (review) => (
-              <ReviewCard
-                key={review.postId}
-                review={review}
-                onReviewClick={openReviewModal}
-              />
-            )
-          )
+          (filteredReviews.length > 0 ? filteredReviews : reviews).map((review) => (
+            <ReviewCard key={review.postId} review={review} onReviewClick={openReviewModal} />
+          ))
         )}
       </div>
-      <button onClick={() => openWriteModal(null,false)} style={reviewStyles.writeButton}>
-        <img
-          src='/img/WriteButtonIcon.png'
-          alt='write button'
-          style={reviewStyles.writeButton}
-        />
+      <button onClick={handleWriteButtonClick} style={reviewStyles.writeButton}>
+        <img src='/img/WriteButtonIcon.png' alt='write button' style={reviewStyles.writeButton} />
       </button>
       {selectedReview && (
         <ReviewModal
@@ -340,9 +319,7 @@ const ReviewPage = () => {
           currentUser={currentUser}
           openWriteModal={openWriteModal}
           deleteReview={(review) => {
-            setReviews((prevReviews) =>
-              prevReviews.filter((r) => r.postId !== review.postId)
-            );
+            setReviews((prevReviews) => prevReviews.filter((r) => r.postId !== review.postId));
           }}
           setReviews={setReviews}
           toggleLike={toggleLike}
@@ -354,6 +331,7 @@ const ReviewPage = () => {
         addReview={addReview}
         existingReview={selectedReview || {}}
         isEditing={isEditing}
+        currentUser={currentUser}
       />
     </div>
   );
