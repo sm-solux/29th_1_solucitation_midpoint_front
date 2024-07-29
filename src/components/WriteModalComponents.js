@@ -67,7 +67,7 @@ const WriteModal = ({
       const fetchProfileData = async () => {
         try {
           const accessToken = localStorage.getItem('accessToken');
-          const response = await axios.get('http://3.36.150.194:8080/api/member/profile', {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/member/profile`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -88,19 +88,25 @@ const WriteModal = ({
   }, [isOpen]);
 
   useEffect(() => {
-    if (Object.keys(existingReview).length > 0) {
+    console.log('WriteModal useEffect called', { isEditing, existingReview });
+    if (isEditing && existingReview) {
       setPlaceName(existingReview.title || '');
       setContent(existingReview.content || '');
       setPhotoURLs(existingReview.images || [null, null, null]);
       setSelectedTags(
         existingReview.postHashtags
-          ? existingReview.postHashtags.map((tagId) =>
-              Object.keys(tagIdMap).find((key) => tagIdMap[key] === tagId)
+          ? existingReview.postHashtags.map((tag) =>
+              Object.keys(tagIdMap).find((key) => tagIdMap[key] === tag)
             )
           : []
       );
+    } else {
+      setPlaceName('');
+      setContent('');
+      setPhotoURLs([null, null, null]);
+      setSelectedTags([]);
     }
-  }, [existingReview]);
+  }, [isEditing, existingReview]);
 
   useEffect(() => {
     return () => {
@@ -183,6 +189,7 @@ const WriteModal = ({
   };
 
   const handleCloseModal = () => {
+    console.log('handleCloseModal called');
     setPlaceName('');
     setContent('');
     setSelectedFiles([null, null, null]);
@@ -248,7 +255,7 @@ const WriteModal = ({
             </TagButton>
           ))}
         </TagContainer>
-        <SubmitButton type='submit'>게시</SubmitButton>
+        <SubmitButton type='submit'>{isEditing ? '수정' : '게시'}</SubmitButton>
       </form>
     </Modal>
   );

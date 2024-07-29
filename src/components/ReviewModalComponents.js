@@ -58,7 +58,8 @@ const ReviewModal = ({
   };
 
   const handleEditClick = () => {
-    openWriteModal(review, true);
+    console.log('handleEditClick called', { review });
+    openWriteModal(review, true); // 수정 모드로 열기
     closeModal();
   };
 

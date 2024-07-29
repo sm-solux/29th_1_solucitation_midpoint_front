@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback,} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Logo } from '../components/CommonComponents';
 import SearchBox from '../components/SearchComponents';
@@ -38,7 +38,6 @@ const hashtagMap = {
   10: '#혼자',
 };
 
-//리뷰 불러오기
 const useFetchReviews = (isLoggedIn) => {
   const [reviews, setReviews] = useState([]);
   const [filteredReviews, setFilteredReviews] = useState([]);
@@ -100,6 +99,7 @@ const ReviewPage = () => {
   const [selectedReview, setSelectedReview] = useState(null);
   const [clickedTags, setClickedTags] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
 
   // 게시글 상세보기
   const fetchReviewDetails = useCallback(async (postId) => {
@@ -114,7 +114,7 @@ const ReviewPage = () => {
       );
 
       const fetchedReviewDetails = {
-        postId: postId, 
+        postId: postId,
         nickname: response.data.nickname,
         title: response.data.title,
         content: response.data.content,
@@ -135,30 +135,38 @@ const ReviewPage = () => {
     }
   }, []);
 
-  const openWriteModal = () => {
-    setSelectedReview(null);
+  const openWriteModal = (review = null, editing = false) => {
+    console.log('openWriteModal called', { review, editing });
+    setSelectedReview(review);
+    setIsEditing(editing);
     setWriteModalIsOpen(true);
   };
 
   const closeWriteModal = () => {
+    console.log('closeWriteModal called');
     setWriteModalIsOpen(false);
     setSelectedReview(null);
+    setIsEditing(false);
   };
 
   const openReviewModal = async (postId) => {
+    console.log('openReviewModal called', { postId });
     await fetchReviewDetails(postId);
   };
 
   const closeReviewModal = () => {
+    console.log('closeReviewModal called');
     setReviewModalIsOpen(false);
     setSelectedReview(null);
   };
 
   const handleWriteButtonClick = () => {
+    console.log('handleWriteButtonClick called');
     openWriteModal();
   };
 
   const addReview = async (newReview, isEditing) => {
+    console.log('addReview called', { newReview, isEditing });
     try {
       const accessToken = localStorage.getItem('accessToken');
       const headers = { Authorization: `Bearer ${accessToken}` };
@@ -236,6 +244,7 @@ const ReviewPage = () => {
 
   //좋아요 표시에 대한 API
   const toggleLike = async (postId) => {
+    console.log('toggleLike called', { postId });
     const accessToken = localStorage.getItem('accessToken');
 
     if (!accessToken) {
@@ -348,8 +357,9 @@ const ReviewPage = () => {
         isOpen={writeModalIsOpen}
         closeModal={closeWriteModal}
         addReview={addReview}
-        existingReview={{}} // writeButton 때
+        existingReview={isEditing ? selectedReview : {}}
         currentUser={currentUser}
+        isEditing={isEditing}
       />
     </div>
   );
