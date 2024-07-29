@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom'; // useNavigate 사용
+import React, { useEffect, useState, useContext } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
   PlaceContainer,
@@ -18,15 +18,22 @@ import {
   WhiteBox
 } from '../../styles/styles';
 import { Logo } from '../../components/CommonComponents';
+import { AppContext } from '../../contexts/AppContext';
 
-function Midpoint() {
+const Midpoint = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // useNavigate 사용
+  const navigate = useNavigate();
   const { places, midpoint } = location.state;
+  const { isLoggedIn } = useContext(AppContext); // AppContext에서 isLoggedIn 가져오기
   const [weather, setWeather] = useState(null);
   const [selectedPlaces, setSelectedPlaces] = useState([]);
   const [midpointDistrict, setMidpointDistrict] = useState('');
   const [selecting, setSelecting] = useState(false);
+
+  // 콘솔에 isLoggedIn 상태 출력
+  useEffect(() => {
+    console.log('isLoggedIn:', isLoggedIn);
+  }, [isLoggedIn]);
 
   useEffect(() => {
     if (!midpoint) {
@@ -94,6 +101,10 @@ function Midpoint() {
   };
 
   const handleSave = () => {
+    if (!isLoggedIn) {
+      alert('로그인 후 사용해주세요.');
+      return;
+    }
     // 저장 기능 구현
   };
 
@@ -135,16 +146,7 @@ function Midpoint() {
                 </PlaceItem>
               ))}
             </PlacesList>
-            <WeatherInfoContainer>
-              {weather && (
-                <WeatherDetails>
-                  <span>{midpointDistrict}</span>
-                  <span className="temperature">{weather.main.temp}°C</span>
-                  <WeatherIcon src={`https://openweathermap.org/img/w/${weather.weather[0].icon}.png`} alt="Weather" />
-                </WeatherDetails>
-              )}
-            </WeatherInfoContainer>
-            {selectedPlaces.length > 0 && (
+            {selecting && (
               <BottomSection>
                 <ShareButton onClick={handleKakaoShare}>
                   <img src="/img/katokshare.png" alt="Kakao Share" style={{ width: '30px', marginRight: '7px' }} />
@@ -156,6 +158,15 @@ function Midpoint() {
                 </SaveButton>
               </BottomSection>
             )}
+            <WeatherInfoContainer>
+              {weather && (
+                <WeatherDetails>
+                  <span>{midpointDistrict}</span>
+                  <span className="temperature">{weather.main.temp}°C</span>
+                  <WeatherIcon src={`https://openweathermap.org/img/w/${weather.weather[0].icon}.png`} alt="Weather" />
+                </WeatherDetails>
+              )}
+            </WeatherInfoContainer>
           </WhiteBox>
         </Left>
 
@@ -183,6 +194,6 @@ function Midpoint() {
       </PlaceContainer>
     </div>
   );
-}
+};
 
 export default Midpoint;

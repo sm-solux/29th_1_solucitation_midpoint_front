@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../../contexts/AppContext';
 
 const Home = () => {
-  const { userInfo, setUserInfo, friends, setFriends, selectedPurpose, setSelectedPurpose } = useContext(AppContext);
+  const { userInfo, setUserInfo, friends, setFriends, selectedPurpose, setSelectedPurpose, isLoggedIn } = useContext(AppContext);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupTarget, setPopupTarget] = useState(null); // 팝업이 열린 대상
   const [friendCount, setFriendCount] = useState(friends.length + 1);
@@ -48,8 +48,6 @@ const Home = () => {
   useEffect(() => {
     fetchUserProfile();
   }, []); // 빈 배열을 의존성으로 설정해 처음 마운트될 때만 실행
-
-  const isLoggedIn = !!localStorage.getItem('accessToken'); // 로그인 여부 확인
 
   const handleAddInput = () => {
     const newFriendName = `친구 ${friendCount}`;
@@ -144,7 +142,7 @@ const Home = () => {
             placeID: place.placeID
           }));
 
-          navigate('/midpoint', { state: { places, district: logicResponse.data.midpointDistrict, midpoint: logicResponse.data } });
+          navigate('/midpoint', { state: { places, district: logicResponse.data.midpointDistrict, midpoint: logicResponse.data, isLoggedIn } });
         } else {
           navigate('/again');
         }
