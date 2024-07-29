@@ -75,18 +75,20 @@ export const reviewStyles = {
   },
   placeName: {
     marginTop: '10px',
-    marginLeft:'2px',
+    marginLeft: '4px',
+    marginBottom: '15px',
     fontSize: '20px',
     fontWeight: 'bold',
     color: '#1B4345',
   },
+  /*
   content: {
     marginTop: '5px',
     marginLeft:'3px',
     marginBottom: '5px',
     color: '#1B4345',
     fontSize: '14px',
-  },
+  },*/
   writeButton: {
     width: '70px',
     height: '70px',

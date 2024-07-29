@@ -36,14 +36,6 @@ const ReviewCard = ({ review, onReviewClick }) => {
     }
   };
 
-  const limitContentLength = (text, maxLength) => {
-    if (text.length > maxLength) {
-      return text.slice(0, maxLength) + '...';
-    } else {
-      return text;
-    }
-  };
-
   return (
     <div style={reviewStyles.card} onClick={handleClick}>
       {firstImageUrl && (
@@ -75,7 +67,6 @@ const ReviewCard = ({ review, onReviewClick }) => {
           </button>
         </div>
         <div style={reviewStyles.placeName}>{title}</div>
-        <div style={reviewStyles.content}>{limitContentLength(title, 20)}</div>
       </div>
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
