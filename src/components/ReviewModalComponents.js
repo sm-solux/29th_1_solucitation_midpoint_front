@@ -7,9 +7,10 @@ const ReviewModal = ({
   isOpen,
   review,
   closeModal,
-  openWriteModal,
+  openEditModal,
   deleteReview,
   toggleLike,
+  setReviews,
 }) => {
   const [liked, setLiked] = useState(review.likes);
   const [likeCount, setLikeCount] = useState(review.likeCnt);
@@ -30,7 +31,7 @@ const ReviewModal = ({
           const data = response.data;
           setProfileData({
             nickname: data.nickname,
-            profileImage: data.profileImage || '../img/default-profile.png',
+            profileImage: data.profileImage || '/img/default-profile.png',
           });
         } catch (error) {
           console.error('프로필 정보를 불러오는 중 에러 발생:', error);
@@ -59,7 +60,7 @@ const ReviewModal = ({
 
   const handleEditClick = () => {
     console.log('handleEditClick called', { review });
-    openWriteModal(review, true); // 수정 모드로 열기
+    openEditModal(review); // 수정 모드로 열기
     closeModal();
   };
 
