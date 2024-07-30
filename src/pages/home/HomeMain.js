@@ -109,20 +109,20 @@ const Home = () => {
       }));
       const latitudes = geocodedInputs.map(input => input.latitude).filter(Boolean);
       const longitudes = geocodedInputs.map(input => input.longitude).filter(Boolean);
-
+  
       const logicResponse = await axios.post('http://3.36.150.194:8080/api/logic', {
         latitudes,
         longitudes
       });
-
+  
       const isSuccess = logicResponse.data.success || (logicResponse.data.latitude && logicResponse.data.longitude);
-
+  
       if (isSuccess) {
         const latitude = logicResponse.data.latitude.toFixed(6);
         const longitude = logicResponse.data.longitude.toFixed(6);
         const category = selectedPurpose || 'restaurant';
         const radius = 1000;
-
+  
         const placesResponse = await axios.get('http://3.36.150.194:8080/api/places', {
           params: {
             latitude,
@@ -131,7 +131,7 @@ const Home = () => {
             radius
           }
         });
-
+  
         if (placesResponse.data.length > 0) {
           const places = placesResponse.data.map(place => ({
             name: place.name,
@@ -139,9 +139,10 @@ const Home = () => {
             latitude: place.latitude,
             longitude: place.longitude,
             types: JSON.parse(place.types),
-            placeID: place.placeID
+            placeID: place.placeID,
+            image: place.photo ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photo}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}` : '/img/default-image.png'
           }));
-
+  
           navigate('/midpoint', { state: { places, district: logicResponse.data.midpointDistrict, midpoint: logicResponse.data, isLoggedIn } });
         } else {
           navigate('/again');
@@ -153,7 +154,7 @@ const Home = () => {
       console.error('Error finding place:', error);
       navigate('/again');
     }
-  };
+  };  
 
   const purposes = [
     { label: '목적 추천 TEST', value: '/test1' },

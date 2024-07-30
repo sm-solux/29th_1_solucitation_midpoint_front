@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   PlaceContainer,
   Left,
@@ -20,20 +20,15 @@ import {
 import { Logo } from '../../components/CommonComponents';
 import { AppContext } from '../../contexts/AppContext';
 
-const Midpoint = () => {
+function Midpoint() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { places, midpoint } = location.state;
-  const { isLoggedIn } = useContext(AppContext); // AppContext에서 isLoggedIn 가져오기
+  const { places, midpoint, isLoggedIn } = location.state;
   const [weather, setWeather] = useState(null);
   const [selectedPlaces, setSelectedPlaces] = useState([]);
   const [midpointDistrict, setMidpointDistrict] = useState('');
   const [selecting, setSelecting] = useState(false);
-
-  // 콘솔에 isLoggedIn 상태 출력
-  useEffect(() => {
-    console.log('isLoggedIn:', isLoggedIn);
-  }, [isLoggedIn]);
+  const { userInfo } = useContext(AppContext);
 
   useEffect(() => {
     if (!midpoint) {
@@ -68,6 +63,10 @@ const Midpoint = () => {
     fetchMidpointDistrict();
   }, [midpoint]);
 
+  useEffect(() => {
+    console.log('Places:', places);
+  }, [places]);
+
   const handlePlaceClick = async (place) => {
     if (selecting) {
       setSelectedPlaces((prevSelectedPlaces) => {
@@ -80,15 +79,9 @@ const Midpoint = () => {
     } else {
       setSelectedPlaces([place]);
 
-      // place 객체 구조 확인을 위한 콘솔 로그
-      console.log('Selected place:', place);
-
-      // placeID를 통해 구글 리뷰 URL을 가져오는 API 호출
       try {
         const response = await axios.get(`http://3.36.150.194:8080/api/reviews?placeId=${place.placeID}`);
         const googleReviewUrl = response.data.url;
-
-        // 구글 리뷰 페이지로 리디렉션
         window.open(googleReviewUrl, '_blank');
       } catch (error) {
         console.error('Error fetching Google review URL:', error);
@@ -100,12 +93,42 @@ const Midpoint = () => {
     // 카카오톡 공유 기능 구현
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!isLoggedIn) {
       alert('로그인 후 사용해주세요.');
       return;
     }
-    // 저장 기능 구현
+
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      console.error('No token found.');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://3.36.150.194:8080/api/search-history', {
+        neighborhood: midpointDistrict,
+        historyDto: selectedPlaces.map(place => ({
+          placeId: place.placeID,
+          placeName: place.name,
+          placeAddress: place.address,
+          imageUrl: place.image // 백엔드에서 제공하는 이미지를 사용
+        }))
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 201) {
+        alert('장소를 저장하였습니다.');
+      } else {
+        console.error('Unexpected response status:', response.status);
+      }
+    } catch (error) {
+      console.error('Error saving places:', error);
+    }
   };
 
   const handleSelectButtonClick = () => {
@@ -146,7 +169,16 @@ const Midpoint = () => {
                 </PlaceItem>
               ))}
             </PlacesList>
-            {selecting && (
+            <WeatherInfoContainer>
+              {weather && (
+                <WeatherDetails>
+                  <span>{midpointDistrict}</span>
+                  <span className="temperature">{weather.main.temp}°C</span>
+                  <WeatherIcon src={`https://openweathermap.org/img/w/${weather.weather[0].icon}.png`} alt="Weather" />
+                </WeatherDetails>
+              )}
+            </WeatherInfoContainer>
+            {selectedPlaces.length > 0 && (
               <BottomSection>
                 <ShareButton onClick={handleKakaoShare}>
                   <img src="/img/katokshare.png" alt="Kakao Share" style={{ width: '30px', marginRight: '7px' }} />
@@ -158,15 +190,6 @@ const Midpoint = () => {
                 </SaveButton>
               </BottomSection>
             )}
-            <WeatherInfoContainer>
-              {weather && (
-                <WeatherDetails>
-                  <span>{midpointDistrict}</span>
-                  <span className="temperature">{weather.main.temp}°C</span>
-                  <WeatherIcon src={`https://openweathermap.org/img/w/${weather.weather[0].icon}.png`} alt="Weather" />
-                </WeatherDetails>
-              )}
-            </WeatherInfoContainer>
           </WhiteBox>
         </Left>
 
@@ -194,6 +217,6 @@ const Midpoint = () => {
       </PlaceContainer>
     </div>
   );
-};
+}
 
 export default Midpoint;
