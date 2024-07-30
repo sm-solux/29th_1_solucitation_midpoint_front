@@ -191,58 +191,100 @@ const EditModal = ({
   };
 
   const handleUpdateReview = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!validateForm()) return;
+  if (!validateForm()) return;
 
-    const tags = selectedTags.map((tag) => tagIdMap[tag]);
+  const tags = selectedTags.map((tag) => tagIdMap[tag]);
 
-    const postDto = {};
+  const postDto = {};
 
-    if (placeName !== (existingReview?.title || '')) {
-      postDto.title = placeName;
-    }
-    if (content !== (existingReview?.content || '')) {
-      postDto.content = content;
-    }
-    if (JSON.stringify(tags) !== JSON.stringify(initialTags.map((tag) => tagIdMap[tag]))) {
-      postDto.postHashtag = tags;
-    }
+  if (placeName !== (existingReview?.title || '')) {
+    postDto.title = placeName;
+  }
+  if (content !== (existingReview?.content || '')) {
+    postDto.content = content;
+  }
+  if (JSON.stringify(tags) !== JSON.stringify(initialTags.map((tag) => tagIdMap[tag]))) {
+    postDto.postHashtag = tags;
+  }
 
-    const formData = new FormData();
-    formData.append('postDto', JSON.stringify(postDto));
+  const formData = new FormData();
+  formData.append('postDto', JSON.stringify(postDto));
 
-    if (isImageChanged) {
-      const validPhotos = selectedFiles.filter((file) => file !== null);
-      validPhotos.forEach((file) => {
-        formData.append('postImages', file);
-      });
+  if (isImageChanged) {
+    const validPhotos = selectedFiles.filter((file) => file !== null);
+    validPhotos.forEach((file) => {
+      formData.append('postImages', file);
+    });
+  } else {
+    initialImages.forEach((url) => {
+      if (url) {
+        formData.append('postImages', url);
+      }
+    });
+  }
+
+  try {
+    const accessToken = localStorage.getItem('accessToken');
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    await axios.patch(
+      `${process.env.REACT_APP_API_URL}/api/posts/${existingReview.postId}`,
+      formData,
+      { headers }
+    );
+    alert('게시글을 성공적으로 수정했습니다.');
+    window.location.reload();
+  } catch (error) {
+    if (error.response) {
+      const status = error.response.status;
+      switch (status) {
+        case 401:
+          alert('로그인하지 않으면 이 작업을 수행할 수 없습니다.');
+          break;
+        case 403:
+          alert('해당 게시글을 수정할 권한이 없습니다. 본인이 작성한 글만 수정할 수 있습니다.');
+          break;
+        case 404:
+          alert('수정하려는 게시글이 존재하지 않습니다.');
+          break;
+        case 400:
+          if (error.response.data.errors) {
+            const errors = error.response.data.errors;
+            errors.forEach((err) => {
+              if (err.field === 'title') {
+                alert('제목을 입력해야 합니다.');
+              } else if (err.field === 'content') {
+                alert('내용을 입력해야 합니다.');
+              }
+            });
+          } else if (error.response.data.message) {
+            const message = error.response.data.message;
+            if (message.includes('해시태그')) {
+              alert('서로 다른 두 개의 해시태그를 선택해야 합니다.');
+            } else if (message.includes('이미지')) {
+              alert('이미지는 최대 3장까지 업로드할 수 있습니다.');
+            } else {
+              alert('알 수 없는 오류가 발생했습니다.');
+            }
+          } else {
+            alert('잘못된 요청입니다.');
+          }
+          break;
+        case 500:
+          alert('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+          break;
+        default:
+          alert('알 수 없는 오류가 발생했습니다.');
+      }
     } else {
-      initialImages.forEach((url) => {
-        if (url) {
-          formData.append('postImages', url);
-        }
-      });
+      alert('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해 주세요.');
     }
-
-    try {
-      const accessToken = localStorage.getItem('accessToken');
-      const headers = {
-        Authorization: `Bearer ${accessToken}`,
-      };
-
-      await axios.patch(
-        `${process.env.REACT_APP_API_URL}/api/posts/${existingReview.postId}`,
-        formData,
-        { headers }
-      );
-
-      window.location.reload();
-    } catch (error) {
-      console.error('Error updating review:', error);
-      alert('리뷰 수정 중 오류가 발생하였습니다.');
-    }
-  };
+  }
+};
 
   const handleCloseModal = () => {
     resetForm();
