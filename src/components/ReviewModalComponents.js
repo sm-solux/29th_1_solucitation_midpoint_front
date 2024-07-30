@@ -3,36 +3,53 @@ import Modal from 'react-modal';
 import axios from 'axios';
 import { reviewModalStyles } from '../styles/reviewModalStyles';
 
+// 날짜를 'YYYY. MM. DD. HH:MM' 형식으로 변환하는 함수
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+
+  return `${year}. ${month}. ${day}. ${hours}:${minutes}`;
+};
+
 const ReviewModal = ({ isOpen, review, closeModal, openEditModal, deleteReview, toggleLike }) => {
   const [liked, setLiked] = useState(review.likes);
   const [likeCount, setLikeCount] = useState(review.likeCnt);
   const [profileData, setProfileData] = useState(null);
   const [error, setError] = useState(null);
-  console.log('Profile Image URL:', review.profileImageUrl);
 
-  useEffect(() => {
-    if (isOpen) {
-      const fetchProfileData = async () => {
-        try {
-          const accessToken = localStorage.getItem('accessToken');
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/member/profile`, {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          });
-
-          const data = response.data;
-          setProfileData({
-            nickname: data.nickname,
-            profileImage: data.profileImageUrl,
-          });
-        } catch (error) {
-          console.error('프로필 정보를 불러오는 중 에러 발생:', error);
-          setError('프로필 정보를 불러오는 중 에러 발생');
+useEffect(() => {
+  if (isOpen) {
+    const fetchProfileData = async () => {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        
+        if (!accessToken) {
+          //console.warn('로그인 정보가 없습니다');
+          return;
         }
-      };
+        
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/member/profile`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
 
-      fetchProfileData();
-    }
-  }, [isOpen]);
+        const data = response.data;
+        setProfileData({
+          nickname: data.nickname,
+          profileImage: data.profileImageUrl,
+        });
+      } catch (error) {
+        setError('프로필 정보를 불러오는 중 에러 발생');
+      }
+    };
+
+    fetchProfileData();
+  }
+}, [isOpen]);
+
 
   useEffect(() => {
     setLiked(review.likes);
@@ -115,7 +132,9 @@ const ReviewModal = ({ isOpen, review, closeModal, openEditModal, deleteReview, 
         />
         <div style={reviewModalStyles.profileInfo}>
           <div style={reviewModalStyles.profileName}>{review.nickname}</div>
-          <div style={reviewModalStyles.date}>{review.createDate}</div>
+          <div style={reviewModalStyles.date}>
+            {formatDate(review.createDate)}
+          </div>
         </div>
       </div>
       <div style={reviewModalStyles.contentContainer}>

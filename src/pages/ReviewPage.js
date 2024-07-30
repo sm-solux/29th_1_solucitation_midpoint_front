@@ -5,7 +5,7 @@ import SearchBox from '../components/SearchComponents';
 import ReviewCard from '../components/ReviewComponents';
 import ReviewModal from '../components/ReviewModalComponents';
 import WriteModal from '../components/WriteModalComponents';
-import EditModal from '../components/EditModalComponents'; // EditModal 컴포넌트 가져오기
+import EditModal from '../components/EditModalComponents';
 import { reviewStyles } from '../styles/reviewStyles';
 
 const useAuth = () => {
@@ -113,10 +113,9 @@ const ReviewPage = () => {
       { headers }
     );
 
-    // 올바른 필드 이름으로 수정
     const fetchedReviewDetails = {
       postId: postId,
-      profileImageUrl: response.data.profileImagerUrl, // 올바른 필드명으로 수정
+      profileImageUrl: response.data.profileImagerUrl,
       nickname: response.data.nickname,
       title: response.data.title,
       content: response.data.content,
@@ -130,15 +129,13 @@ const ReviewPage = () => {
     };
 
     setSelectedReview(fetchedReviewDetails);
-    console.log('Fetched Review Details:', fetchedReviewDetails);
     setReviewModalIsOpen(true);
   } catch (error) {
     setError('해당 게시글 조회 중 오류가 발생하였습니다.');
     console.error('Fetch review details error:', error);
   }
-}, []);
-
-
+  }, []);
+  
   const openWriteModal = () => {
     setWriteModalIsOpen(true);
   };
