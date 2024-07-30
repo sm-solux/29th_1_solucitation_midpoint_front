@@ -43,10 +43,11 @@ const tagIdMap = {
   '#혼자': 10,
 };
 
-const WriteModal = ({
+const EditModal = ({
   isOpen,
   closeModal,
-  addReview,
+  updateReview,
+  existingReview,
   currentUser,
 }) => {
   const [placeName, setPlaceName] = useState('');
@@ -56,8 +57,11 @@ const WriteModal = ({
   const [selectedTags, setSelectedTags] = useState([]);
   const [profileData, setProfileData] = useState({
     nickname: '',
-    profileImageUrl: '',
+    profileImage: '../img/default-profile.png',
   });
+  const [initialTags, setInitialTags] = useState([]);
+  const [initialImages, setInitialImages] = useState([]);
+  const [isImageChanged, setIsImageChanged] = useState(false);
   const fileInputRefs = [useRef(null), useRef(null), useRef(null)];
 
   useEffect(() => {
@@ -74,7 +78,7 @@ const WriteModal = ({
           const data = response.data;
           setProfileData({
             nickname: data.nickname,
-            profileImage: data.profileImageUrl,
+            profileImage: data.profileImage || '../img/default-profile.png',
           });
         } catch (error) {
           console.error('프로필 정보를 불러오는 중 에러 발생:', error);
@@ -86,15 +90,36 @@ const WriteModal = ({
   }, [isOpen]);
 
   useEffect(() => {
-    console.log('WriteModal useEffect called');
-    if (!isOpen) {
-      setPlaceName('');
-      setContent('');
-      setSelectedFiles([null, null, null]);
-      setPhotoURLs([null, null, null]);
-      setSelectedTags([]);
+    if (isOpen && existingReview) {
+      setPlaceName(existingReview.title || '');
+      setContent(existingReview.content || '');
+
+      const initialPhotoURLs = [null, null, null];
+      if (existingReview.images) {
+        for (let i = 0; i < existingReview.images.length && i < 3; i++) {
+          initialPhotoURLs[i] = existingReview.images[i];
+        }
+      }
+      setPhotoURLs(initialPhotoURLs);
+      setInitialImages(initialPhotoURLs);
+
+      const initialTags = existingReview.postHashtags || [];
+      setSelectedTags(initialTags);
+      setInitialTags(initialTags);
+
+      // 현재 입력된 데이터 출력
+      console.log("Editing Mode: Existing Review Loaded", {
+        placeName: existingReview.title,
+        content: existingReview.content,
+        photoURLs: existingReview.photoURLs,
+        selectedTags: existingReview.tags,
+      });
+    } else {
+      resetForm();
+      // 현재 입력된 데이터 출력
+      console.log("Form Reset");
     }
-  }, [isOpen]);
+  }, [isOpen, existingReview]);
 
   useEffect(() => {
     return () => {
@@ -103,6 +128,17 @@ const WriteModal = ({
       });
     };
   }, [photoURLs]);
+
+  const resetForm = () => {
+    setPlaceName('');
+    setContent('');
+    setSelectedFiles([null, null, null]);
+    setPhotoURLs([null, null, null]);
+    setSelectedTags([]);
+    setInitialTags([]);
+    setInitialImages([]);
+    setIsImageChanged(false);
+  };
 
   const handleIconClick = (index) => {
     fileInputRefs[index]?.current?.click();
@@ -122,6 +158,15 @@ const WriteModal = ({
     }
     newPhotoURLs[index] = URL.createObjectURL(file);
     setPhotoURLs(newPhotoURLs);
+    setIsImageChanged(true);
+
+    // 현재 입력된 데이터 출력
+    console.log("Current Form Data", {
+      placeName,
+      content,
+      photoURLs: newPhotoURLs,
+      selectedTags,
+    });
   };
 
   const handleTagClick = (tag) => {
@@ -129,9 +174,15 @@ const WriteModal = ({
       setSelectedTags(selectedTags.filter((t) => t !== tag));
     } else if (selectedTags.length < 2) {
       setSelectedTags([...selectedTags, tag]);
-    } else {
-      alert('두 개의 태그만 선택할 수 있습니다.');
     }
+
+    // 현재 입력된 데이터 출력
+    console.log("Current Form Data", {
+      placeName,
+      content,
+      photoURLs,
+      selectedTags,
+    });
   };
 
   const validateForm = () => {
@@ -140,18 +191,23 @@ const WriteModal = ({
       return false;
     }
 
+    if (placeName.length > 100) {
+      alert('제목은 100자 이내로 입력해 주세요.');
+      return false;
+    }
+
     if (!content.trim()) {
       alert('내용을 입력해 주세요.');
       return false;
     }
 
-    if (selectedTags.length !== 2) {
-      alert('서로 다른 두 개의 해시태그를 선택해야 합니다.');
+    if (selectedTags.length < 2) {
+      alert('태그를 2개 선택해 주세요.');
       return false;
     }
 
     const validPhotos = selectedFiles.filter((file) => file !== null);
-    if (validPhotos.length < 1) {
+    if (initialImages.filter((url) => url !== null).length < 1 && validPhotos.length < 1) {
       alert('최소 한 장의 사진을 업로드해 주세요.');
       return false;
     }
@@ -159,37 +215,78 @@ const WriteModal = ({
     return true;
   };
 
-  const handleAddReview = async (e) => {
-    e.preventDefault();
+  const handleUpdateReview = async (e) => {
+  e.preventDefault();
 
-    if (!validateForm()) return;
+  if (!validateForm()) return;
 
-    const tags = selectedTags.map((tag) => tagIdMap[tag]);
+  const tags = selectedTags.map((tag) => tagIdMap[tag]);
 
-    const newReview = {
-      title: placeName,
-      content,
-      photos: selectedFiles.filter((file) => file !== null),
-      tags,
-      author: currentUser,
+  const postDto = {};
+
+  if (placeName !== (existingReview?.title || '')) {
+    postDto.title = placeName;
+  }
+  if (content !== (existingReview?.content || '')) {
+    postDto.content = content;
+  }
+  if (JSON.stringify(tags) !== JSON.stringify(initialTags.map((tag) => tagIdMap[tag]))) {
+    postDto.postHashtag = tags;
+  }
+
+  const formData = new FormData();
+  formData.append('postDto', JSON.stringify(postDto));
+
+  if (isImageChanged) {
+    const validPhotos = selectedFiles.filter((file) => file !== null);
+    validPhotos.forEach((file) => {
+      formData.append('postImages', file);
+    });
+  } else {
+    initialImages.forEach((url) => {
+      if (url) {
+        formData.append('postImages', url);
+      }
+    });
+  }
+
+  try {
+    const accessToken = localStorage.getItem('accessToken');
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
     };
 
-    await addReview(newReview);
+    await axios.patch(
+      `${process.env.REACT_APP_API_URL}/api/posts/${existingReview.postId}`,
+      formData,
+      { headers }
+    );
+
+    window.location.reload();
+  } catch (error) {
+    console.error('Error updating review:', error);
+    alert('리뷰 수정 중 오류가 발생하였습니다.');
+  }
+};
+
+
+  const handleCloseModal = () => {
+    resetForm();
     closeModal();
   };
 
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={closeModal}
+      onRequestClose={handleCloseModal}
       style={{
         overlay: writeModalStyles.overlay,
         content: writeModalStyles.modal,
       }}
-      contentLabel='Write Review Modal'
+      contentLabel='Edit Review Modal'
     >
-      <form onSubmit={handleAddReview}>
-        <CloseButton onClick={closeModal}>X</CloseButton>
+      <form onSubmit={handleUpdateReview}>
+        <CloseButton onClick={handleCloseModal}>X</CloseButton>
         <ProfileContainer>
           <ProfileImg src={profileData.profileImage} alt='profile' />
           <ProfileName>{profileData.nickname}</ProfileName>
@@ -199,6 +296,7 @@ const WriteModal = ({
           placeholder='글제목'
           value={placeName}
           onChange={(e) => setPlaceName(e.target.value)}
+          maxLength={100}
         />
         <Textarea
           placeholder='내용을 입력하세요'
@@ -235,10 +333,10 @@ const WriteModal = ({
             </TagButton>
           ))}
         </TagContainer>
-        <SubmitButton type='submit'>게시</SubmitButton>
+        <SubmitButton type='submit'>수정</SubmitButton>
       </form>
     </Modal>
   );
 };
 
-export default WriteModal;
+export default EditModal;
