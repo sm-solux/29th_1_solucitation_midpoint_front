@@ -119,16 +119,21 @@ function Midpoint() {
       return;
     }
 
+    const saveData = {
+      neighborhood: midpointDistrict,
+      historyDto: selectedPlaces.map(place => ({
+        placeId: place.placeID,
+        placeName: place.name,
+        placeAddress: place.address,
+        imageUrl: place.image
+      }))
+    };
+
+    // JSON 형태로 콘솔에 출력합니다.
+    console.log('Save Data:', JSON.stringify(saveData, null, 2));
+
     try {
-      const response = await axios.post('http://3.36.150.194:8080/api/search-history', {
-        neighborhood: midpointDistrict,
-        historyDto: selectedPlaces.map(place => ({
-          placeId: place.placeID,
-          placeName: place.name,
-          placeAddress: place.address,
-          imageUrl: place.image
-        }))
-      }, {
+      const response = await axios.post('http://3.36.150.194:8080/api/search-history', saveData, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -141,7 +146,7 @@ function Midpoint() {
         console.error('Unexpected response status:', response.status);
       }
     } catch (error) {
-      console.error('Error saving places:', error);
+      console.error('Error saving places:', error.response ? error.response.data : error.message);
     }
   };
 
