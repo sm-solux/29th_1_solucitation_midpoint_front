@@ -46,9 +46,7 @@ const tagIdMap = {
 const EditModal = ({
   isOpen,
   closeModal,
-  updateReview,
   existingReview,
-  currentUser,
 }) => {
   const [placeName, setPlaceName] = useState('');
   const [content, setContent] = useState('');
@@ -57,7 +55,7 @@ const EditModal = ({
   const [selectedTags, setSelectedTags] = useState([]);
   const [profileData, setProfileData] = useState({
     nickname: '',
-    profileImageUrl: '',  // 수정된 필드 이름
+    profileImageUrl: '',
   });
   const [initialTags, setInitialTags] = useState([]);
   const [initialImages, setInitialImages] = useState([]);
@@ -78,7 +76,7 @@ const EditModal = ({
           const data = response.data;
           setProfileData({
             nickname: data.nickname || '',
-            profileImageUrl: data.profileImageUrl || '',  // 수정된 필드 이름
+            profileImageUrl: data.profileImageUrl || '',
           });
         } catch (error) {
           console.error('프로필 정보를 불러오는 중 에러 발생:', error);
@@ -107,17 +105,8 @@ const EditModal = ({
       setSelectedTags(initialTags);
       setInitialTags(initialTags);
 
-      // 현재 입력된 데이터 출력
-      console.log("Editing Mode: Existing Review Loaded", {
-        placeName: existingReview.title,
-        content: existingReview.content,
-        photoURLs: existingReview.photoURLs,
-        selectedTags: existingReview.tags,
-      });
     } else {
       resetForm();
-      // 현재 입력된 데이터 출력
-      console.log("Form Reset");
     }
   }, [isOpen, existingReview]);
 
@@ -160,13 +149,6 @@ const EditModal = ({
     setPhotoURLs(newPhotoURLs);
     setIsImageChanged(true);
 
-    // 현재 입력된 데이터 출력
-    console.log("Current Form Data", {
-      placeName,
-      content,
-      photoURLs: newPhotoURLs,
-      selectedTags,
-    });
   };
 
   const handleTagClick = (tag) => {
@@ -176,13 +158,6 @@ const EditModal = ({
       setSelectedTags([...selectedTags, tag]);
     }
 
-    // 현재 입력된 데이터 출력
-    console.log("Current Form Data", {
-      placeName,
-      content,
-      photoURLs,
-      selectedTags,
-    });
   };
 
   const validateForm = () => {
@@ -288,9 +263,9 @@ const EditModal = ({
         <CloseButton onClick={handleCloseModal}>X</CloseButton>
         <ProfileContainer>
           <ProfileImg
-            src={profileData.profileImageUrl || '/img/defaultProfile.png'}  // 기본 이미지 설정
+            src={profileData.profileImageUrl || '/img/defaultProfile.png'}
             alt='profile'
-            onError={(e) => e.target.src = '/img/defaultProfile.png'}  // 이미지 로드 오류 시 기본 이미지로 설정
+            onError={(e) => e.target.src = '/img/defaultProfile.png'}
           />
           <ProfileName>{profileData.nickname}</ProfileName>
         </ProfileContainer>

@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
 import { reviewModalStyles } from '../styles/reviewModalStyles';
+import useToggleLike from '../components/ToggleLike';
+import LikeButton from '../components/LikeButtonComponents';
 
-// 날짜를 'YYYY. MM. DD. HH:MM' 형식으로 변환하는 함수
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   const year = date.getFullYear();
@@ -15,56 +16,38 @@ const formatDate = (dateString) => {
   return `${year}. ${month}. ${day}. ${hours}:${minutes}`;
 };
 
-const ReviewModal = ({ isOpen, review, closeModal, openEditModal, deleteReview, toggleLike }) => {
-  const [liked, setLiked] = useState(review.likes);
-  const [likeCount, setLikeCount] = useState(review.likeCnt);
+const ReviewModal = ({ isOpen, review, closeModal, openEditModal, deleteReview }) => {
   const [profileData, setProfileData] = useState(null);
   const [error, setError] = useState(null);
-
-useEffect(() => {
-  if (isOpen) {
-    const fetchProfileData = async () => {
-      try {
-        const accessToken = localStorage.getItem('accessToken');
-        
-        if (!accessToken) {
-          //console.warn('로그인 정보가 없습니다');
-          return;
-        }
-        
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/member/profile`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-
-        const data = response.data;
-        setProfileData({
-          nickname: data.nickname,
-          profileImage: data.profileImageUrl,
-        });
-      } catch (error) {
-        setError('프로필 정보를 불러오는 중 에러 발생');
-      }
-    };
-
-    fetchProfileData();
-  }
-}, [isOpen]);
-
+  const { liked, likeCount, toggleLike, error: likeError } = useToggleLike(review.postId, review.likes, review.likeCnt);
 
   useEffect(() => {
-    setLiked(review.likes);
-    setLikeCount(review.likeCnt);
-  }, [review]);
+    if (isOpen) {
+      const fetchProfileData = async () => {
+        try {
+          const accessToken = localStorage.getItem('accessToken');
+          
+          if (!accessToken) {
+            return;
+          }
+          
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/member/profile`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          });
 
-  const handleToggleLike = async () => {
-    try {
-      await toggleLike(review.postId);
-      setLiked(!liked);
-      setLikeCount(liked ? likeCount - 1 : likeCount + 1);
-    } catch (error) {
-      setError('좋아요 상태를 변경하는 중 오류가 발생하였습니다.');
+          const data = response.data;
+          setProfileData({
+            nickname: data.nickname,
+            profileImage: data.profileImageUrl,
+          });
+        } catch (error) {
+          setError('프로필 정보를 불러오는 중 에러 발생');
+        }
+      };
+
+      fetchProfileData();
     }
-  };
+  }, [isOpen]);
 
   const handleEditClick = () => {
     openEditModal(review);
@@ -156,21 +139,7 @@ useEffect(() => {
       </div>
       <div style={reviewModalStyles.footer}>
         <div style={reviewModalStyles.likeSection}>
-          <button onClick={handleToggleLike} style={reviewModalStyles.likeButton}>
-            {liked ? (
-              <img
-                src={`${process.env.PUBLIC_URL}/img/activeLiked.png`}
-                alt="Active Liked Icon"
-                style={reviewModalStyles.icon}
-              />
-            ) : (
-              <img
-                src={`${process.env.PUBLIC_URL}/img/Liked.png`}
-                alt="Like Icon"
-                style={reviewModalStyles.icon}
-              />
-            )}
-          </button>
+          <LikeButton liked={liked} toggleLike={toggleLike} />
           <span style={reviewModalStyles.like}>좋아요 {likeCount.toString()}</span>
         </div>
         <div style={reviewModalStyles.tags}>
@@ -198,6 +167,7 @@ useEffect(() => {
         )}
       </div>
       {error && <p style={{ color: 'red' }}>{error}</p>}
+      {likeError && <p style={{ color: 'red' }}>{likeError}</p>}
     </Modal>
   );
 };

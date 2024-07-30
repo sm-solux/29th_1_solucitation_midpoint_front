@@ -94,27 +94,15 @@ export const reviewModalStyles = {
     display: 'flex',
     alignItems: 'center',
     marginBottom: '10px',
-  },
-  likeButton: {
-    width: '25px',
-    height: '25px',
-    backgroundPosition: 'center',
-    border: 'none',
-    cursor: 'pointer',
-  },
-  likeButtonActive: {
-    width: '25px',
-    height: '25px',
-    backgroundPosition: 'center',
-    border: 'none',
-    cursor: 'pointer',
+    flexDirection: 'row',
   },
   like: {
-    marginLeft:'10px',
+    marginLeft: '10px',
     fontSize: '17px',
     fontWeight: 'bold',
     color: '#1B4345',
   },
+  // ...
   tags: {
     marginTop: '20px',
   },

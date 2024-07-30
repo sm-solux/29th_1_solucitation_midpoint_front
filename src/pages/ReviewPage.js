@@ -63,6 +63,7 @@ const useFetchReviews = (isLoggedIn) => {
         likes: isLoggedIn ? review.likes : false,
       }));
 
+      console.log(fetchedReviews);
       setReviews(fetchedReviews);
       setFilteredReviews(fetchedReviews);
     } catch (error) {
@@ -103,39 +104,39 @@ const ReviewPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const fetchReviewDetails = useCallback(async (postId) => {
-  try {
-    const accessToken = localStorage.getItem('accessToken');
-    const headers = accessToken
-      ? { Authorization: `Bearer ${accessToken}` }
-      : {};
-    const response = await axios.get(
-      `${process.env.REACT_APP_API_URL}/api/posts/${postId}`,
-      { headers }
-    );
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      const headers = accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : {};
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/posts/${postId}`,
+        { headers }
+      );
 
-    const fetchedReviewDetails = {
-      postId: postId,
-      profileImageUrl: response.data.profileImagerUrl,
-      nickname: response.data.nickname,
-      title: response.data.title,
-      content: response.data.content,
-      createDate: response.data.createDate,
-      postHashtags: response.data.postHashtags.map(
-        (tagId) => hashtagMap[tagId]
-      ),
-      images: response.data.images,
-      likeCnt: response.data.likeCnt,
-      likes: response.data.likes,
-    };
+      const fetchedReviewDetails = {
+        postId: postId,
+        profileImageUrl: response.data.profileImagerUrl,
+        nickname: response.data.nickname,
+        title: response.data.title,
+        content: response.data.content,
+        createDate: response.data.createDate,
+        postHashtags: response.data.postHashtags.map(
+          (tagId) => hashtagMap[tagId]
+        ),
+        images: response.data.images,
+        likeCnt: response.data.likeCnt,
+        likes: response.data.likes,
+      };
 
-    setSelectedReview(fetchedReviewDetails);
-    setReviewModalIsOpen(true);
-  } catch (error) {
-    setError('해당 게시글 조회 중 오류가 발생하였습니다.');
-    console.error('Fetch review details error:', error);
-  }
+      setSelectedReview(fetchedReviewDetails);
+      setReviewModalIsOpen(true);
+    } catch (error) {
+      setError('해당 게시글 조회 중 오류가 발생하였습니다.');
+      console.error('Fetch review details error:', error);
+    }
   }, []);
-  
+
   const openWriteModal = () => {
     setWriteModalIsOpen(true);
   };
@@ -275,60 +276,6 @@ const ReviewPage = () => {
     }
   };
 
-  const toggleLike = async (postId) => {
-    console.log('toggleLike called', { postId });
-    const accessToken = localStorage.getItem('accessToken');
-
-    if (!accessToken) {
-      setError('로그인이 필요합니다.');
-      return;
-    }
-
-    try {
-      const headers = { Authorization: `Bearer ${accessToken}` };
-
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/posts/${postId}/likes`, {}, { headers });
-
-      if (response.status === 200) {
-        setReviews((prevReviews) =>
-          prevReviews.map((review) =>
-            review.postId === postId ? { ...review, likes: !review.likes, likeCnt: review.likes ? review.likeCnt - 1 : review.likeCnt + 1 } : review
-          )
-        );
-
-        if (selectedReview && selectedReview.postId === postId) {
-          setSelectedReview((prevReview) => ({
-            ...prevReview,
-            likes: !prevReview.likes,
-            likeCnt: prevReview.likes ? prevReview.likeCnt - 1 : prevReview.likeCnt + 1,
-          }));
-        }
-        setError(null);
-      }
-    } catch (error) {
-      if (error.response) {
-        switch (error.response.status) {
-          case 401:
-            setError('해당 서비스를 이용하기 위해서는 로그인이 필요합니다.');
-            break;
-          case 404:
-            setError(error.response.data);
-            break;
-          case 500:
-            setError(`좋아요 상태를 변경하는 중 오류가 발생하였습니다: ${error.message}`);
-            break;
-          default:
-            setError(`오류가 발생하였습니다: ${error.message}`);
-        }
-      } else if (error.request) {
-        setError('서버와 연결할 수 없습니다.');
-      } else {
-        setError(`오류가 발생하였습니다: ${error.message}`);
-      }
-    }
-  };
-
   return (
     <div>
       <Logo bgColor='#F2F2F2' />
@@ -352,19 +299,6 @@ const ReviewPage = () => {
       <button onClick={handleWriteButtonClick} style={reviewStyles.writeButton}>
         <img src='/img/WriteButtonIcon.png' alt='write button' style={reviewStyles.writeButton} />
       </button>
-      {selectedReview && (
-        <ReviewModal
-          isOpen={reviewModalIsOpen}
-          review={selectedReview}
-          closeModal={closeReviewModal}
-          openEditModal={openEditModal} // EditModal 열기 함수 전달
-          deleteReview={(review) => {
-            setReviews((prevReviews) => prevReviews.filter((r) => r.postId !== review.postId));
-          }}
-          setReviews={setReviews}
-          toggleLike={toggleLike}
-        />
-      )}
       <WriteModal
         isOpen={writeModalIsOpen}
         closeModal={closeWriteModal}
@@ -378,6 +312,17 @@ const ReviewPage = () => {
           updateReview={updateReview}
           existingReview={selectedReview}
           currentUser={currentUser}
+        />
+      )}
+      {selectedReview && (
+        <ReviewModal
+          isOpen={reviewModalIsOpen}
+          review={selectedReview}
+          closeModal={closeReviewModal}
+          openEditModal={openEditModal}
+          deleteReview={(review) => {
+            setReviews((prevReviews) => prevReviews.filter((r) => r.postId !== review.postId));
+          }}
         />
       )}
     </div>
