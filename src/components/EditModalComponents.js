@@ -57,7 +57,7 @@ const EditModal = ({
   const [selectedTags, setSelectedTags] = useState([]);
   const [profileData, setProfileData] = useState({
     nickname: '',
-    profileImage: '../img/default-profile.png',
+    profileImageUrl: '',  // 수정된 필드 이름
   });
   const [initialTags, setInitialTags] = useState([]);
   const [initialImages, setInitialImages] = useState([]);
@@ -77,8 +77,8 @@ const EditModal = ({
 
           const data = response.data;
           setProfileData({
-            nickname: data.nickname,
-            profileImage: data.profileImage || '../img/default-profile.png',
+            nickname: data.nickname || '',
+            profileImageUrl: data.profileImageUrl || '',  // 수정된 필드 이름
           });
         } catch (error) {
           console.error('프로필 정보를 불러오는 중 에러 발생:', error);
@@ -216,59 +216,58 @@ const EditModal = ({
   };
 
   const handleUpdateReview = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!validateForm()) return;
+    if (!validateForm()) return;
 
-  const tags = selectedTags.map((tag) => tagIdMap[tag]);
+    const tags = selectedTags.map((tag) => tagIdMap[tag]);
 
-  const postDto = {};
+    const postDto = {};
 
-  if (placeName !== (existingReview?.title || '')) {
-    postDto.title = placeName;
-  }
-  if (content !== (existingReview?.content || '')) {
-    postDto.content = content;
-  }
-  if (JSON.stringify(tags) !== JSON.stringify(initialTags.map((tag) => tagIdMap[tag]))) {
-    postDto.postHashtag = tags;
-  }
+    if (placeName !== (existingReview?.title || '')) {
+      postDto.title = placeName;
+    }
+    if (content !== (existingReview?.content || '')) {
+      postDto.content = content;
+    }
+    if (JSON.stringify(tags) !== JSON.stringify(initialTags.map((tag) => tagIdMap[tag]))) {
+      postDto.postHashtag = tags;
+    }
 
-  const formData = new FormData();
-  formData.append('postDto', JSON.stringify(postDto));
+    const formData = new FormData();
+    formData.append('postDto', JSON.stringify(postDto));
 
-  if (isImageChanged) {
-    const validPhotos = selectedFiles.filter((file) => file !== null);
-    validPhotos.forEach((file) => {
-      formData.append('postImages', file);
-    });
-  } else {
-    initialImages.forEach((url) => {
-      if (url) {
-        formData.append('postImages', url);
-      }
-    });
-  }
+    if (isImageChanged) {
+      const validPhotos = selectedFiles.filter((file) => file !== null);
+      validPhotos.forEach((file) => {
+        formData.append('postImages', file);
+      });
+    } else {
+      initialImages.forEach((url) => {
+        if (url) {
+          formData.append('postImages', url);
+        }
+      });
+    }
 
-  try {
-    const accessToken = localStorage.getItem('accessToken');
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
-    };
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+      };
 
-    await axios.patch(
-      `${process.env.REACT_APP_API_URL}/api/posts/${existingReview.postId}`,
-      formData,
-      { headers }
-    );
+      await axios.patch(
+        `${process.env.REACT_APP_API_URL}/api/posts/${existingReview.postId}`,
+        formData,
+        { headers }
+      );
 
-    window.location.reload();
-  } catch (error) {
-    console.error('Error updating review:', error);
-    alert('리뷰 수정 중 오류가 발생하였습니다.');
-  }
-};
-
+      window.location.reload();
+    } catch (error) {
+      console.error('Error updating review:', error);
+      alert('리뷰 수정 중 오류가 발생하였습니다.');
+    }
+  };
 
   const handleCloseModal = () => {
     resetForm();
@@ -288,7 +287,11 @@ const EditModal = ({
       <form onSubmit={handleUpdateReview}>
         <CloseButton onClick={handleCloseModal}>X</CloseButton>
         <ProfileContainer>
-          <ProfileImg src={profileData.profileImage} alt='profile' />
+          <ProfileImg
+            src={profileData.profileImageUrl || '/img/defaultProfile.png'}  // 기본 이미지 설정
+            alt='profile'
+            onError={(e) => e.target.src = '/img/defaultProfile.png'}  // 이미지 로드 오류 시 기본 이미지로 설정
+          />
           <ProfileName>{profileData.nickname}</ProfileName>
         </ProfileContainer>
         <InputName

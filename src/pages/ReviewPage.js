@@ -103,37 +103,41 @@ const ReviewPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const fetchReviewDetails = useCallback(async (postId) => {
-    try {
-      const accessToken = localStorage.getItem('accessToken');
-      const headers = accessToken
-        ? { Authorization: `Bearer ${accessToken}` }
-        : {};
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/posts/${postId}`,
-        { headers }
-      );
+  try {
+    const accessToken = localStorage.getItem('accessToken');
+    const headers = accessToken
+      ? { Authorization: `Bearer ${accessToken}` }
+      : {};
+    const response = await axios.get(
+      `${process.env.REACT_APP_API_URL}/api/posts/${postId}`,
+      { headers }
+    );
 
-      const fetchedReviewDetails = {
-        postId: postId,
-        nickname: response.data.nickname,
-        title: response.data.title,
-        content: response.data.content,
-        createDate: response.data.createDate,
-        postHashtags: response.data.postHashtags.map(
-          (tagId) => hashtagMap[tagId]
-        ),
-        images: response.data.images,
-        likeCnt: response.data.likeCnt,
-        likes: response.data.likes,
-      };
+    // 올바른 필드 이름으로 수정
+    const fetchedReviewDetails = {
+      postId: postId,
+      profileImageUrl: response.data.profileImagerUrl, // 올바른 필드명으로 수정
+      nickname: response.data.nickname,
+      title: response.data.title,
+      content: response.data.content,
+      createDate: response.data.createDate,
+      postHashtags: response.data.postHashtags.map(
+        (tagId) => hashtagMap[tagId]
+      ),
+      images: response.data.images,
+      likeCnt: response.data.likeCnt,
+      likes: response.data.likes,
+    };
 
-      setSelectedReview(fetchedReviewDetails);
-      setReviewModalIsOpen(true);
-    } catch (error) {
-      setError('해당 게시글 조회 중 오류가 발생하였습니다.');
-      console.error('Fetch review details error:', error);
-    }
-  }, []);
+    setSelectedReview(fetchedReviewDetails);
+    console.log('Fetched Review Details:', fetchedReviewDetails);
+    setReviewModalIsOpen(true);
+  } catch (error) {
+    setError('해당 게시글 조회 중 오류가 발생하였습니다.');
+    console.error('Fetch review details error:', error);
+  }
+}, []);
+
 
   const openWriteModal = () => {
     setWriteModalIsOpen(true);

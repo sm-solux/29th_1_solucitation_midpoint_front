@@ -3,19 +3,12 @@ import Modal from 'react-modal';
 import axios from 'axios';
 import { reviewModalStyles } from '../styles/reviewModalStyles';
 
-const ReviewModal = ({
-  isOpen,
-  review,
-  closeModal,
-  openEditModal,
-  deleteReview,
-  toggleLike,
-  setReviews,
-}) => {
+const ReviewModal = ({ isOpen, review, closeModal, openEditModal, deleteReview, toggleLike }) => {
   const [liked, setLiked] = useState(review.likes);
   const [likeCount, setLikeCount] = useState(review.likeCnt);
   const [profileData, setProfileData] = useState(null);
   const [error, setError] = useState(null);
+  console.log('Profile Image URL:', review.profileImageUrl);
 
   useEffect(() => {
     if (isOpen) {
@@ -23,15 +16,13 @@ const ReviewModal = ({
         try {
           const accessToken = localStorage.getItem('accessToken');
           const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/member/profile`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
+            headers: { Authorization: `Bearer ${accessToken}` },
           });
 
           const data = response.data;
           setProfileData({
             nickname: data.nickname,
-            profileImage: data.profileImage || '/img/default-profile.png',
+            profileImage: data.profileImageUrl,
           });
         } catch (error) {
           console.error('프로필 정보를 불러오는 중 에러 발생:', error);
@@ -50,7 +41,7 @@ const ReviewModal = ({
 
   const handleToggleLike = async () => {
     try {
-      await toggleLike(review.postId); // review.postId를 직접 전달
+      await toggleLike(review.postId);
       setLiked(!liked);
       setLikeCount(liked ? likeCount - 1 : likeCount + 1);
     } catch (error) {
@@ -59,8 +50,7 @@ const ReviewModal = ({
   };
 
   const handleEditClick = () => {
-    console.log('handleEditClick called', { review });
-    openEditModal(review); // 수정 모드로 열기
+    openEditModal(review);
     closeModal();
   };
 
@@ -69,9 +59,7 @@ const ReviewModal = ({
       try {
         const accessToken = localStorage.getItem('accessToken');
         await axios.delete(`${process.env.REACT_APP_API_URL}/api/posts/${review.postId}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+          headers: { Authorization: `Bearer ${accessToken}` },
         });
         deleteReview(review);
         closeModal();
@@ -121,7 +109,7 @@ const ReviewModal = ({
       </button>
       <div style={reviewModalStyles.profileContainer}>
         <img
-          src={profileData?.profileImage || '/img/default-profile.png'}
+          src={review.profileImageUrl}
           alt="profile"
           style={reviewModalStyles.profileImg}
         />

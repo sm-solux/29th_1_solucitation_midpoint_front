@@ -74,7 +74,7 @@ const WriteModal = ({
           const data = response.data;
           setProfileData({
             nickname: data.nickname,
-            profileImage: data.profileImageUrl,
+            profileImageUrl: data.profileImageUrl,
           });
         } catch (error) {
           console.error('프로필 정보를 불러오는 중 에러 발생:', error);
@@ -86,7 +86,6 @@ const WriteModal = ({
   }, [isOpen]);
 
   useEffect(() => {
-    console.log('WriteModal useEffect called');
     if (!isOpen) {
       setPlaceName('');
       setContent('');
@@ -191,8 +190,12 @@ const WriteModal = ({
       <form onSubmit={handleAddReview}>
         <CloseButton onClick={closeModal}>X</CloseButton>
         <ProfileContainer>
-          <ProfileImg src={profileData.profileImage} alt='profile' />
-          <ProfileName>{profileData.nickname}</ProfileName>
+          {profileData.profileImageUrl ? (
+            <ProfileImg src={profileData.profileImageUrl} alt='profile' />
+          ) : (
+            <ProfileImg alt='profile' />
+          )}
+          <ProfileName>{profileData.nickname || '이름 없음'}</ProfileName>
         </ProfileContainer>
         <InputName
           type='text'
