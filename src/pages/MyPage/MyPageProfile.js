@@ -36,12 +36,14 @@ const MyPageProfile = () => {
         });
 
         const data = response.data;
+        console.log("Received profile data:", data); // 콘솔에 데이터 출력
+
         setProfileData({
           name: data.name,
           nickname: data.nickname,
           id: data.loginId,
           email: data.email,
-          profileImage: data.profileImage || '../img/default-profile.png',
+          profileImage: data.profileImageUrl, // URL directly
           password: profileData.password,
         });
       } catch (error) {
@@ -71,18 +73,31 @@ const MyPageProfile = () => {
     setProfileData({ ...profileData, [name]: value });
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileData({ ...profileData, profileImage: reader.result });
-      };
-      reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append('profileImage', file);
+      
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await axios.post('http://3.36.150.194:8080/api/member/profile-image', formData, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        console.log("Uploaded profile image response:", response.data); // 업로드 응답 데이터 출력
+
+        // Update profile image URL after successful upload
+        setProfileData({ ...profileData, profileImage: response.data.profileImage });
+      } catch (error) {
+        console.error('프로필 이미지 업로드 중 에러 발생:', error);
+      }
     }
   };
 
-  //수정 예비 코드
   const handleSave = async () => {
     try {
       const accessToken = localStorage.getItem('accessToken');
@@ -122,7 +137,6 @@ const MyPageProfile = () => {
     }
   };
 
-  //탈퇴 코드
   const handleDeleteConfirm = async () => {
     try {
       const accessToken = localStorage.getItem('accessToken');
@@ -205,7 +219,7 @@ const MyPageProfile = () => {
         togglePasswordEditMode={togglePasswordEditMode}
       />
       <ProfileImage
-        profileImage={profileData.profileImage}
+        profileImage={profileData.profileImage} // URL directly
         editMode={state.editMode}
         handleFileChange={handleFileChange}
         handleImageClick={() => fileInputRef.current?.click()}
@@ -268,8 +282,9 @@ const ProfileImage = ({ profileImage, editMode, handleFileChange, handleImageCli
   <div style={myPageStyles.profilePictureItem}>
     <div style={myPageStyles.profileLabel}>프로필 사진</div>
     <div>
+      {console.log("Profile Image URL:", profileImage)} {/* 이미지 URL 콘솔 출력 */}
       <img
-        src={profileImage}
+        src={profileImage} // URL directly
         alt="프로필 사진"
         style={{
           width: '100px',
