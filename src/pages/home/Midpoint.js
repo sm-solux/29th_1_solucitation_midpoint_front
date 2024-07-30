@@ -90,7 +90,21 @@ function Midpoint() {
   };
 
   const handleKakaoShare = () => {
-    // 카카오톡 공유 기능 구현
+    if (!selectedPlaces.length) {
+      alert('공유할 장소를 선택해주세요.');
+      return;
+    }
+
+    const placeInfo = selectedPlaces.map(place => `${place.name}: ${place.address}`).join('\n');
+    window.Kakao.Link.sendDefault({
+      objectType: 'text',
+      text: `추천 장소:\n${placeInfo}`,
+      link: {
+        webUrl: window.location.href,
+        mobileWebUrl: window.location.href,
+      },
+      buttonTitle: '장소 보기',
+    });
   };
 
   const handleSave = async () => {
@@ -112,7 +126,7 @@ function Midpoint() {
           placeId: place.placeID,
           placeName: place.name,
           placeAddress: place.address,
-          imageUrl: place.image // 백엔드에서 제공하는 이미지를 사용
+          imageUrl: place.image
         }))
       }, {
         headers: {
