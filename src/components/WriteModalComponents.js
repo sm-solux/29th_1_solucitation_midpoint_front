@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from 'react-modal';
-
+import axios from 'axios';
 import writeModalStyles, {
   CloseButton,
   ProfileContainer,
@@ -56,22 +56,57 @@ const WriteModal = ({
   const [selectedFiles, setSelectedFiles] = useState([null, null, null]);
   const [photoURLs, setPhotoURLs] = useState([null, null, null]);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [profileData, setProfileData] = useState({
+    nickname: '',
+    profileImage: '../img/default-profile.png',
+  });
   const fileInputRefs = [useRef(null), useRef(null), useRef(null)];
 
   useEffect(() => {
-    if (Object.keys(existingReview).length > 0) {
+    if (isOpen) {
+      const fetchProfileData = async () => {
+        try {
+          const accessToken = localStorage.getItem('accessToken');
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/member/profile`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+
+          const data = response.data;
+          setProfileData({
+            nickname: data.nickname,
+            profileImage: data.profileImage || '../img/default-profile.png',
+          });
+        } catch (error) {
+          console.error('프로필 정보를 불러오는 중 에러 발생:', error);
+        }
+      };
+
+      fetchProfileData();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    console.log('WriteModal useEffect called', { isEditing, existingReview });
+    if (isEditing && existingReview) {
       setPlaceName(existingReview.title || '');
       setContent(existingReview.content || '');
       setPhotoURLs(existingReview.images || [null, null, null]);
       setSelectedTags(
         existingReview.postHashtags
-          ? existingReview.postHashtags.map((tagId) =>
-              Object.keys(tagIdMap).find((key) => tagIdMap[key] === tagId)
+          ? existingReview.postHashtags.map((tag) =>
+              Object.keys(tagIdMap).find((key) => tagIdMap[key] === tag)
             )
           : []
       );
+    } else {
+      setPlaceName('');
+      setContent('');
+      setPhotoURLs([null, null, null]);
+      setSelectedTags([]);
     }
-  }, [existingReview]);
+  }, [isEditing, existingReview]);
 
   useEffect(() => {
     return () => {
@@ -134,7 +169,7 @@ const WriteModal = ({
     return true;
   };
 
-  const handleAddReview = (e) => {
+  const handleAddReview = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) return;
@@ -149,11 +184,12 @@ const WriteModal = ({
       author: currentUser,
     };
 
-    addReview(newReview, isEditing);
-    handleCloseModal();
+    await addReview(newReview, isEditing);
+    window.location.reload(); // 페이지 새로 고침
   };
 
   const handleCloseModal = () => {
+    console.log('handleCloseModal called');
     setPlaceName('');
     setContent('');
     setSelectedFiles([null, null, null]);
@@ -175,10 +211,8 @@ const WriteModal = ({
       <form onSubmit={handleAddReview}>
         <CloseButton onClick={handleCloseModal}>X</CloseButton>
         <ProfileContainer>
-          <ProfileImg src='/img/default-profile.png' alt='profile' />
-          <ProfileName>
-            {currentUser ? currentUser.name : 'anonymous'}
-          </ProfileName>
+          <ProfileImg src={profileData.profileImage} alt='profile' />
+          <ProfileName>{profileData.nickname}</ProfileName>
         </ProfileContainer>
         <InputName
           type='text'
@@ -221,7 +255,7 @@ const WriteModal = ({
             </TagButton>
           ))}
         </TagContainer>
-        <SubmitButton type='submit'>게시</SubmitButton>
+        <SubmitButton type='submit'>{isEditing ? '수정' : '게시'}</SubmitButton>
       </form>
     </Modal>
   );

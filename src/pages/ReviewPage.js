@@ -38,7 +38,6 @@ const hashtagMap = {
   10: '#혼자',
 };
 
-//리뷰 불러오기
 const useFetchReviews = (isLoggedIn) => {
   const [reviews, setReviews] = useState([]);
   const [filteredReviews, setFilteredReviews] = useState([]);
@@ -100,8 +99,9 @@ const ReviewPage = () => {
   const [selectedReview, setSelectedReview] = useState(null);
   const [clickedTags, setClickedTags] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
 
-  //게시글 상세보기
+  // 게시글 상세보기
   const fetchReviewDetails = useCallback(async (postId) => {
     try {
       const accessToken = localStorage.getItem('accessToken');
@@ -113,8 +113,8 @@ const ReviewPage = () => {
         { headers }
       );
 
-      // response data 받기
       const fetchedReviewDetails = {
+        postId: postId,
         nickname: response.data.nickname,
         title: response.data.title,
         content: response.data.content,
@@ -124,40 +124,49 @@ const ReviewPage = () => {
         ),
         images: response.data.images,
         likeCnt: response.data.likeCnt,
+        likes: response.data.likes,
       };
 
       setSelectedReview(fetchedReviewDetails);
-      setReviewModalIsOpen(true); // Open review modal
+      setReviewModalIsOpen(true);
     } catch (error) {
       setError('해당 게시글 조회 중 오류가 발생하였습니다.');
       console.error('Fetch review details error:', error);
     }
   }, []);
 
-  const openWriteModal = (review = null) => {
+  const openWriteModal = (review = null, editing = false) => {
+    console.log('openWriteModal called', { review, editing });
     setSelectedReview(review);
+    setIsEditing(editing);
     setWriteModalIsOpen(true);
   };
 
   const closeWriteModal = () => {
+    console.log('closeWriteModal called');
     setWriteModalIsOpen(false);
     setSelectedReview(null);
+    setIsEditing(false);
   };
 
-  const openReviewModal = (postId) => {
-    fetchReviewDetails(postId);
+  const openReviewModal = async (postId) => {
+    console.log('openReviewModal called', { postId });
+    await fetchReviewDetails(postId);
   };
 
   const closeReviewModal = () => {
+    console.log('closeReviewModal called');
     setReviewModalIsOpen(false);
     setSelectedReview(null);
   };
 
   const handleWriteButtonClick = () => {
+    console.log('handleWriteButtonClick called');
     openWriteModal();
   };
 
   const addReview = async (newReview, isEditing) => {
+    console.log('addReview called', { newReview, isEditing });
     try {
       const accessToken = localStorage.getItem('accessToken');
       const headers = { Authorization: `Bearer ${accessToken}` };
@@ -172,18 +181,6 @@ const ReviewPage = () => {
         })
       );
       newReview.photos.forEach((photo) => formData.append('postImages', photo));
-
-      //제대로 되나 확인 코드
-      console.log(
-        'postDto:',
-        JSON.stringify({
-          title: newReview.placeName,
-          content: newReview.content,
-          postHashtag: newReview.tags,
-        })
-      );
-
-      console.log('');
 
       let response;
       if (isEditing && selectedReview) {
@@ -213,6 +210,7 @@ const ReviewPage = () => {
           ? '게시글을 성공적으로 수정하였습니다.'
           : '게시글을 성공적으로 등록하였습니다.'
       );
+      window.location.reload(); // 등록 후 페이지 새로 고침
     } catch (error) {
       if (error.response) {
         if (error.response.status === 400) {
@@ -241,6 +239,68 @@ const ReviewPage = () => {
         );
       }
       console.error('Error adding review:', error);
+    }
+  };
+
+  //좋아요 표시에 대한 API
+  const toggleLike = async (postId) => {
+    console.log('toggleLike called', { postId });
+    const accessToken = localStorage.getItem('accessToken');
+
+    if (!accessToken) {
+      setError('로그인이 필요합니다.');
+      return;
+    }
+
+    try {
+      const headers = { Authorization: `Bearer ${accessToken}` };
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/posts/${postId}/likes`,
+        {},
+        { headers }
+      );
+
+      if (response.status === 200) {
+        setReviews((prevReviews) =>
+          prevReviews.map((review) =>
+            review.postId === postId
+              ? { ...review, likes: !review.likes, likeCnt: review.likes ? review.likeCnt - 1 : review.likeCnt + 1 }
+              : review
+          )
+        );
+
+        if (selectedReview && selectedReview.postId === postId) {
+          setSelectedReview((prevReview) => ({
+            ...prevReview,
+            likes: !prevReview.likes,
+            likeCnt: prevReview.likes ? prevReview.likeCnt - 1 : prevReview.likeCnt + 1,
+          }));
+        }
+        setError(null);
+      }
+    } catch (error) {
+      if (error.response) {
+        switch (error.response.status) {
+          case 401:
+            setError('해당 서비스를 이용하기 위해서는 로그인이 필요합니다.');
+            break;
+          case 404:
+            setError(error.response.data);
+            break;
+          case 500:
+            setError(
+              `좋아요 상태를 변경하는 중 오류가 발생하였습니다: ${error.message}`
+            );
+            break;
+          default:
+            setError(`오류가 발생하였습니다: ${error.message}`);
+        }
+      } else if (error.request) {
+        setError('서버와 연결할 수 없습니다.');
+      } else {
+        setError(`오류가 발생하였습니다: ${error.message}`);
+      }
     }
   };
 
@@ -290,14 +350,16 @@ const ReviewPage = () => {
             );
           }}
           setReviews={setReviews}
+          toggleLike={toggleLike}
         />
       )}
       <WriteModal
         isOpen={writeModalIsOpen}
         closeModal={closeWriteModal}
         addReview={addReview}
-        existingReview={selectedReview || {}}
+        existingReview={isEditing ? selectedReview : {}}
         currentUser={currentUser}
+        isEditing={isEditing}
       />
     </div>
   );
