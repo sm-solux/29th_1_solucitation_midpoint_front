@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../styles/global.css';
 import { myPageStyles } from '../../styles/myPageStyles';
+import { refreshAccessToken } from '../../components/refreshAccess'; // refreshAccessToken 함수 import
 
 const MyPageProfile = () => {
   const [state, setState] = useState({
@@ -29,21 +30,20 @@ const MyPageProfile = () => {
     const fetchProfileData = async () => {
       try {
         const accessToken = localStorage.getItem('accessToken');
-        const response = await axios.get('http://3.36.150.194:8080/api/member/profile', {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/member/profile`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         });
 
         const data = response.data;
-        console.log("Received profile data:", data); // 콘솔에 데이터 출력
-
+        
         setProfileData({
           name: data.name,
           nickname: data.nickname,
           id: data.loginId,
           email: data.email,
-          profileImage: data.profileImageUrl, // URL directly
+          profileImage: data.profileImageUrl,
           password: profileData.password,
         });
       } catch (error) {
@@ -51,11 +51,33 @@ const MyPageProfile = () => {
           if (error.response.status === 401) {
             const errorData = error.response.data;
             if (errorData.error === 'access_token_expired') {
-              alert('Access Token이 만료되었습니다. 로그인 페이지로 이동합니다.');
+              try {
+                const refreshToken = localStorage.getItem('refreshToken');
+                const newAccessToken = await refreshAccessToken(refreshToken);
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/member/profile`, {
+                  headers: {
+                    Authorization: `Bearer ${newAccessToken}`,
+                  },
+                });
+                const data = response.data;
+
+                setProfileData({
+                  name: data.name,
+                  nickname: data.nickname,
+                  id: data.loginId,
+                  email: data.email,
+                  profileImage: data.profileImageUrl,
+                  password: profileData.password,
+                });
+              } catch (refreshError) {
+                console.error('Failed to refresh access token:', refreshError);
+                alert('토큰 갱신에 실패했습니다. 로그인 페이지로 이동합니다.');
+                navigate('/login');
+              }
             } else if (errorData.error === 'invalid_token') {
               alert('유효하지 않은 Access Token입니다. 로그인 페이지로 이동합니다.');
+              navigate('/login');
             }
-            navigate('/login');
           } else {
             console.error('회원 정보를 불러오는 중 에러 발생:', error.response.data);
           }
@@ -81,19 +103,35 @@ const MyPageProfile = () => {
       
       try {
         const accessToken = localStorage.getItem('accessToken');
-        const response = await axios.post('http://3.36.150.194:8080/api/member/profile-image', formData, {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/member`, formData, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'multipart/form-data',
           },
         });
 
-        console.log("Uploaded profile image response:", response.data); // 업로드 응답 데이터 출력
-
-        // Update profile image URL after successful upload
         setProfileData({ ...profileData, profileImage: response.data.profileImage });
       } catch (error) {
-        console.error('프로필 이미지 업로드 중 에러 발생:', error);
+        if (error.response && error.response.status === 401 && error.response.data.error === 'access_token_expired') {
+          try {
+            const refreshToken = localStorage.getItem('refreshToken');
+            const newAccessToken = await refreshAccessToken(refreshToken);
+            const formData = new FormData();
+            formData.append('profileImage', file);
+            const retryResponse = await axios.post(`${process.env.REACT_APP_API_URL}/api/member`, formData, {
+              headers: {
+                Authorization: `Bearer ${newAccessToken}`,
+                'Content-Type': 'multipart/form-data',
+              },
+            });
+            setProfileData({ ...profileData, profileImage: retryResponse.data.profileImage });
+          } catch (refreshError) {
+            alert('토큰 갱신에 실패했습니다. 로그인 페이지로 이동합니다.');
+            navigate('/login');
+          }
+        } else {
+          console.error('프로필 이미지 업로드 중 에러 발생:', error);
+        }
       }
     }
   };
@@ -101,14 +139,32 @@ const MyPageProfile = () => {
   const handleSave = async () => {
     try {
       const accessToken = localStorage.getItem('accessToken');
-      await axios.put('http://3.36.150.194:8080/api/member/profile', profileData, {
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/member/profile`, profileData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
       setState({ ...state, editMode: false, passwordEditMode: false });
     } catch (error) {
-      console.error('프로필 저장 중 에러 발생:', error);
+      if (error.response && error.response.status === 401 && error.response.data.error === 'access_token_expired') {
+        try {
+          const refreshToken = localStorage.getItem('refreshToken');
+          const newAccessToken = await refreshAccessToken(refreshToken);
+          // 새로운 ACCESS_TOKEN으로 다시 요청
+          await axios.put(`${process.env.REACT_APP_API_URL}/api/member/profile`, profileData, {
+            headers: {
+              Authorization: `Bearer ${newAccessToken}`,
+            },
+          });
+          setState({ ...state, editMode: false, passwordEditMode: false });
+        } catch (refreshError) {
+          console.error('Failed to refresh access token:', refreshError);
+          alert('토큰 갱신에 실패했습니다. 로그인 페이지로 이동합니다.');
+          navigate('/login');
+        }
+      } else {
+        console.error('프로필 저장 중 에러 발생:', error);
+      }
     }
   };
 
@@ -140,7 +196,7 @@ const MyPageProfile = () => {
   const handleDeleteConfirm = async () => {
     try {
       const accessToken = localStorage.getItem('accessToken');
-      await axios.delete('http://3.36.150.194:8080/api/member/profile', {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/member/profile`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -148,7 +204,25 @@ const MyPageProfile = () => {
       alert('탈퇴 됐습니다.');
       navigate('/');
     } catch (error) {
-      console.error('탈퇴 중 에러 발생:', error);
+      if (error.response && error.response.status === 401 && error.response.data.error === 'access_token_expired') {
+        try {
+          const refreshToken = localStorage.getItem('refreshToken');
+          const newAccessToken = await refreshAccessToken(refreshToken);
+          // 새로운 ACCESS_TOKEN으로 다시 요청
+          await axios.delete(`${process.env.REACT_APP_API_URL}/api/member/profile`, {
+            headers: {
+              Authorization: `Bearer ${newAccessToken}`,
+            },
+          });
+          alert('탈퇴 됐습니다.');
+          navigate('/');
+        } catch (refreshError) {
+          alert('토큰 갱신에 실패했습니다. 로그인 페이지로 이동합니다.');
+          navigate('/login');
+        }
+      } else {
+        console.error('탈퇴 중 에러 발생:', error);
+      }
     }
   };
 
@@ -208,7 +282,7 @@ const MyPageProfile = () => {
       <ProfileField
         field="email"
         value={profileData.email}
-        editMode={state.editMode}
+        editMode={false}
         handleInputChange={handleInputChange}
         placeholder="이메일"
       />
@@ -219,8 +293,8 @@ const MyPageProfile = () => {
         togglePasswordEditMode={togglePasswordEditMode}
       />
       <ProfileImage
-        profileImage={profileData.profileImage} // URL directly
-        editMode={state.editMode}
+        profileImage={profileData.profileImage}
+        editMode={state.editMode} // Edit mode 적용
         handleFileChange={handleFileChange}
         handleImageClick={() => fileInputRef.current?.click()}
         fileInputRef={fileInputRef}
@@ -282,7 +356,6 @@ const ProfileImage = ({ profileImage, editMode, handleFileChange, handleImageCli
   <div style={myPageStyles.profilePictureItem}>
     <div style={myPageStyles.profileLabel}>프로필 사진</div>
     <div>
-      {console.log("Profile Image URL:", profileImage)} {/* 이미지 URL 콘솔 출력 */}
       <img
         src={profileImage} // URL directly
         alt="프로필 사진"
@@ -293,15 +366,17 @@ const ProfileImage = ({ profileImage, editMode, handleFileChange, handleImageCli
           marginTop: '10px',
           cursor: editMode ? 'pointer' : 'default',
         }}
-        onClick={handleImageClick}
+        onClick={editMode ? handleImageClick : undefined} // editMode일 때만 클릭 이벤트 추가
       />
-      <input
-        type="file"
-        name="profileImage"
-        style={{ display: 'none' }}
-        ref={fileInputRef}
-        onChange={handleFileChange}
-      />
+      {editMode && (
+        <input
+          type="file"
+          name="profileImage"
+          style={{ display: 'none' }}
+          ref={fileInputRef}
+          onChange={handleFileChange}
+        />
+      )}
     </div>
   </div>
 );

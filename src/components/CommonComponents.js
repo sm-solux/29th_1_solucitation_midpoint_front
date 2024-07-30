@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { commonStyles } from "../styles/styles";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { refreshAccessToken } from "../components/refreshAccess"; // refreshAccessToken 함수 import
 
 // 헤더 (배경색 설정 가능 / default는 transparent)
 function Logo({ exist = true, bgColor = "transparent" }) {
@@ -47,40 +48,7 @@ function Logo({ exist = true, bgColor = "transparent" }) {
     return isActive ? activeLinkStyle : linkStyle;
   };
 
-  // 새로운 액세스 토큰 발급 함수
-  const refreshAccessToken = async (refreshToken) => {
-    try {
-      const response = await axios.post(
-        "http://3.36.150.194:8080/api/auth/refresh-token",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${refreshToken}`,
-          },
-        }
-      );
-      localStorage.setItem("accessToken", response.data.accessToken);
-      localStorage.setItem("refreshToken", response.data.refreshToken);
-      return response.data.accessToken;
-    } catch (error) {
-      console.error(
-        "Failed to refresh access token:",
-        error.response.data.message
-      );
-      if (
-        error.response.data.error === "refresh_token_expired" ||
-        error.response.data.error === "invalid_token"
-      ) {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        setIsLoggedIn(false);
-        navigate("/login");
-      }
-      throw error;
-    }
-  };
-
-  //로그아웃 부분
+  // 로그아웃 부분
   const handleLogout = async () => {
     const accessToken = localStorage.getItem("accessToken");
     const refreshToken = localStorage.getItem("refreshToken");
@@ -94,7 +62,7 @@ function Logo({ exist = true, bgColor = "transparent" }) {
 
     try {
       const response = await axios.post(
-        "http://3.36.150.194:8080/api/member/logout",
+        `${process.env.REACT_APP_API_URL}/api/member/logout`,
         {},
         {
           headers: {
@@ -105,7 +73,7 @@ function Logo({ exist = true, bgColor = "transparent" }) {
       );
       console.log("Logout Successful:", response.data.message);
 
-      localStorage.removeItem("accessToken"); //로그아웃 3번방법 3번
+      localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       setIsLoggedIn(false);
       navigate("/home");
@@ -113,11 +81,11 @@ function Logo({ exist = true, bgColor = "transparent" }) {
       if (error.response) {
         const { status, data } = error.response;
         if (status === 401) {
-          if (status === 401 && data.error === "access_token_expired") {
+          if (data.error === "access_token_expired") {
             try {
               const newAccessToken = await refreshAccessToken(refreshToken);
               const retryResponse = await axios.post(
-                "http://3.36.150.194:8080/api/member/logout",
+                `${process.env.REACT_APP_API_URL}/api/member/logout`,
                 {},
                 {
                   headers: {
@@ -134,7 +102,7 @@ function Logo({ exist = true, bgColor = "transparent" }) {
             } catch (retryError) {
               console.error(
                 "Retry logout failed:",
-                retryError.response.data.message || retryError.message
+                retryError.response?.data?.message || retryError.message
               );
               setIsLoggedIn(false);
               navigate("/home");
@@ -242,4 +210,4 @@ const Timer = ({ isActive, resetTimer }) => {
   );
 };
 
-export { Logo, Timer };
+export { Logo,Timer };
