@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { searchStyles } from '../styles/searchStyles';
 
@@ -58,6 +58,39 @@ const SearchBox = ({
     });
   };
 
+  const fetchAllPosts = async () => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      const headers = accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : {};
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/posts`,
+        { headers }
+      );
+
+      if (response.status === 200) {
+        const data = response.data.map((item) => ({
+          postId: item.postId,
+          firstImageUrl: item.firstImageUrl,
+          title: item.title,
+          hashtags: item.hashtags.map((tagId) => hashtagMap[tagId]),
+          likes: item.likes,
+        }));
+        setFilteredReviews(data);
+        setError(null);
+      }
+    } catch (error) {
+      if (error.response) {
+        setError(`게시글 검색 중 오류가 발생하였습니다: ${error.message}`);
+      } else if (error.request) {
+        setError('서버와 연결할 수 없습니다.');
+      } else {
+        setError(`오류가 발생하였습니다: ${error.message}`);
+      }
+    }
+  };
+
   // 검색어로 검색
   const fetchBySearchTerm = async (text) => {
     try {
@@ -101,6 +134,11 @@ const SearchBox = ({
 
   // 태그로 검색
   const fetchByTags = async (tagIds) => {
+    if (tagIds.length === 0) {
+      fetchAllPosts();
+      return;
+    }
+
     try {
       const accessToken = localStorage.getItem('accessToken');
       const headers = accessToken
@@ -152,9 +190,19 @@ const SearchBox = ({
   };
 
   const handleSearch = () => {
-    setSearchTerm(searchText);
-    fetchBySearchTerm(searchText);
+    if (searchText.trim() === '') {
+      fetchAllPosts();
+    } else {
+      setSearchTerm(searchText);
+      fetchBySearchTerm(searchText);
+    }
   };
+
+  useEffect(() => {
+    if (clickedTags.length === 0) {
+      fetchAllPosts();
+    }
+  }, [clickedTags]);
 
   return (
     <>
