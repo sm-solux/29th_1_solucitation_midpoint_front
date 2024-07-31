@@ -23,12 +23,12 @@ import { AppContext } from '../../contexts/AppContext';
 function Midpoint() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { places, midpoint, isLoggedIn } = location.state;
+  const { places, midpoint } = location.state;
   const [weather, setWeather] = useState(null);
   const [selectedPlaces, setSelectedPlaces] = useState([]);
   const [midpointDistrict, setMidpointDistrict] = useState('');
   const [selecting, setSelecting] = useState(false);
-  const { userInfo } = useContext(AppContext);
+  const { userInfo, isLoggedIn } = useContext(AppContext);
 
   useEffect(() => {
     if (!midpoint) {
@@ -130,12 +130,11 @@ function Midpoint() {
     };
 
     console.log('Save Data:', JSON.stringify(saveData, null, 2));
-    console.log('Token:', token);
 
     try {
       const response = await axios.post('http://3.36.150.194:8080/api/search-history-v2', saveData, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'ACCESS_TOKEN': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
@@ -150,8 +149,27 @@ function Midpoint() {
         const { status, data } = error.response;
         if (status === 400) {
           alert(`에러: ${data.errors.map(err => `${err.field}: ${err.message}`).join(', ')}`);
-        } else if (status === 401) {
-          alert('로그인이 필요합니다.');
+        } else if (status === 401 && data.error === "access_token_expired" && data.message === "Access Token이 만료되었습니다.") {
+          try {
+            const refreshToken = localStorage.getItem('refreshToken');
+            if (!refreshToken) {
+              throw new Error('No refresh token found.');
+            }
+
+            const tokenResponse = await axios.post('http://3.36.150.194:8080/api/auth/refresh-token', {}, {
+              headers: {
+                'Authorization': `Bearer ${refreshToken}`
+              }
+            });
+
+            const { accessToken: newAccessToken } = tokenResponse.data;
+            localStorage.setItem('accessToken', newAccessToken);
+            handleSave(); // Retry the save operation with the new token
+          } catch (tokenError) {
+            console.error('Error refreshing token:', tokenError);
+            alert('로그인이 필요합니다. 다시 로그인해주세요.');
+            navigate('/login');
+          }
         } else if (status === 404) {
           alert('사용자를 찾을 수 없습니다.');
         } else if (status === 500) {

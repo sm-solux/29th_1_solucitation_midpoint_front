@@ -32,7 +32,7 @@ const Home = () => {
       if (response.data) {
         setUserInfo({
           ...userInfo,
-          name: response.data.nickname || '나',
+          nickname: response.data.nickname || '나',
           profileImage: response.data.profileImage || '/img/default-profile.png',
           address: response.data.address || ''
         });
@@ -51,7 +51,7 @@ const Home = () => {
     } else {
       setUserInfo({
         ...userInfo,
-        name: '나',
+        nickname: '나',
         profileImage: '/img/default-profile.png',
         address: ''
       });
@@ -188,7 +188,7 @@ const Home = () => {
               alt='프로필 이미지'
               style={commonStyles.profileImg}
             />
-            <span style={commonStyles.profileName}>{isLoggedIn ? userInfo.name : '나'}</span>
+            <span style={commonStyles.profileName}>{isLoggedIn ? userInfo.nickname : '나'}</span>
           </div>
           <div style={commonStyles.inputGroup}>
             <input

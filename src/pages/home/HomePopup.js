@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import { commonStyles, SearchList, SearchItem, FriendItem } from '../../styles/styles';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
+import { AppContext } from '../../contexts/AppContext';
 
-const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLoggedIn }) => {
+const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults }) => {
   const mapRef = useRef(null);
   const [map, setMap] = useState(null);
   const [showMap, setShowMap] = useState(false);
@@ -12,6 +13,7 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
   const [suggestions, setSuggestions] = useState([]);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
   const [selectedFriend, setSelectedFriend] = useState(null);
+  const { userInfo, isLoggedIn } = useContext(AppContext);
 
   const friends = [
     { name: '친구1', address: '서울특별시 용산구 청파대로10 1층' },
@@ -82,7 +84,7 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
     setSelectedSuggestion(suggestion);
     setSearchInput(suggestion.description);
     setSuggestions([]);
-    setShowPlacesList(false);  // 드롭다운 닫기
+    setShowPlacesList(false);
   };
 
   const handleSearch = async () => {
