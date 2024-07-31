@@ -47,6 +47,7 @@ const EditModal = ({
   isOpen,
   closeModal,
   existingReview,
+  setReviews
 }) => {
   const [placeName, setPlaceName] = useState('');
   const [content, setContent] = useState('');
@@ -190,101 +191,126 @@ const EditModal = ({
     return true;
   };
 
+  const urlToFile = async (url, filename, mimeType) => {
+    try {
+      const res = await fetch(url); //, { mode: 'cors' }
+      const blob = await res.blob();
+      return new File([blob], filename, { type: mimeType });
+    } catch (error) {
+      console.error('Error converting URL to file:', error);
+      throw error;
+    }
+  };
+
   const handleUpdateReview = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!validateForm()) return;
+    if (!validateForm()) return;
 
-  const tags = selectedTags.map((tag) => tagIdMap[tag]);
-
-  const postDto = {};
-
-  if (placeName !== (existingReview?.title || '')) {
-    postDto.title = placeName;
-  }
-  if (content !== (existingReview?.content || '')) {
-    postDto.content = content;
-  }
-  if (JSON.stringify(tags) !== JSON.stringify(initialTags.map((tag) => tagIdMap[tag]))) {
-    postDto.postHashtag = tags;
-  }
-
-  const formData = new FormData();
-  formData.append('postDto', JSON.stringify(postDto));
-
-  if (isImageChanged) {
-    const validPhotos = selectedFiles.filter((file) => file !== null);
-    validPhotos.forEach((file) => {
-      formData.append('postImages', file);
-    });
-  } else {
-    initialImages.forEach((url) => {
-      if (url) {
-        formData.append('postImages', url);
-      }
-    });
-  }
-
-  try {
-    const accessToken = localStorage.getItem('accessToken');
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
+    const updatedReview = {
+      title: placeName,
+      content,
+      tags: selectedTags.map(tag => tagIdMap[tag]),
+      photos: selectedFiles.filter(file => file !== null),
     };
 
-    await axios.patch(
-      `${process.env.REACT_APP_API_URL}/api/posts/${existingReview.postId}`,
-      formData,
-      { headers }
-    );
-    alert('게시글을 성공적으로 수정했습니다.');
-    window.location.reload();
-  } catch (error) {
-    if (error.response) {
-      const status = error.response.status;
-      switch (status) {
-        case 401:
-          alert('로그인하지 않으면 이 작업을 수행할 수 없습니다.');
-          break;
-        case 403:
-          alert('해당 게시글을 수정할 권한이 없습니다. 본인이 작성한 글만 수정할 수 있습니다.');
-          break;
-        case 404:
-          alert('수정하려는 게시글이 존재하지 않습니다.');
-          break;
-        case 400:
-          if (error.response.data.errors) {
-            const errors = error.response.data.errors;
-            errors.forEach((err) => {
-              if (err.field === 'title') {
-                alert('제목을 입력해야 합니다.');
-              } else if (err.field === 'content') {
-                alert('내용을 입력해야 합니다.');
-              }
-            });
-          } else if (error.response.data.message) {
-            const message = error.response.data.message;
-            if (message.includes('해시태그')) {
-              alert('서로 다른 두 개의 해시태그를 선택해야 합니다.');
-            } else if (message.includes('이미지')) {
-              alert('이미지는 최대 3장까지 업로드할 수 있습니다.');
-            } else {
-              alert('알 수 없는 오류가 발생했습니다.');
-            }
-          } else {
-            alert('잘못된 요청입니다.');
-          }
-          break;
-        case 500:
-          alert('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
-          break;
-        default:
-          alert('알 수 없는 오류가 발생했습니다.');
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      const headers = { Authorization: `Bearer ${accessToken}` };
+
+      const postDto = {
+        title: updatedReview.title,
+        content: updatedReview.content,
+        postHashtag: updatedReview.tags
+      };
+
+      const formData = new FormData();
+      formData.append('postDto', JSON.stringify(postDto));
+
+      const allImages = initialImages.filter(url => url !== null).concat(updatedReview.photos);
+      for (let i = 0; i < allImages.length; i++) {
+        const image = allImages[i];
+        if (typeof image === 'string') {
+          const file = await urlToFile(image, `image${i}.jpg`, 'image/jpeg');
+          formData.append('postImages', file);
+        } else {
+          formData.append('postImages', image);
+        }
       }
-    } else {
-      alert('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해 주세요.');
+
+      // FormData 내용을 확인하는 로그 (이미지 파일 확인)
+      for (let pair of formData.entries()) {
+        if (pair[0].includes('postImages')) {
+          console.log(`${pair[0]}: ${pair[1] instanceof File ? pair[1].name : pair[1]}`);
+        } else {
+          console.log(`${pair[0]}: ${pair[1]}`);
+        }
+      }
+
+      const response = await axios.patch(
+        `${process.env.REACT_APP_API_URL}/api/posts/${existingReview.postId}`,
+        formData,
+        { headers }
+      );
+
+      setReviews((prevReviews) =>
+        prevReviews.map((review) =>
+          review.postId === existingReview.postId ? response.data : review
+        )
+      );
+      alert('게시글을 성공적으로 수정하였습니다.');
+      window.location.reload(); // 수정 후 페이지 새로 고침
+    } catch (error) {
+      console.error('Error updating review:', error);
+      if (error.response) {
+        const status = error.response.status;
+        const responseData = error.response.data;
+
+        switch (status) {
+          case 401:
+            alert('해당 서비스를 이용하기 위해서는 로그인이 필요합니다.');
+            break;
+          case 404:
+            alert('해당 게시글이 존재하지 않습니다.');
+            break;
+          case 403:
+            alert('해당 게시글을 수정할 권한이 없습니다. 본인이 작성한 글만 수정할 수 있습니다.');
+            break;
+          case 400:
+            if (responseData.errors) {
+              const errors = responseData.errors;
+              errors.forEach((err) => {
+                if (err.field === 'title') {
+                  alert('제목을 입력해야 합니다.');
+                } else if (err.field === 'content') {
+                  alert('내용을 입력해야 합니다.');
+                } else if (err.field === 'title' && err.message.includes('100자')) {
+                  alert('제목은 최대 100자까지 가능합니다.');
+                }
+              });
+            } else if (responseData.message) {
+              if (responseData.message.includes('해시태그')) {
+                alert('서로 다른 두 개의 해시태그를 선택해야 합니다.');
+              } else if (responseData.message.includes('이미지')) {
+                alert('이미지는 최대 3장까지 업로드할 수 있습니다.');
+              } else if (responseData.message.includes('최소 1장')) {
+                alert('이미지를 최소 1장 이상 업로드해야 합니다.');
+              } else {
+                alert('잘못된 요청입니다.');
+              }
+            }
+            break;
+          case 500:
+            alert('게시물 수정 중 오류가 발생했습니다.');
+            break;
+          default:
+            alert(`게시글 수정 과정에서 오류가 발생하였습니다: ${responseData}`);
+        }
+      } else {
+        alert(`게시글 수정 과정에서 오류가 발생하였습니다: ${error.message}`);
+      }
     }
-  }
-};
+  };
 
   const handleCloseModal = () => {
     resetForm();

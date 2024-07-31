@@ -25,7 +25,6 @@ export const refreshAccessToken = async (refreshToken) => {
     ) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
-      // Set isLoggedIn to false and navigate to login (you need to handle these in the component where the function is used)
       throw error;
     }
     throw error;

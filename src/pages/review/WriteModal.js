@@ -46,8 +46,8 @@ const tagIdMap = {
 const WriteModal = ({
   isOpen,
   closeModal,
-  addReview,
   currentUser,
+  setReviews,
 }) => {
   const [placeName, setPlaceName] = useState('');
   const [content, setContent] = useState('');
@@ -58,7 +58,7 @@ const WriteModal = ({
     nickname: '',
     profileImageUrl: '',
   });
-  const fileInputRefs = [useRef(null), useRef(null), useRef(null)];
+  const fileInputRefs = useRef([null, null, null]);
 
   useEffect(() => {
     if (isOpen) {
@@ -82,18 +82,18 @@ const WriteModal = ({
       };
 
       fetchProfileData();
+    } else {
+      resetForm();
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (!isOpen) {
-      setPlaceName('');
-      setContent('');
-      setSelectedFiles([null, null, null]);
-      setPhotoURLs([null, null, null]);
-      setSelectedTags([]);
-    }
-  }, [isOpen]);
+  const resetForm = () => {
+    setPlaceName('');
+    setContent('');
+    setSelectedFiles([null, null, null]);
+    setPhotoURLs([null, null, null]);
+    setSelectedTags([]);
+  };
 
   useEffect(() => {
     return () => {
@@ -104,7 +104,7 @@ const WriteModal = ({
   }, [photoURLs]);
 
   const handleIconClick = (index) => {
-    fileInputRefs[index]?.current?.click();
+    fileInputRefs.current[index]?.click();
   };
 
   const handleFileChange = (index, e) => {
@@ -124,13 +124,16 @@ const WriteModal = ({
   };
 
   const handleTagClick = (tag) => {
-    if (selectedTags.includes(tag)) {
-      setSelectedTags(selectedTags.filter((t) => t !== tag));
-    } else if (selectedTags.length < 2) {
-      setSelectedTags([...selectedTags, tag]);
-    } else {
-      alert('두 개의 태그만 선택할 수 있습니다.');
-    }
+    setSelectedTags((prevTags) => {
+      if (prevTags.includes(tag)) {
+        return prevTags.filter((t) => t !== tag);
+      } else if (prevTags.length < 2) {
+        return [...prevTags, tag];
+      } else {
+        alert('두 개의 태그만 선택할 수 있습니다.');
+        return prevTags;
+      }
+    });
   };
 
   const validateForm = () => {
@@ -149,13 +152,51 @@ const WriteModal = ({
       return false;
     }
 
-    const validPhotos = selectedFiles.filter((file) => file !== null);
-    if (validPhotos.length < 1) {
+    if (selectedFiles.filter((file) => file !== null).length < 1) {
       alert('최소 한 장의 사진을 업로드해 주세요.');
       return false;
     }
 
     return true;
+  };
+
+  const addReview = async (newReview) => {
+    console.log('addReview called', { newReview });
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      const headers = { Authorization: `Bearer ${accessToken}` };
+
+      const formData = new FormData();
+      const postDto = {
+        title: newReview.title,
+        content: newReview.content,
+        postHashtag: newReview.tags,
+      };
+      formData.append('postDto', JSON.stringify(postDto));
+      newReview.photos.forEach((photo) => formData.append('postImages', photo));
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/posts`,
+        formData,
+        { headers }
+      );
+
+      setReviews((prevReviews) => [...prevReviews, response.data]);
+      alert('게시글을 성공적으로 등록하였습니다.');
+      window.location.reload(); // 등록 후 페이지 새로 고침
+    } catch (error) {
+      console.error('Error adding review:', error);
+      if (error.response) {
+        const errorMessage = error.response.data.errors
+          ? error.response.data.errors
+              .map((err) => `${err.field}: ${err.message}`)
+              .join(', ')
+          : error.response.data;
+        alert(`게시글 등록 중 오류가 발생하였습니다: ${errorMessage}`);
+      } else {
+        alert(`게시글 등록 중 오류가 발생하였습니다: ${error.message}`);
+      }
+    }
   };
 
   const handleAddReview = async (e) => {
@@ -195,7 +236,7 @@ const WriteModal = ({
           ) : (
             <ProfileImg alt='profile' />
           )}
-          <ProfileName>{profileData.nickname || '이름 없음'}</ProfileName>
+          <ProfileName>{profileData.nickname}</ProfileName>
         </ProfileContainer>
         <InputName
           type='text'
@@ -209,16 +250,16 @@ const WriteModal = ({
           onChange={(e) => setContent(e.target.value)}
         />
         <ImgContainer>
-          {photoURLs.map((url, index) => (
+          {[0, 1, 2].map((index) => (
             <span key={index}>
               <AddImg
-                src={url || '/img/addPhoto.png'}
+                src={photoURLs[index] || `${process.env.PUBLIC_URL}/img/addPhoto.png`}
                 onClick={() => handleIconClick(index)}
-                alt={url ? `Image ${index + 1}` : `Upload ${index + 1}`}
+                alt={`Upload ${index + 1}`}
               />
               <input
                 type='file'
-                ref={fileInputRefs[index]}
+                ref={(el) => (fileInputRefs.current[index] = el)}
                 onChange={(e) => handleFileChange(index, e)}
                 style={{ display: 'none' }}
               />
