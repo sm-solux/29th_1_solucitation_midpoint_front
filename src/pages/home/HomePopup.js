@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import { commonStyles, SearchList, SearchItem, FriendItem } from '../../styles/styles';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
+import { AppContext } from '../../contexts/AppContext';
 
-const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLoggedIn }) => {
+const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults }) => {
   const mapRef = useRef(null);
   const [map, setMap] = useState(null);
   const [showMap, setShowMap] = useState(false);
@@ -12,12 +13,36 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
   const [suggestions, setSuggestions] = useState([]);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
   const [selectedFriend, setSelectedFriend] = useState(null);
+  const { userInfo, isLoggedIn, friends, setFriends } = useContext(AppContext);
 
-  const friends = [
-    { name: '친구1', address: '서울특별시 용산구 청파대로10 1층' },
-    { name: '친구2', address: '서울특별시 용산구 청파대로20 2층' },
-    { name: '친구3', address: '서울특별시 용산구 청파대로30 3층' },
-  ];
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchFriends();
+    }
+  }, [isLoggedIn]);
+
+  const fetchFriends = async () => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      console.error('No token found.');
+      return;
+    }
+
+    try {
+      const response = await axios.get('http://3.36.150.194:8080/api/favs/friends/list', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.data) {
+        setFriends(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching friends:', error);
+    }
+  };
 
   useEffect(() => {
     const loadGoogleMaps = () => {
@@ -82,6 +107,7 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
     setSelectedSuggestion(suggestion);
     setSearchInput(suggestion.description);
     setSuggestions([]);
+    setShowPlacesList(false);
   };
 
   const handleSearch = async () => {
@@ -102,7 +128,7 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
           address: data.result.formatted_address,
           imgSrc: data.result.photos
             ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${data.result.photos[0].photo_reference}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`
-            : '/path/to/default/image.png',
+            : '/img/default-image.png',
         };
 
         const updatedResults = [place, ...searchResults]; // 맨 위로 추가
@@ -184,6 +210,11 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
     onClose(friend.address, searchResults);
   };
 
+  const handleSearchItemClick = (place) => {
+    setSearchInput(place.address);
+    setShowPlacesList(false);
+  };
+
   return (
     <div style={commonStyles.popupContainer}>
       <div style={commonStyles.popupBox}>
@@ -235,16 +266,22 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
               <div style={commonStyles.popupSection2}>
                 <p style={commonStyles.popupSectionTitle}>즐겨찾는 친구</p>
                 <div style={commonStyles.favoriteFriends}>
-                  {friends.map((friend, index) => (
-                    <button
-                      key={index}
-                      style={commonStyles.favoriteFriend}
-                      onClick={() => handleFriendClick(friend)}
-                    >
-                      <img src="/img/pprofile.png" alt={friend.name} style={commonStyles.favoriteFriendImage} />
-                      <p>{friend.name}</p>
-                    </button>
-                  ))}
+                  {friends.length > 0 ? (
+                    <div style={{ display: 'flex', overflowX: 'scroll', maxWidth: '100%' }}>
+                      {friends.map((friend) => (
+                        <button
+                          key={friend.favFriendId}
+                          style={commonStyles.favoriteFriend}
+                          onClick={() => handleFriendClick(friend)}
+                        >
+                          <img src="/img/pprofile.png" alt={friend.name} style={commonStyles.favoriteFriendImage} />
+                          <p>{friend.name}</p>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <p style={{ marginBottom: '53px' }}> </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -254,8 +291,8 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
               <p style={commonStyles.currentLocationText}>검색 목록</p>
               <SearchList>
                 {searchResults.map((place, index) => (
-                  <SearchItem key={index}>
-                    <img src={place.imgSrc} alt={place.name} />
+                  <SearchItem key={index} onClick={() => handleSearchItemClick(place)}>
+                    <img src={place.imgSrc || '/img/default-image.png'} alt={place.name} />
                     <div>
                       <h3>{place.name}</h3>
                       <p>{place.address}</p>
