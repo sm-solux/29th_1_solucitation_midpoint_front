@@ -214,6 +214,7 @@ export const myPageStyles = {
   },
   deleteButton: {
     padding: '10px 30px',
+    fontFamily: 'Freesentation',
     fontSize: '16px',
     fontWeight: 'bold',
     color: '#fff',
@@ -223,6 +224,7 @@ export const myPageStyles = {
     cursor: 'pointer',
   },
 
+  //2번 즐겨찾기
   favoritesContainer: {
     display: 'flex',
     flexDirection: 'row', 
@@ -319,7 +321,7 @@ export const myPageStyles = {
     border: 'none',
     borderRadius: '5px',
     fontFamily: 'Freesentation',
-    fontSize: '15px',
+    fontSize: '18px',
     textAlign: 'center',
     outline: 'none',
   },
@@ -343,7 +345,8 @@ export const myPageStyles = {
     color: '#ffffff',
     backgroundColor: '#1B4345',
     border: 'none',
-    fontSize: '15px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
     marginTop: '30px',
   },
   favoriteButtonEdit: {
@@ -352,7 +355,8 @@ export const myPageStyles = {
     color: '#ffffff',
     backgroundColor: '#1B4345',
     border: 'none',
-    fontSize: '15px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
     marginTop: '50px',
   },
   favoriteButtonQuit: {
@@ -361,11 +365,13 @@ export const myPageStyles = {
     color: '#fff',
     backgroundColor: '#D00303',
     border: 'none',
-    fontSize: '15px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
     marginLeft: '55px',
   },
 };
 
+//3번 검색 기록 
 export const PlaceContainer = styled.div`
   display: flex;
   width: 100%;
