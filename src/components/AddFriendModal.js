@@ -4,6 +4,7 @@ import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { myPageStyles } from '../styles/myPageStyles';
 import { commonStyles } from '../styles/styles';
+import { refreshAccessToken } from './refreshAccess';
 
 Modal.setAppElement('#root');
 
@@ -105,8 +106,30 @@ const AddFriendModal = ({
         setErrorMessage(response.data.message);
       }
     } catch (error) {
-      console.error('친구 저장 오류:', error.message);
-      setErrorMessage(getErrorMessage(error));
+      if (error.response?.status === 401 && error.response?.data?.error === 'access_token_expired') {
+        try {
+          const refreshToken = localStorage.getItem('refreshToken');
+          if (!refreshToken) {
+            throw new Error('No refresh token available.');
+          }
+          const newAccessToken = await refreshAccessToken(refreshToken);
+          const headers = { Authorization: `Bearer ${newAccessToken}` };
+          const retryResponse = await apiCall(friendData, headers);
+          if (retryResponse.data.success) {
+            successCallback(retryResponse.data);
+            clearInputs();
+            closeModal();
+          } else {
+            setErrorMessage(retryResponse.data.message);
+          }
+        } catch (refreshError) {
+          console.error('Failed to refresh access token:', refreshError);
+          setErrorMessage('토큰 갱신 중 오류가 발생하였습니다. 다시 시도해 주세요.');
+        }
+      } else {
+        console.error('친구 저장 오류:', error.message);
+        setErrorMessage(getErrorMessage(error));
+      }
     }
   };
 
@@ -188,6 +211,7 @@ const AddFriendModal = ({
         const response = await axios.delete(`${API_URL}/api/favs/friends/delete?favFriendId=${selectedFriend.favFriendId}`, { headers });
 
         if (response.data.success) {
+          alert('삭제되었습니다');
           deleteFriend(selectedFriend);
           closeModal();
           clearInputs();
@@ -196,11 +220,34 @@ const AddFriendModal = ({
           setErrorMessage(response.data.message);
         }
       } catch (error) {
-        if (error.response && error.response.status === 404) {
-          setErrorMessage('존재하지 않는 친구입니다.');
+        if (error.response?.status === 401 && error.response?.data?.error === 'access_token_expired') {
+          try {
+            const refreshToken = localStorage.getItem('refreshToken');
+            if (!refreshToken) {
+              throw new Error('No refresh token available.');
+            }
+            const newAccessToken = await refreshAccessToken(refreshToken);
+            const headers = { Authorization: `Bearer ${newAccessToken}` };
+            const retryResponse = await axios.delete(`${API_URL}/api/favs/friends/delete?favFriendId=${selectedFriend.favFriendId}`, { headers });
+            if (retryResponse.data.success) {
+              deleteFriend(selectedFriend);
+              closeModal();
+              clearInputs();
+              setIsEditing(false);
+            } else {
+              setErrorMessage(retryResponse.data.message);
+            }
+          } catch (refreshError) {
+            console.error('Failed to refresh access token:', refreshError);
+            setErrorMessage('토큰 갱신 중 오류가 발생하였습니다. 다시 시도해 주세요.');
+          }
         } else {
-          console.error('친구 삭제 오류:', error.message);
-          setErrorMessage(getErrorMessage(error));
+          if (error.response && error.response.status === 404) {
+            setErrorMessage('존재하지 않는 친구입니다.');
+          } else {
+            console.error('친구 삭제 오류:', error.message);
+            setErrorMessage(getErrorMessage(error));
+          }
         }
       }
     }

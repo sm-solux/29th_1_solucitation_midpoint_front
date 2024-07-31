@@ -15,6 +15,8 @@ const ReviewCard = ({ review, onReviewClick, onLikeToggle }) => {
     onLikeToggle(postId, !liked);
   };
 
+  const truncatedTitle = title.length > 20 ? `${title.slice(0, 20)}...` : title;
+
   return (
     <div style={reviewStyles.card} onClick={handleClick}>
       {firstImageUrl && (
@@ -32,7 +34,7 @@ const ReviewCard = ({ review, onReviewClick, onLikeToggle }) => {
         </div>
         <LikeButton liked={liked} toggleLike={handleLike} likeCount={likeCount} />
       </div>
-      <div style={reviewStyles.placeName}>{title}</div>
+      <div style={reviewStyles.placeName}>{truncatedTitle}</div>
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
