@@ -1,7 +1,6 @@
 import React from 'react';
-import { reviewStyles } from '../styles/reviewStyles';
-import useToggleLike from '../components/ToggleLike';
-import LikeButton from './LikeButtonComponents';
+import { reviewStyles } from '../../styles/reviewStyles';
+import LikeButton, { useToggleLike } from '../../components/LikeButtonComponents';
 
 const ReviewCard = ({ review, onReviewClick }) => {
   const { firstImageUrl, hashtags, title, postId } = review;

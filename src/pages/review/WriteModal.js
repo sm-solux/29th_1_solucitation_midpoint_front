@@ -13,7 +13,7 @@ import writeModalStyles, {
   TagContainer,
   TagButton,
   SubmitButton,
-} from '../styles/writeModalStyles';
+} from '../../styles/writeModalStyles';
 
 Modal.setAppElement('#root');
 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import ReviewCard from '../../components/ReviewComponents';
-import ReviewModal from '../../components/ReviewModalComponents';
-import WriteModal from '../../components/WriteModalComponents';
+import ReviewCard from '../review/ReviewCard';
+import ReviewModal from '../review/ReviewModal';
+import WriteModal from '../review/WriteModal';
 import { reviewStyles } from '../../styles/reviewStyles';
 
 const useAuth = () => {

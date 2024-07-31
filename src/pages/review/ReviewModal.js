@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
-import { reviewModalStyles } from '../styles/reviewModalStyles';
-import useToggleLike from '../components/ToggleLike';
-import LikeButton from '../components/LikeButtonComponents';
+import { reviewModalStyles } from '../../styles/reviewModalStyles';
+import LikeButton, { useToggleLike } from '../../components/LikeButtonComponents';
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);

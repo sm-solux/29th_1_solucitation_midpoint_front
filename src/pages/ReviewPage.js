@@ -2,10 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Logo } from '../components/CommonComponents';
 import SearchBox from '../components/SearchComponents';
-import ReviewCard from '../components/ReviewComponents';
-import ReviewModal from '../components/ReviewModalComponents';
-import WriteModal from '../components/WriteModalComponents';
-import EditModal from '../components/EditModalComponents';
+import ReviewCard from './review/ReviewCard';
+import ReviewModal from './review/ReviewModal';
+import WriteModal from './review/WriteModal';
+import EditModal from './review/EditModal';
 import { reviewStyles } from '../styles/reviewStyles';
 
 const useAuth = () => {
