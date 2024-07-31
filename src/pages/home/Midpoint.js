@@ -129,11 +129,11 @@ function Midpoint() {
       }))
     };
 
-    // JSON 형태로 콘솔에 출력합니다.
     console.log('Save Data:', JSON.stringify(saveData, null, 2));
+    console.log('Token:', token);
 
     try {
-      const response = await axios.post('http://3.36.150.194:8080/api/search-history', saveData, {
+      const response = await axios.post('http://3.36.150.194:8080/api/search-history-v2', saveData, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -146,7 +146,22 @@ function Midpoint() {
         console.error('Unexpected response status:', response.status);
       }
     } catch (error) {
-      console.error('Error saving places:', error.response ? error.response.data : error.message);
+      if (error.response) {
+        const { status, data } = error.response;
+        if (status === 400) {
+          alert(`에러: ${data.errors.map(err => `${err.field}: ${err.message}`).join(', ')}`);
+        } else if (status === 401) {
+          alert('로그인이 필요합니다.');
+        } else if (status === 404) {
+          alert('사용자를 찾을 수 없습니다.');
+        } else if (status === 500) {
+          alert('서버 오류가 발생했습니다. 다시 시도해주세요.');
+        } else {
+          console.error('Error saving places:', error.response.data);
+        }
+      } else {
+        console.error('Error saving places:', error);
+      }
     }
   };
 

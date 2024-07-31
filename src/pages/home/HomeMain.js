@@ -32,8 +32,8 @@ const Home = () => {
       if (response.data) {
         setUserInfo({
           ...userInfo,
-          name: response.data.nickname,
-          profileImage: response.data.profileImage,
+          name: response.data.nickname || '나',
+          profileImage: response.data.profileImage || '/img/default-profile.png',
           address: response.data.address || ''
         });
       }
@@ -46,8 +46,17 @@ const Home = () => {
   };
 
   useEffect(() => {
-    fetchUserProfile();
-  }, []); // 빈 배열을 의존성으로 설정해 처음 마운트될 때만 실행
+    if (isLoggedIn) {
+      fetchUserProfile();
+    } else {
+      setUserInfo({
+        ...userInfo,
+        name: '나',
+        profileImage: '/img/default-profile.png',
+        address: ''
+      });
+    }
+  }, [isLoggedIn]); // 로그인 상태가 변경될 때만 실행
 
   const handleAddInput = () => {
     const newFriendName = `친구 ${friendCount}`;
@@ -175,11 +184,11 @@ const Home = () => {
         <div style={commonStyles.inputContainer}>
           <div style={commonStyles.profileContainer}>
             <img
-              src={userInfo.profileImage}
+              src={userInfo.profileImage || '/img/default-profile.png'}
               alt='프로필 이미지'
               style={commonStyles.profileImg}
             />
-            <span style={commonStyles.profileName}>{userInfo.name}</span>
+            <span style={commonStyles.profileName}>{isLoggedIn ? userInfo.name : '나'}</span>
           </div>
           <div style={commonStyles.inputGroup}>
             <input

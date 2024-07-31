@@ -102,7 +102,7 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
           address: data.result.formatted_address,
           imgSrc: data.result.photos
             ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${data.result.photos[0].photo_reference}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`
-            : '/path/to/default/image.png',
+            : '/img/default-image.png',
         };
 
         const updatedResults = [place, ...searchResults]; // 맨 위로 추가
@@ -184,6 +184,11 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
     onClose(friend.address, searchResults);
   };
 
+  const handleSearchItemClick = (place) => {
+    setSearchInput(place.address);
+    setShowPlacesList(false);
+  };
+
   return (
     <div style={commonStyles.popupContainer}>
       <div style={commonStyles.popupBox}>
@@ -254,8 +259,8 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
               <p style={commonStyles.currentLocationText}>검색 목록</p>
               <SearchList>
                 {searchResults.map((place, index) => (
-                  <SearchItem key={index}>
-                    <img src={place.imgSrc} alt={place.name} />
+                  <SearchItem key={index} onClick={() => handleSearchItemClick(place)}>
+                    <img src={place.imgSrc || '/img/default-image.png'} alt={place.name} />
                     <div>
                       <h3>{place.name}</h3>
                       <p>{place.address}</p>
