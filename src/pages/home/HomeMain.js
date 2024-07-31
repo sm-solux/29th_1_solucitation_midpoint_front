@@ -32,7 +32,7 @@ const Home = () => {
       if (response.data) {
         setUserInfo({
           ...userInfo,
-          nickname: response.data.nickname || '나',
+          name: response.data.nickname || '나',
           profileImage: response.data.profileImage || '/img/default-profile.png',
           address: response.data.address || ''
         });
@@ -51,7 +51,7 @@ const Home = () => {
     } else {
       setUserInfo({
         ...userInfo,
-        nickname: '나',
+        name: '나',
         profileImage: '/img/default-profile.png',
         address: ''
       });
@@ -72,7 +72,7 @@ const Home = () => {
     setIsPopupOpen(true);
   };
 
-  const handlePopupClose = (address, results) => {
+  const handlePopupClose = (address, name, results) => {
     if (address) {
       if (popupTarget === 'user') {
         setUserInfo({ ...userInfo, address });
@@ -80,7 +80,7 @@ const Home = () => {
       } else {
         const updatedFriends = friends.map((friend, index) => {
           if (index === popupTarget) {
-            return { ...friend, address };
+            return { ...friend, address, name };
           }
           return friend;
         });
@@ -188,7 +188,7 @@ const Home = () => {
               alt='프로필 이미지'
               style={commonStyles.profileImg}
             />
-            <span style={commonStyles.profileName}>{isLoggedIn ? userInfo.nickname : '나'}</span>
+            <span style={commonStyles.profileName}>{isLoggedIn ? userInfo.name : '나'}</span>
           </div>
           <div style={commonStyles.inputGroup}>
             <input
@@ -259,13 +259,13 @@ const Home = () => {
       {isPopupOpen && (
         <HomePopup
           onClose={handlePopupClose}
-          setAddress={(address) => {
+          setAddress={(address, name) => {
             if (popupTarget === 'user') {
               setUserInfo({ ...userInfo, address });
             } else {
               const updatedFriends = friends.map((friend, index) => {
                 if (index === popupTarget) {
-                  return { ...friend, address };
+                  return { ...friend, address, name };
                 }
                 return friend;
               });
