@@ -3,26 +3,39 @@ import axios from 'axios';
 import ReviewCard from '../review/ReviewCard';
 import ReviewModal from '../review/ReviewModal';
 import WriteModal from '../review/WriteModal';
+import EditModal from '../review/EditModal';
 import { reviewStyles } from '../../styles/reviewStyles';
+import { refreshAccessToken } from '../../components/refreshAccess';
 
 const useAuth = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const userToken = localStorage.getItem('userToken');
-    const storedUser = localStorage.getItem('currentUser');
-    if (userToken && storedUser) {
-      setIsLoggedIn(true);
-      setCurrentUser(JSON.parse(storedUser));
-    } else {
-      setIsLoggedIn(false);
-    }
+    const checkLoginStatus = async () => {
+      const accessToken = localStorage.getItem('accessToken');
+      const refreshToken = localStorage.getItem('refreshToken');
+
+      if (accessToken && refreshToken) {
+        try {
+          await refreshAccessToken(refreshToken);
+          setIsLoggedIn(true);
+          setCurrentUser(JSON.parse(localStorage.getItem('currentUser')));
+        } catch (error) {
+          setIsLoggedIn(false);
+          setCurrentUser(null);
+        }
+      } else {
+        setIsLoggedIn(false);
+        setCurrentUser(null);
+      }
+    };
+
+    checkLoginStatus();
   }, []);
 
-  return { currentUser, isLoggedIn };
+  return { currentUser, isLoggedIn, setIsLoggedIn };
 };
-
 const hashtagMap = {
   1: '#식사',
   2: '#카페',
@@ -90,6 +103,7 @@ const MyPagePosts = () => {
 
       const fetchedReviewDetails = {
         postId: postId,
+        profileImageUrl: response.data.profileImagerUrl,
         nickname: response.data.nickname,
         title: response.data.title,
         content: response.data.content,

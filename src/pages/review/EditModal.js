@@ -60,6 +60,7 @@ const EditModal = ({
   });
   const [initialTags, setInitialTags] = useState([]);
   const [initialImages, setInitialImages] = useState([]);
+  const [deletedImages, setDeletedImages] = useState([]);
   const [isImageChanged, setIsImageChanged] = useState(false);
   const fileInputRefs = [useRef(null), useRef(null), useRef(null)];
 
@@ -127,6 +128,7 @@ const EditModal = ({
     setSelectedTags([]);
     setInitialTags([]);
     setInitialImages([]);
+    setDeletedImages([]);
     setIsImageChanged(false);
   };
 
@@ -143,13 +145,15 @@ const EditModal = ({
     setSelectedFiles(newSelectedFiles);
 
     const newPhotoURLs = [...photoURLs];
+    if (newPhotoURLs[index] && initialImages.includes(newPhotoURLs[index])) {
+      setDeletedImages([...deletedImages, newPhotoURLs[index]]);
+    }
     if (newPhotoURLs[index]) {
       URL.revokeObjectURL(newPhotoURLs[index]);
     }
     newPhotoURLs[index] = URL.createObjectURL(file);
     setPhotoURLs(newPhotoURLs);
     setIsImageChanged(true);
-
   };
 
   const handleTagClick = (tag) => {
@@ -158,7 +162,6 @@ const EditModal = ({
     } else if (selectedTags.length < 2) {
       setSelectedTags([...selectedTags, tag]);
     }
-
   };
 
   const validateForm = () => {
@@ -183,23 +186,12 @@ const EditModal = ({
     }
 
     const validPhotos = selectedFiles.filter((file) => file !== null);
-    if (initialImages.filter((url) => url !== null).length < 1 && validPhotos.length < 1) {
+    if (initialImages.filter((url) => url !== null).length - deletedImages.length < 1 && validPhotos.length < 1) {
       alert('최소 한 장의 사진을 업로드해 주세요.');
       return false;
     }
 
     return true;
-  };
-
-  const urlToFile = async (url, filename, mimeType) => {
-    try {
-      const res = await fetch(url); //, { mode: 'cors' }
-      const blob = await res.blob();
-      return new File([blob], filename, { type: mimeType });
-    } catch (error) {
-      console.error('Error converting URL to file:', error);
-      throw error;
-    }
   };
 
   const handleUpdateReview = async (e) => {
@@ -212,6 +204,7 @@ const EditModal = ({
       content,
       tags: selectedTags.map(tag => tagIdMap[tag]),
       photos: selectedFiles.filter(file => file !== null),
+      deleteImageUrl: deletedImages,
     };
 
     try {
@@ -221,22 +214,16 @@ const EditModal = ({
       const postDto = {
         title: updatedReview.title,
         content: updatedReview.content,
-        postHashtag: updatedReview.tags
+        postHashtag: updatedReview.tags,
+        deleteImageUrl: updatedReview.deleteImageUrl
       };
 
       const formData = new FormData();
       formData.append('postDto', JSON.stringify(postDto));
 
-      const allImages = initialImages.filter(url => url !== null).concat(updatedReview.photos);
-      for (let i = 0; i < allImages.length; i++) {
-        const image = allImages[i];
-        if (typeof image === 'string') {
-          const file = await urlToFile(image, `image${i}.jpg`, 'image/jpeg');
-          formData.append('postImages', file);
-        } else {
-          formData.append('postImages', image);
-        }
-      }
+      updatedReview.photos.forEach((image) => {
+        formData.append('postImages', image);
+      });
 
       // FormData 내용을 확인하는 로그 (이미지 파일 확인)
       for (let pair of formData.entries()) {

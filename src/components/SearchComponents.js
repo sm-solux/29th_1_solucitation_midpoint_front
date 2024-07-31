@@ -144,7 +144,6 @@ const SearchBox = ({
       const headers = accessToken
         ? { Authorization: `Bearer ${accessToken}` }
         : {};
-      console.log('Fetching by tags:', tagIds);
 
       const response = await axios.get(
         `${process.env.REACT_APP_API_URL}/api/posts/search/purpose`,

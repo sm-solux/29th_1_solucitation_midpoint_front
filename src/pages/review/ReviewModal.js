@@ -15,7 +15,7 @@ const formatDate = (dateString) => {
   return `${year}. ${month}. ${day}. ${hours}:${minutes}`;
 };
 
-const ReviewModal = ({ isOpen, review, closeModal, openEditModal, deleteReview }) => {
+const ReviewModal = ({ isOpen, review, closeModal, openEditModal, deleteReview, onLikeToggle }) => {
   const [profileData, setProfileData] = useState(null);
   const [error, setError] = useState(null);
   const { liked, likeCount, toggleLike, error: likeError } = useToggleLike(review.postId, review.likes, review.likeCnt);
@@ -62,7 +62,6 @@ const ReviewModal = ({ isOpen, review, closeModal, openEditModal, deleteReview }
         });
         deleteReview(review);
         closeModal();
-        window.location.reload();
       } catch (error) {
         if (error.response) {
           switch (error.response.status) {
@@ -88,6 +87,11 @@ const ReviewModal = ({ isOpen, review, closeModal, openEditModal, deleteReview }
         }
       }
     }
+  };
+
+  const handleLike = async () => {
+    await toggleLike();
+    onLikeToggle(review.postId, !liked);
   };
 
   const photos = Array.isArray(review.images) ? review.images : [];
@@ -138,7 +142,7 @@ const ReviewModal = ({ isOpen, review, closeModal, openEditModal, deleteReview }
       </div>
       <div style={reviewModalStyles.footer}>
         <div style={reviewModalStyles.likeSection}>
-          <LikeButton liked={liked} toggleLike={toggleLike} />
+          <LikeButton liked={liked} toggleLike={handleLike} likeCount={likeCount} />
           <span style={reviewModalStyles.like}>좋아요 {likeCount.toString()}</span>
         </div>
         <div style={reviewModalStyles.tags}>
