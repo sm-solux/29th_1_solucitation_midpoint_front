@@ -82,6 +82,7 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
     setSelectedSuggestion(suggestion);
     setSearchInput(suggestion.description);
     setSuggestions([]);
+    setShowPlacesList(false);  // 드롭다운 닫기
   };
 
   const handleSearch = async () => {
