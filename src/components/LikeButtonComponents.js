@@ -22,7 +22,8 @@ export const useToggleLike = (postId, initialLiked = false, initialLikeCount = 0
 
       if (response.status === 200) {
         setLiked(prevLiked => !prevLiked);
-        setLikeCount(prevLikeCount => (liked ? prevLikeCount - 1 : prevLikeCount + 1));
+        setLikeCount(prevLikeCount => prevLikeCount + (liked ? -1 : 1));
+        console.log(postId, liked ? '좋아요를 취소하였습니다!' : '좋아요를 눌렀습니다!');
       }
     } catch (error) {
       console.error('Error toggling like', error);
@@ -33,10 +34,10 @@ export const useToggleLike = (postId, initialLiked = false, initialLikeCount = 0
           setError('해당 서비스를 이용하기 위해서는 로그인이 필요합니다.');
           break;
         case 404:
-          setError(errorMessage);
+          setError('해당 게시글을 찾을 수 없습니다.');
           break;
         case 500:
-          setError(`좋아요 상태를 변경하는 중 오류가 발생하였습니다. 에러 메시지: ${errorMessage}`);
+          setError(`좋아요 상태를 변경하는 중 오류가 발생하였습니다: ${errorMessage}`);
           break;
         default:
           setError(`오류가 발생하였습니다: ${errorMessage}`);
@@ -47,8 +48,9 @@ export const useToggleLike = (postId, initialLiked = false, initialLikeCount = 0
   return { liked, likeCount, toggleLike, error };
 };
 
-const LikeButton = ({ liked, toggleLike }) => {
+const LikeButton = ({ liked, toggleLike, likeCount }) => {
   const buttonStyle = {
+    marginLeft:'10px',
     background: 'none',
     border: 'none',
     padding: '5px',

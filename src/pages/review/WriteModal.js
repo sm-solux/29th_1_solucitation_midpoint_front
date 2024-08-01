@@ -14,6 +14,7 @@ import writeModalStyles, {
   TagButton,
   SubmitButton,
 } from '../../styles/writeModalStyles';
+import { refreshAccessToken } from '../../components/refreshAccess';
 
 Modal.setAppElement('#root');
 
@@ -77,7 +78,29 @@ const WriteModal = ({
             profileImageUrl: data.profileImageUrl,
           });
         } catch (error) {
-          console.error('프로필 정보를 불러오는 중 에러 발생:', error);
+          if (error.response?.status === 401 && error.response?.data?.error === 'access_token_expired') {
+            try {
+              const refreshToken = localStorage.getItem('refreshToken');
+              if (!refreshToken) {
+                throw new Error('No refresh token available.');
+              }
+              const newAccessToken = await refreshAccessToken(refreshToken);
+              const retryResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/member/profile`, {
+                headers: {
+                  Authorization: `Bearer ${newAccessToken}`,
+                },
+              });
+              const data = retryResponse.data;
+              setProfileData({
+                nickname: data.nickname,
+                profileImageUrl: data.profileImageUrl,
+              });
+            } catch (refreshError) {
+              console.error('Failed to refresh access token:', refreshError);
+            }
+          } else {
+            console.error('프로필 정보를 불러오는 중 에러 발생:', error);
+          }
         }
       };
 
@@ -162,18 +185,18 @@ const WriteModal = ({
 
   const addReview = async (newReview) => {
     console.log('addReview called', { newReview });
+    const formData = new FormData();
+    const postDto = {
+      title: newReview.title,
+      content: newReview.content,
+      postHashtag: newReview.tags,
+    };
+    formData.append('postDto', JSON.stringify(postDto));
+    newReview.photos.forEach((photo) => formData.append('postImages', photo));
+
     try {
       const accessToken = localStorage.getItem('accessToken');
       const headers = { Authorization: `Bearer ${accessToken}` };
-
-      const formData = new FormData();
-      const postDto = {
-        title: newReview.title,
-        content: newReview.content,
-        postHashtag: newReview.tags,
-      };
-      formData.append('postDto', JSON.stringify(postDto));
-      newReview.photos.forEach((photo) => formData.append('postImages', photo));
 
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/posts`,
@@ -185,16 +208,38 @@ const WriteModal = ({
       alert('게시글을 성공적으로 등록하였습니다.');
       window.location.reload(); // 등록 후 페이지 새로 고침
     } catch (error) {
-      console.error('Error adding review:', error);
-      if (error.response) {
-        const errorMessage = error.response.data.errors
-          ? error.response.data.errors
-              .map((err) => `${err.field}: ${err.message}`)
-              .join(', ')
-          : error.response.data;
-        alert(`게시글 등록 중 오류가 발생하였습니다: ${errorMessage}`);
+      if (error.response?.status === 401 && error.response?.data?.error === 'access_token_expired') {
+        try {
+          const refreshToken = localStorage.getItem('refreshToken');
+          if (!refreshToken) {
+            throw new Error('No refresh token available.');
+          }
+          const newAccessToken = await refreshAccessToken(refreshToken);
+          const headers = { Authorization: `Bearer ${newAccessToken}` };
+          const retryResponse = await axios.post(
+            `${process.env.REACT_APP_API_URL}/api/posts`,
+            formData,
+            { headers }
+          );
+          setReviews((prevReviews) => [...prevReviews, retryResponse.data]);
+          alert('게시글을 성공적으로 등록하였습니다.');
+          window.location.reload(); // 등록 후 페이지 새로 고침
+        } catch (refreshError) {
+          console.error('Failed to refresh access token:', refreshError);
+          alert('토큰 갱신 중 오류가 발생하였습니다. 다시 시도해 주세요.');
+        }
       } else {
-        alert(`게시글 등록 중 오류가 발생하였습니다: ${error.message}`);
+        console.error('Error adding review:', error);
+        if (error.response) {
+          const errorMessage = error.response.data.errors
+            ? error.response.data.errors
+                .map((err) => `${err.field}: ${err.message}`)
+                .join(', ')
+            : error.response.data;
+          alert(`게시글 등록 중 오류가 발생하였습니다: ${errorMessage}`);
+        } else {
+          alert(`게시글 등록 중 오류가 발생하였습니다: ${error.message}`);
+        }
       }
     }
   };

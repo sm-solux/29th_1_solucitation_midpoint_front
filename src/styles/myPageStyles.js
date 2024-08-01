@@ -214,6 +214,7 @@ export const myPageStyles = {
   },
   deleteButton: {
     padding: '10px 30px',
+    fontFamily: 'Freesentation',
     fontSize: '16px',
     fontWeight: 'bold',
     color: '#fff',
@@ -223,6 +224,7 @@ export const myPageStyles = {
     cursor: 'pointer',
   },
 
+  //2번 즐겨찾기
   favoritesContainer: {
     display: 'flex',
     flexDirection: 'row', 
@@ -319,7 +321,7 @@ export const myPageStyles = {
     border: 'none',
     borderRadius: '5px',
     fontFamily: 'Freesentation',
-    fontSize: '15px',
+    fontSize: '18px',
     textAlign: 'center',
     outline: 'none',
   },
@@ -343,7 +345,8 @@ export const myPageStyles = {
     color: '#ffffff',
     backgroundColor: '#1B4345',
     border: 'none',
-    fontSize: '15px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
     marginTop: '30px',
   },
   favoriteButtonEdit: {
@@ -352,7 +355,8 @@ export const myPageStyles = {
     color: '#ffffff',
     backgroundColor: '#1B4345',
     border: 'none',
-    fontSize: '15px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
     marginTop: '50px',
   },
   favoriteButtonQuit: {
@@ -361,21 +365,33 @@ export const myPageStyles = {
     color: '#fff',
     backgroundColor: '#D00303',
     border: 'none',
-    fontSize: '15px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
     marginLeft: '55px',
   },
 };
 
+//3번 검색 기록 
 export const PlaceContainer = styled.div`
   display: flex;
-  width: 100%;
+  justify-content: center;
+  align-items: center;
+  width: 800px;
+  height: 100vh; /* Ensure the container takes full viewport height */
 `;
 
-export const Left = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: center; /* WhiteBox를 가운데로 정렬 */
+export const WhiteBox = styled.div`
+  background-color: white;
   padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 800px;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 `;
 
 export const PlacesList = styled.ul`
@@ -433,35 +449,8 @@ export const PlaceItem = styled.div`
 export const BottomSection = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   margin-top: 2rem;
-`;
-
-export const Right = styled.div`
-  flex: 1;
-  padding: 1rem;
-`;
-
-export const MapContainer = styled.div`
-  h2 {
-    margin-bottom: 1rem;
-  }
-
-  iframe {
-    border: 0;
-    width: 100%;
-    height: 400px;
-  }
-`;
-
-export const WhiteBox = styled.div`
-  background-color: white;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-  width: 100%; /* Left 컨테이너 내에서의 크기를 설정 */
-  max-width: 90%; /* 최대 너비 설정 */
 `;
 
 export const ShareButton = styled.button`
@@ -482,4 +471,17 @@ export const ShareButton = styled.button`
   img {
     margin-left: 0.5rem;
   }
+`;
+
+export const MapContainer = styled.div`
+  h2 {
+    margin-bottom: 1rem;
+  }
+
+  iframe {
+    border: 0;
+    width: 100%;
+    height: 400px;
+  }
+
 `;

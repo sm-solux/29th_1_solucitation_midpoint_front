@@ -3,6 +3,7 @@ import Modal from 'react-modal';
 import axios from 'axios';
 import { reviewModalStyles } from '../../styles/reviewModalStyles';
 import LikeButton, { useToggleLike } from '../../components/LikeButtonComponents';
+import { refreshAccessToken } from '../../components/refreshAccess';
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -15,7 +16,7 @@ const formatDate = (dateString) => {
   return `${year}. ${month}. ${day}. ${hours}:${minutes}`;
 };
 
-const ReviewModal = ({ isOpen, review, closeModal, openEditModal, deleteReview }) => {
+const ReviewModal = ({ isOpen, review, closeModal, openEditModal, deleteReview, onLikeToggle }) => {
   const [profileData, setProfileData] = useState(null);
   const [error, setError] = useState(null);
   const { liked, likeCount, toggleLike, error: likeError } = useToggleLike(review.postId, review.likes, review.likeCnt);
@@ -62,32 +63,55 @@ const ReviewModal = ({ isOpen, review, closeModal, openEditModal, deleteReview }
         });
         deleteReview(review);
         closeModal();
-        window.location.reload();
       } catch (error) {
-        if (error.response) {
-          switch (error.response.status) {
-            case 401:
-              setError('로그인이 필요합니다.');
-              break;
-            case 404:
-              setError('해당 게시글이 존재하지 않습니다.');
-              break;
-            case 403:
-              setError('해당 게시글을 삭제할 권한이 없습니다. 본인이 작성한 글만 삭제할 수 있습니다.');
-              break;
-            case 500:
-              setError('게시글 삭제 중 오류가 발생하였습니다.');
-              break;
-            default:
-              setError(`오류가 발생하였습니다: ${error.message}`);
+        if (error.response?.status === 401 && error.response?.data?.error === 'access_token_expired') {
+          try {
+            const refreshToken = localStorage.getItem('refreshToken');
+            if (!refreshToken) {
+              throw new Error('No refresh token available.');
+            }
+            const newAccessToken = await refreshAccessToken(refreshToken);
+            const headers = { Authorization: `Bearer ${newAccessToken}` };
+            await axios.delete(`${process.env.REACT_APP_API_URL}/api/posts/${review.postId}`, {
+              headers,
+            });
+            deleteReview(review);
+            closeModal();
+          } catch (refreshError) {
+            console.error('Failed to refresh access token:', refreshError);
+            setError('토큰 갱신 중 오류가 발생하였습니다. 다시 시도해 주세요.');
           }
-        } else if (error.request) {
-          setError('서버와 연결할 수 없습니다.');
         } else {
-          setError(`오류가 발생하였습니다: ${error.message}`);
+          if (error.response) {
+            switch (error.response.status) {
+              case 401:
+                setError('로그인이 필요합니다.');
+                break;
+              case 404:
+                setError('해당 게시글이 존재하지 않습니다.');
+                break;
+              case 403:
+                setError('해당 게시글을 삭제할 권한이 없습니다. 본인이 작성한 글만 삭제할 수 있습니다.');
+                break;
+              case 500:
+                setError('게시글 삭제 중 오류가 발생하였습니다.');
+                break;
+              default:
+                setError(`오류가 발생하였습니다: ${error.message}`);
+            }
+          } else if (error.request) {
+            setError('서버와 연결할 수 없습니다.');
+          } else {
+            setError(`오류가 발생하였습니다: ${error.message}`);
+          }
         }
       }
     }
+  };
+
+  const handleLike = async () => {
+    await toggleLike();
+    onLikeToggle(review.postId, !liked);
   };
 
   const photos = Array.isArray(review.images) ? review.images : [];
@@ -138,7 +162,7 @@ const ReviewModal = ({ isOpen, review, closeModal, openEditModal, deleteReview }
       </div>
       <div style={reviewModalStyles.footer}>
         <div style={reviewModalStyles.likeSection}>
-          <LikeButton liked={liked} toggleLike={toggleLike} />
+          <LikeButton liked={liked} toggleLike={handleLike} likeCount={likeCount} />
           <span style={reviewModalStyles.like}>좋아요 {likeCount.toString()}</span>
         </div>
         <div style={reviewModalStyles.tags}>
