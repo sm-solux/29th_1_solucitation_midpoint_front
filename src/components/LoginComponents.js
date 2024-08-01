@@ -57,7 +57,8 @@ const LoginForm = ({ inputs, buttonText, onLoginSuccess }) => {
       // 로컬 스토리지에 토큰 저장
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
-
+      
+      window.location.reload();
       navigate("/home");
 
       onLoginSuccess(response.data);
@@ -800,6 +801,11 @@ const ResetPasswordForm = ({ inputs, values, setValues, buttonText }) => {
             placeholder={label}
             value={values[id] || ""}
           />
+          {errors[id] && (
+            <p style={{ color: "red", marginBottom: "0rem", fontSize: "1rem" }}>
+              {errors[id]}
+            </p>
+          )}
         </LoginInputGroup>
       ))}
       <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
