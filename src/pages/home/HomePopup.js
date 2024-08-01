@@ -4,7 +4,7 @@ import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { AppContext } from '../../contexts/AppContext';
 
-const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults }) => {
+const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSelectedFriend }) => {
   const mapRef = useRef(null);
   const [map, setMap] = useState(null);
   const [showMap, setShowMap] = useState(false);
@@ -12,7 +12,7 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults }) => 
   const [searchInput, setSearchInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
-  const [selectedFriend, setSelectedFriend] = useState(null);
+  const [selectedFriend, setSelectedFriendLocal] = useState(null);
   const [favoriteFriends, setFavoriteFriends] = useState([]); // 즐겨찾는 친구 목록 상태 추가
   const { userInfo, isLoggedIn } = useContext(AppContext);
 
@@ -202,10 +202,10 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults }) => 
   };
 
   const handleFriendClick = (friend) => {
-    setSelectedFriend(friend);
+    setSelectedFriend(friend); // Home 컴포넌트의 setSelectedFriend 호출
     setAddress(friend.address);
-    onClose(friend.address, searchResults);
-  };
+    onClose(friend.address, searchResults, friend.name);
+  };  
 
   const handleSearchItemClick = (place) => {
     setSearchInput(place.address);
@@ -260,19 +260,31 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults }) => 
                   </button>
                 </div>
               </div>
-              <div style={commonStyles.popupSection2}>
+              <div style={{ 
+                ...commonStyles.popupSection2, 
+                height: favoriteFriends.length === 0 ? '118px' : '118px', 
+                width: favoriteFriends.length === 0 ? '280px' : '280px', // 필요한 너비로 설정
+                border: favoriteFriends.length === 0 ? 'none' : 'none', // 경계선 추가
+                display: favoriteFriends.length === 0 ? 'flex' : 'block', // 중앙 정렬을 위해 flex 사용
+                justifyContent: favoriteFriends.length === 0 ? 'flex-start' : 'flex-start', 
+                alignItems: favoriteFriends.length === 0 ? 'flex-start' : 'flex-start'
+              }}>
                 <p style={commonStyles.popupSectionTitle}>즐겨찾는 친구</p>
                 <div style={commonStyles.favoriteFriends}>
-                  {favoriteFriends.map((friend) => (
-                    <button
-                      key={friend.favFriendId}
-                      style={commonStyles.favoriteFriend}
-                      onClick={() => handleFriendClick(friend)}
-                    >
-                      <img src="/img/pprofile.png" alt={friend.name} style={commonStyles.favoriteFriendImage} />
-                      <p>{friend.name}</p>
-                    </button>
-                  ))}
+                  {favoriteFriends.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '20px' }}> </div>
+                  ) : (
+                    favoriteFriends.map((friend) => (
+                      <button
+                        key={friend.favFriendId}
+                        style={commonStyles.favoriteFriend}
+                        onClick={() => handleFriendClick(friend)}
+                      >
+                        <img src="/img/pprofile.png" alt={friend.name} style={commonStyles.favoriteFriendImage} />
+                        <p>{friend.name}</p>
+                      </button>
+                    ))
+                  )}
                 </div>
               </div>
             </div>
@@ -313,7 +325,7 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults }) => 
         </div>
       </div>
     </div>
-  );
+  );  
 };
 
 export default HomePopup;

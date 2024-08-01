@@ -12,6 +12,7 @@ const Home = () => {
   const [popupTarget, setPopupTarget] = useState(null); // 팝업이 열린 대상
   const [friendCount, setFriendCount] = useState(friends.length + 1);
   const [searchResults, setSearchResults] = useState({ user: [], friends: {} });
+  const [selectedFriend, setSelectedFriend] = useState({ name: '', address: '' }); // 선택된 친구의 상태 추가
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -66,11 +67,11 @@ const Home = () => {
   }, [isLoggedIn]); // 로그인 상태가 변경될 때만 실행
 
   const handleAddInput = () => {
-    const newFriendName = `친구 ${friendCount}`;
+    const newFriendName = selectedFriend.name || `친구 ${friendCount}`;
     setFriendCount(friendCount + 1);
     setFriends([
       ...friends,
-      { profile: '/img/default-profile.png', name: newFriendName, address: '' },
+      { profile: '/img/default-profile.png', name: newFriendName, address: selectedFriend.address || '' },
     ]);
   };
 
@@ -79,7 +80,7 @@ const Home = () => {
     setIsPopupOpen(true);
   };
 
-  const handlePopupClose = (address, results) => {
+  const handlePopupClose = (address, results, name = '') => {
     if (address) {
       if (popupTarget === 'user') {
         setUserInfo({ ...userInfo, address });
@@ -87,13 +88,14 @@ const Home = () => {
       } else {
         const updatedFriends = friends.map((friend, index) => {
           if (index === popupTarget) {
-            return { ...friend, address };
+            return { ...friend, address, name };
           }
           return friend;
         });
         setFriends(updatedFriends);
         setSearchResults({ ...searchResults, friends: { ...searchResults.friends, [popupTarget]: results } });
       }
+      setSelectedFriend({ name, address });
     }
     setIsPopupOpen(false);
   };
@@ -289,6 +291,7 @@ const Home = () => {
             }
           }))}
           isLoggedIn={isLoggedIn} // 로그인 상태 전달
+          setSelectedFriend={setSelectedFriend} // 친구 선택을 위한 함수 전달
         />
       )}
     </div>
