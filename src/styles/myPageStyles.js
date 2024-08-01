@@ -299,12 +299,13 @@ export const myPageStyles = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: '800px',
-    height: '400px',
+    height: '500px',
     backgroundColor: '#F2F2EF',
     padding: "20px",
     border: '3px solid #000',
     boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
     zIndex: '1000',
+    overflow: 'hidden', // overflow 속성 제거
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -333,7 +334,7 @@ export const myPageStyles = {
     margin: '0 auto',
   },
   inputName: {
-    width: '400px',
+    width: '500px',
     height: '40px',
     border: 'none',
     textAlign: 'center',
@@ -344,7 +345,7 @@ export const myPageStyles = {
     outline: 'none',
   },
   inputLocate: {
-    width: '400px',
+    width: '500px',
     height: '40px',
     border: 'none',
     borderRadius: '5px',
@@ -361,7 +362,6 @@ export const myPageStyles = {
     backgroundColor: '#fff',
     zIndex: 1000,
     maxHeight: '200px',
-    overflowY: 'auto',
   },
   predictionItem: {
     padding: '10px',
@@ -399,7 +399,7 @@ export const myPageStyles = {
   },
 
   suggestionsList: {
-    width: '400px',
+    width: '500px',
     listStyle: 'none',
     margin: 0,
     padding: 0,
