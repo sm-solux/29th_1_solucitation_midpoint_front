@@ -13,41 +13,61 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults }) => 
   const [suggestions, setSuggestions] = useState([]);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
   const [selectedFriend, setSelectedFriend] = useState(null);
+  const [favoriteFriends, setFavoriteFriends] = useState([]); // 즐겨찾는 친구 목록 상태 추가
   const { userInfo, isLoggedIn } = useContext(AppContext);
 
-  const friends = [
-    { name: '친구1', address: '서울특별시 용산구 청파대로10 1층' },
-    { name: '친구2', address: '서울특별시 용산구 청파대로20 2층' },
-    { name: '친구3', address: '서울특별시 용산구 청파대로30 3층' },
-  ];
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchFavoriteFriends(); // 로그인 상태일 때 즐겨찾는 친구 목록을 가져옴
+    }
+  }, [isLoggedIn]);
+
+  const fetchFavoriteFriends = async () => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      console.error('No token found');
+      return;
+    }
+
+    try {
+      const response = await axios.get('http://localhost:8080/api/favs/friends/list', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      setFavoriteFriends(response.data);
+    } catch (error) {
+      console.error('Error fetching favorite friends:', error);
+    }
+  };
+
+  const loadGoogleMaps = () => {
+    if (!window.google) {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places&language=ko`;
+      script.async = true;
+      script.onload = () => {
+        if (mapRef.current && showMap) {
+          const mapOptions = {
+            center: new window.google.maps.LatLng(37.5665, 126.9780),
+            zoom: 10,
+          };
+          const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
+          setMap(googleMap);
+        }
+      };
+      document.head.appendChild(script);
+    } else if (mapRef.current && showMap) {
+      const mapOptions = {
+        center: new window.google.maps.LatLng(37.5665, 126.9780),
+        zoom: 10,
+      };
+      const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
+      setMap(googleMap);
+    }
+  };
 
   useEffect(() => {
-    const loadGoogleMaps = () => {
-      if (!window.google) {
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places&language=ko`;
-        script.async = true;
-        script.onload = () => {
-          if (mapRef.current && showMap) {
-            const mapOptions = {
-              center: new window.google.maps.LatLng(37.5665, 126.9780),
-              zoom: 10,
-            };
-            const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
-            setMap(googleMap);
-          }
-        };
-        document.head.appendChild(script);
-      } else if (mapRef.current && showMap) {
-        const mapOptions = {
-          center: new window.google.maps.LatLng(37.5665, 126.9780),
-          zoom: 10,
-        };
-        const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
-        setMap(googleMap);
-      }
-    };
-
     loadGoogleMaps();
   }, [showMap]);
 
@@ -243,9 +263,9 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults }) => 
               <div style={commonStyles.popupSection2}>
                 <p style={commonStyles.popupSectionTitle}>즐겨찾는 친구</p>
                 <div style={commonStyles.favoriteFriends}>
-                  {friends.map((friend, index) => (
+                  {favoriteFriends.map((friend) => (
                     <button
-                      key={index}
+                      key={friend.favFriendId}
                       style={commonStyles.favoriteFriend}
                       onClick={() => handleFriendClick(friend)}
                     >
