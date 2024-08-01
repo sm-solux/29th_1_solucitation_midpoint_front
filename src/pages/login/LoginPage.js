@@ -63,14 +63,13 @@ function LoginPage() {
   const kakaoLogin = () => {
     if (kakaoConfig) {
       const { clientId, redirectUri } = kakaoConfig;
-      const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
+      const kakaoURL = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}`;
       window.location.href = kakaoURL;
     } else {
       console.error("카카오 설정이 아직 로드되지 않았습니다.");
     }
   };
 
-  
   return (
     <div>
       <Logo />
@@ -102,4 +101,58 @@ function LoginPage() {
   );
 }
 
-export default LoginPage;
+const OAuth = () => {
+  const code = new URL(window.location.href).searchParams.get("code");
+  const [oauthData, setOauthData] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (code) {
+      const fetchOAuthData = async (code) => {
+        console.log("Starting fetchOAuthData with code:", code);
+        try {
+          const response = await fetch(
+            `http://3.36.150.194:8080/api/auth/oauth2/code/kakao?code=${code}`,
+            {
+              method: "POST",
+            }
+          );
+
+          console.log("Fetch response:", response);
+          if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error data from server:", errorData);
+            throw new Error(
+              `HTTP error! Status: ${
+                response.status
+              }, Details: ${JSON.stringify(errorData)}`
+            );
+          }
+
+          const data = await response.json();
+          console.log("Server response data:", data);
+          setOauthData(data);
+          console.log("Access Token:", data.accessToken);
+        } catch (error) {
+          setError(error.message);
+          console.error("Error occurred while fetching OAuth data:", error);
+        }
+      };
+
+      fetchOAuthData(code);
+    } else {
+      console.error("No OAuth code found in URL");
+    }
+  }, [code]);
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  if (oauthData) {
+    return <div>로그인 성공! Access Token: {oauthData.accessToken}</div>;
+  }
+
+  return <div>로그인 중입니다.</div>;
+};
+
+export { LoginPage, OAuth };

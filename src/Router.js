@@ -1,24 +1,24 @@
-import React, { useState } from 'react'; // useState를 임포트합니다.
-import { BrowserRouter as AppRouter, Routes, Route } from 'react-router-dom';
-import MainPage from './pages/MainPage';
-import LoginPage from './pages/login/LoginPage';
-import DirectLoginPage from './pages/login/DirectLoginPage';
-import FindPassword from './pages/login/FindPassword';
-import Join from './pages/login/Join';
-import ResetPassword from './pages/login/ResetPassword';
-import KakaoRedirect from './pages/login/KakaoRedirect';
-import Home from './pages/home/HomeMain';
-import ReviewPage from './pages/ReviewPage';
-import MyPage from './pages/MyPage';
-import Again from './pages/home/Again';
-import Test1 from './pages/home/Test1';
-import Test2 from './pages/home/Test2';
-import Test3 from './pages/home/Test3';
-import Result1 from './pages/home/Result1';
-import Result2 from './pages/home/Result2';
-import Result3 from './pages/home/Result3';
-import Result4 from './pages/home/Result4';
-import Midpoint from './pages/home/Midpoint';
+import React, { useState } from "react";
+import { BrowserRouter as AppRouter, Routes, Route } from "react-router-dom";
+import MainPage from "./pages/MainPage";
+import { LoginPage, OAuth } from "./pages/login/LoginPage";
+import DirectLoginPage from "./pages/login/DirectLoginPage";
+import FindPassword from "./pages/login/FindPassword";
+import Join from "./pages/login/Join";
+import ResetPassword from "./pages/login/ResetPassword";
+import KakaoRedirect from "./pages/login/KakaoRedirect";
+import Home from "./pages/home/HomeMain";
+import ReviewPage from "./pages/ReviewPage";
+import MyPage from "./pages/MyPage";
+import Again from "./pages/home/Again";
+import Test1 from "./pages/home/Test1";
+import Test2 from "./pages/home/Test2";
+import Test3 from "./pages/home/Test3";
+import Result1 from "./pages/home/Result1";
+import Result2 from "./pages/home/Result2";
+import Result3 from "./pages/home/Result3";
+import Result4 from "./pages/home/Result4";
+import Midpoint from "./pages/home/Midpoint";
 import { AppProvider } from './contexts/AppContext';
 
 function Router() {
@@ -41,7 +41,7 @@ function Router() {
           <Route path="/login/findpassword" element={<FindPassword />} />
           <Route path="/login/join" element={<Join />} />
           <Route path="/login/resetpassword" element={<ResetPassword/>} />
-          <Route path="/oauth2/callback" element={<KakaoRedirect/>} />
+          <Route path="/api/auth/oauth2/code/kakao" element={<OAuth />} />
           <Route path="/home" element={<Home />} />
           <Route path="/Review" element={<ReviewPage />} />
           <Route path="/Mypage" element={<MyPage />} />
