@@ -44,6 +44,7 @@ const Home = () => {
           profileImage: response.data.profileImage || '/img/default-profile.png',
           address: response.data.address || ''
         });
+        localStorage.setItem('userAddress', response.data.address || '');
       }
     } catch (error) {
       console.error('Error fetching user profile:', error);
@@ -57,11 +58,12 @@ const Home = () => {
     if (isLoggedIn) {
       fetchUserProfile();
     } else {
+      const storedAddress = localStorage.getItem('userAddress') || '';
       setUserInfo({
         ...userInfo,
         nickname: '나',
         profileImage: '/img/default-profile.png',
-        address: ''
+        address: storedAddress
       });
     }
   }, [isLoggedIn]); // 로그인 상태가 변경될 때만 실행
@@ -84,6 +86,7 @@ const Home = () => {
       if (popupTarget === 'user') {
         setUserInfo({ ...userInfo, address });
         setSearchResults({ ...searchResults, user: results });
+        localStorage.setItem('userAddress', address);
       } else {
         const updatedFriends = friends.map((friend, index) => {
           if (index === popupTarget) {
@@ -269,6 +272,7 @@ const Home = () => {
           setAddress={(address, name = '') => {
             if (popupTarget === 'user') {
               setUserInfo({ ...userInfo, address });
+              localStorage.setItem('userAddress', address);
             } else {
               const updatedFriends = friends.map((friend, index) => {
                 if (index === popupTarget) {

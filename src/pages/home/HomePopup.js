@@ -13,11 +13,13 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
   const [suggestions, setSuggestions] = useState([]);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
   const [favoriteFriends, setFavoriteFriends] = useState([]); // 즐겨찾는 친구 목록 상태 추가
+  const [favoritePlaces, setFavoritePlaces] = useState({ home: null, work: null }); // 즐겨찾는 장소 상태 추가
   const { isLoggedIn } = useContext(AppContext);
 
   useEffect(() => {
     if (isLoggedIn) {
       fetchFavoriteFriends(); // 로그인 상태일 때 즐겨찾는 친구 목록을 가져옴
+      fetchFavoritePlaces(); // 로그인 상태일 때 즐겨찾는 장소 목록을 가져옴
     }
   }, [isLoggedIn]);
 
@@ -37,6 +39,28 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
       setFavoriteFriends(response.data);
     } catch (error) {
       console.error('Error fetching favorite friends:', error);
+    }
+  };
+
+  const fetchFavoritePlaces = async () => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      console.error('No token found');
+      return;
+    }
+
+    try {
+      const response = await axios.get('http://3.36.150.194:8080/api/favs/places/list', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const places = response.data;
+      const homePlace = places.find(place => place.addrType === 'HOME');
+      const workPlace = places.find(place => place.addrType === 'WORK');
+      setFavoritePlaces({ home: homePlace, work: workPlace });
+    } catch (error) {
+      console.error('Error fetching favorite places:', error);
     }
   };
 
@@ -206,6 +230,13 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
     onClose(friend.address, searchResults, friend.name);
   };
 
+  const handleFavoritePlaceClick = (place) => {
+    if (place) {
+      setAddress(place.addr);
+      onClose(place.addr, searchResults);
+    }
+  };
+
   const handleSearchItemClick = (place) => {
     setSearchInput(place.address);
     setShowPlacesList(false);
@@ -249,11 +280,17 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
               <div style={commonStyles.popupSection1}>
                 <p style={commonStyles.popupSectionTitle}>즐겨찾는 장소</p>
                 <div style={commonStyles.favoritePlaces}>
-                  <button style={commonStyles.favoritePlace}>
+                  <button 
+                    style={commonStyles.favoritePlace} 
+                    onClick={() => handleFavoritePlaceClick(favoritePlaces.home)}
+                  >
                     <img src="/img/home.png" alt="집" style={commonStyles.favoritePlaceImage} />
                     <p>집</p>
                   </button>
-                  <button style={commonStyles.favoritePlace}>
+                  <button 
+                    style={commonStyles.favoritePlace}
+                    onClick={() => handleFavoritePlaceClick(favoritePlaces.work)}
+                  >
                     <img src="/img/work.png" alt="직장/학교" style={commonStyles.favoritePlaceImage} />
                     <p>직장/학교</p>
                   </button>
