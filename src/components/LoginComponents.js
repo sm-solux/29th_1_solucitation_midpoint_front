@@ -59,6 +59,7 @@ const LoginForm = ({ inputs, buttonText, onLoginSuccess }) => {
       localStorage.setItem("refreshToken", refreshToken);
 
       navigate("/home");
+      window.location.reload();
 
       onLoginSuccess(response.data);
     } catch (error) {
@@ -800,6 +801,11 @@ const ResetPasswordForm = ({ inputs, values, setValues, buttonText }) => {
             placeholder={label}
             value={values[id] || ""}
           />
+          {errors[id] && (
+            <p style={{ color: "red", marginBottom: "0rem", fontSize: "1rem" }}>
+              {errors[id]}
+            </p>
+          )}
         </LoginInputGroup>
       ))}
       <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>

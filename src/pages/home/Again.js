@@ -1,57 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { commonStyles, WhiteBox, PlaceContainer, Left, Right, MapContainer } from '../../styles/styles';
 import { Logo } from '../../components/CommonComponents';
-import { useLocation, useNavigate } from 'react-router-dom';
 
 const Again = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { midpoint } = location.state || {};
-  const [selectedPurpose, setSelectedPurpose] = useState('');
-  const [selectedRadius, setSelectedRadius] = useState('');
+  const { midpoint, selectedPurpose: initialPurpose, selectedRadius: initialRadius } = location.state || {};
+  const [selectedPurpose, setSelectedPurpose] = useState(initialPurpose || '');
+  const [selectedRadius, setSelectedRadius] = useState(initialRadius || '1000');
   const [places, setPlaces] = useState([]);
 
   useEffect(() => {
     if (!midpoint) {
-      console.warn('Midpoint data is missing, redirecting to home.');
-      navigate('/home');
+      console.warn('Midpoint data is missing, cannot proceed.');
     }
-  }, [midpoint, navigate]);
+  }, [midpoint]);
 
-  const handleRetry = async () => {
-    if (!selectedPurpose || !selectedRadius) {
-      alert('목적과 반경을 선택해주세요.');
-      return;
-    }
-
-    try {
-      const response = await axios.get('http://3.36.150.194:8080/api/places', {
-        params: {
-          latitude: midpoint?.latitude || 0, // 기본값 0 사용
-          longitude: midpoint?.longitude || 0, // 기본값 0 사용
-          category: selectedPurpose,
-          radius: selectedRadius
-        }
-      });
-
-      if (response.data.length > 0) {
-        const places = response.data.map(place => ({
-          name: place.name,
-          address: place.address,
-          latitude: place.latitude,
-          longitude: place.longitude,
-          types: JSON.parse(place.types),
-          placeID: place.placeID
-        }));
-
-        setPlaces(places);
-      } else {
-        setPlaces([]);
-      }
-    } catch (error) {
-      console.error('Error finding places:', error);
-    }
+  const handleRetry = () => {
+    navigate('/home', { state: { selectedPurpose } });
   };
 
   const selectStyle = {
@@ -83,9 +50,9 @@ const Again = () => {
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginBottom: '1rem' }}>
               <h2 style={{ marginTop: '15px', textAlign: 'center' }}>목적 또는 반경을 변경하거나, 위치를 다시 검색해주세요!</h2>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center'}}>
               <select style={selectStyle} value={selectedPurpose} onChange={(e) => setSelectedPurpose(e.target.value)}>
-                <option value="">목적 선택</option>
+                <option value="" disabled hidden>목적 선택</option>
                 <option value="restaurant">맛집</option>
                 <option value="cafe">카페</option>
                 <option value="walk">산책</option>
@@ -96,12 +63,9 @@ const Again = () => {
                 <option value="social">친목</option>
               </select>
               <select style={selectStyle} value={selectedRadius} onChange={(e) => setSelectedRadius(e.target.value)}>
-                <option value="">반경 선택</option>
-                <option value="500">500m</option>
-                <option value="1000">1km</option>
-                <option value="2000">2km</option>
-                <option value="3000">3km</option>
-                <option value="5000">5km</option>
+                <option value="1000">1km 이내</option>
+                <option value="2000">2km 이내</option>
+                <option value="3000">3km 이내</option>
               </select>
               <button 
                 type="button" 
@@ -115,7 +79,7 @@ const Again = () => {
                   fontWeight: 'bold', 
                   alignSelf: 'center', 
                   width: '140px',
-                  marginTop: '0.7rem' 
+                  marginTop: '1rem' 
                 }} 
                 onClick={handleRetry}
               >
