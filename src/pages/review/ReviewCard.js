@@ -10,7 +10,8 @@ const ReviewCard = ({ review, onReviewClick, onLikeToggle }) => {
     onReviewClick(postId);
   };
 
-  const handleLike = async () => {
+  const handleLike = async (e) => {
+    e.stopPropagation();
     await toggleLike();
     onLikeToggle(postId, !liked);
   };

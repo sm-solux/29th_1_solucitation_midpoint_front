@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import axios from 'axios';
 
 export const useToggleLike = (postId, initialLiked = false, initialLikeCount = 0) => {
@@ -21,8 +21,8 @@ export const useToggleLike = (postId, initialLiked = false, initialLikeCount = 0
       );
 
       if (response.status === 200) {
-        setLiked(prevLiked => !prevLiked);
-        setLikeCount(prevLikeCount => prevLikeCount + (liked ? -1 : 1));
+        setLiked((prevLiked) => !prevLiked);
+        setLikeCount((prevLikeCount) => prevLikeCount + (liked ? -1 : 1));
         console.log(postId, liked ? '좋아요를 취소하였습니다!' : '좋아요를 눌렀습니다!');
       }
     } catch (error) {
@@ -51,7 +51,7 @@ export const useToggleLike = (postId, initialLiked = false, initialLikeCount = 0
 
 const LikeButton = ({ liked, toggleLike, likeCount }) => {
   const buttonStyle = {
-    marginLeft:'10px',
+    marginLeft: '10px',
     background: 'none',
     border: 'none',
     padding: '5px',
@@ -67,7 +67,7 @@ const LikeButton = ({ liked, toggleLike, likeCount }) => {
 
   const handleClick = (e) => {
     e.stopPropagation();
-    toggleLike();
+    toggleLike(e);
   };
 
   return (

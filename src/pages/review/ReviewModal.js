@@ -109,7 +109,8 @@ const ReviewModal = ({ isOpen, review, closeModal, openEditModal, deleteReview, 
     }
   };
 
-  const handleLike = async () => {
+  const handleLike = async (e) => {
+    e.stopPropagation();
     await toggleLike();
     onLikeToggle(review.postId, !liked);
   };
