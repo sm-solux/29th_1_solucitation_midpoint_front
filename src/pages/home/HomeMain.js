@@ -3,7 +3,7 @@ import axios from 'axios';
 import { commonStyles } from '../../styles/styles';
 import { Logo } from '../../components/CommonComponents';
 import HomePopup from './HomePopup';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AppContext } from '../../contexts/AppContext';
 
 const Home = () => {
@@ -13,6 +13,13 @@ const Home = () => {
   const [friendCount, setFriendCount] = useState(friends.length + 1);
   const [searchResults, setSearchResults] = useState({ user: [], friends: {} });
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state && location.state.selectedPurpose) {
+      setSelectedPurpose(location.state.selectedPurpose);
+    }
+  }, [location.state]);
 
   const fetchUserProfile = async () => {
     const token = localStorage.getItem('accessToken');
@@ -32,7 +39,7 @@ const Home = () => {
       if (response.data) {
         setUserInfo({
           ...userInfo,
-          name: response.data.nickname || '나',
+          nickname: response.data.nickname || '나',
           profileImage: response.data.profileImage || '/img/default-profile.png',
           address: response.data.address || ''
         });
@@ -51,7 +58,7 @@ const Home = () => {
     } else {
       setUserInfo({
         ...userInfo,
-        name: '나',
+        nickname: '나',
         profileImage: '/img/default-profile.png',
         address: ''
       });
@@ -72,7 +79,7 @@ const Home = () => {
     setIsPopupOpen(true);
   };
 
-  const handlePopupClose = (address, name, results) => {
+  const handlePopupClose = (address, results) => {
     if (address) {
       if (popupTarget === 'user') {
         setUserInfo({ ...userInfo, address });
@@ -80,7 +87,7 @@ const Home = () => {
       } else {
         const updatedFriends = friends.map((friend, index) => {
           if (index === popupTarget) {
-            return { ...friend, address, name };
+            return { ...friend, address };
           }
           return friend;
         });
@@ -130,8 +137,8 @@ const Home = () => {
         const latitude = logicResponse.data.latitude.toFixed(6);
         const longitude = logicResponse.data.longitude.toFixed(6);
         const category = selectedPurpose || 'restaurant';
-        const radius = 1000;
-  
+        const radius = 1000; // 기본 반경 값
+
         const placesResponse = await axios.get('http://3.36.150.194:8080/api/places', {
           params: {
             latitude,
@@ -154,14 +161,14 @@ const Home = () => {
   
           navigate('/midpoint', { state: { places, district: logicResponse.data.midpointDistrict, midpoint: logicResponse.data, isLoggedIn } });
         } else {
-          navigate('/again');
+          navigate('/again', { state: { midpoint: { latitude, longitude }, selectedPurpose, selectedRadius: radius } });
         }
       } else {
-        navigate('/again');
+        navigate('/again', { state: { midpoint: { latitude: 0, longitude: 0 }, selectedPurpose, selectedRadius: 1000 } });
       }
     } catch (error) {
       console.error('Error finding place:', error);
-      navigate('/again');
+      navigate('/again', { state: { midpoint: { latitude: 0, longitude: 0 }, selectedPurpose, selectedRadius: 1000 } });
     }
   };  
 
@@ -188,7 +195,7 @@ const Home = () => {
               alt='프로필 이미지'
               style={commonStyles.profileImg}
             />
-            <span style={commonStyles.profileName}>{isLoggedIn ? userInfo.name : '나'}</span>
+            <span style={commonStyles.profileName}>{isLoggedIn ? userInfo.nickname : '나'}</span>
           </div>
           <div style={commonStyles.inputGroup}>
             <input
@@ -259,13 +266,13 @@ const Home = () => {
       {isPopupOpen && (
         <HomePopup
           onClose={handlePopupClose}
-          setAddress={(address, name) => {
+          setAddress={(address) => {
             if (popupTarget === 'user') {
               setUserInfo({ ...userInfo, address });
             } else {
               const updatedFriends = friends.map((friend, index) => {
                 if (index === popupTarget) {
-                  return { ...friend, address, name };
+                  return { ...friend, address };
                 }
                 return friend;
               });
