@@ -40,6 +40,7 @@ export const useToggleLike = (postId, initialLiked = false, initialLikeCount = 0
           setError(`좋아요 상태를 변경하는 중 오류가 발생하였습니다: ${errorMessage}`);
           break;
         default:
+          alert('로그인 후 가능합니다.');
           setError(`오류가 발생하였습니다: ${errorMessage}`);
       }
     }

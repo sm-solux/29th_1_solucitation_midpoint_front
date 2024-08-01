@@ -77,6 +77,7 @@ function Logo({ exist = true, bgColor = "transparent" }) {
       localStorage.removeItem("refreshToken");
       setIsLoggedIn(false);
       navigate("/home");
+      window.location.reload();
     } catch (error) {
       if (error.response) {
         const { status, data } = error.response;
