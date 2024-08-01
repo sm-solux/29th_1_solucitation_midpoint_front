@@ -11,21 +11,27 @@ export const refreshAccessToken = async (refreshToken) => {
         },
       }
     );
-    localStorage.setItem("accessToken", response.data.accessToken);
-    localStorage.setItem("refreshToken", response.data.refreshToken);
-    return response.data.accessToken;
+
+    if (response.data && response.data.accessToken && response.data.refreshToken) {
+
+      localStorage.setItem('accessToken', response.data.accessToken);
+      localStorage.setItem('refreshToken', response.data.refreshToken);
+      return response.data.accessToken;
+    } else {
+      throw new Error('Invalid response data');
+    }
   } catch (error) {
-    console.error(
-      "Failed to refresh access token:",
-      error.response.data.message
-    );
-    if (
-      error.response.data.error === "refresh_token_expired" ||
-      error.response.data.error === "invalid_token"
-    ) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      throw error;
+    if (error.response && error.response.data) {
+      console.error('Failed to refresh access token:', error.response.data.message);
+      if (
+        error.response.data.error === 'refresh_token_expired' ||
+        error.response.data.error === 'invalid_token'
+      ) {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+      }
+    } else {
+      console.error('Failed to refresh access token:', error.message);
     }
     throw error;
   }

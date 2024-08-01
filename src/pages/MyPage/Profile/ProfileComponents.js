@@ -21,7 +21,7 @@ export const ProfileField = ({ field, value, editMode, handleInputChange, placeh
   </div>
 );
 
-export const ProfilePassword = ({ password, passwordEditMode, editMode, togglePasswordEditMode }) => (
+export const ProfilePassword = ({ password = '', passwordEditMode, editMode, togglePasswordEditMode }) => (
   <div style={myPageStyles.profileItem}>
     <span style={myPageStyles.profileLabel}>비밀번호</span>
     {passwordEditMode ? (
@@ -36,6 +36,7 @@ export const ProfilePassword = ({ password, passwordEditMode, editMode, togglePa
     )}
   </div>
 );
+
 
 export const ProfileImage = ({ profileImage, editMode, handleFileChange, handleImageClick, fileInputRef }) => (
   <div style={myPageStyles.profilePictureItem}>

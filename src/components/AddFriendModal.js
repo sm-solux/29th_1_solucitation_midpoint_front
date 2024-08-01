@@ -8,7 +8,6 @@ import { commonStyles } from '../styles/styles';
 Modal.setAppElement('#root');
 
 const GEOCODING_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
-const API_URL = process.env.REACT_APP_API_URL;
 
 const AddFriendModal = ({
   isOpen,
@@ -87,29 +86,6 @@ const AddFriendModal = ({
     setErrorMessage('');
   };
 
-  const handleSaveFriend = async (friendData, apiCall, successCallback) => {
-    setErrorMessage('');
-
-    const accessToken = localStorage.getItem('accessToken');
-    const headers = accessToken
-      ? { Authorization: `Bearer ${accessToken}` }
-      : {};
-
-    try {
-      const response = await apiCall(friendData, headers);
-      if (response.data.success) {
-        successCallback(response.data);
-        clearInputs();
-        closeModal();
-      } else {
-        setErrorMessage(response.data.message);
-      }
-    } catch (error) {
-      console.error('친구 저장 오류:', error.message);
-      setErrorMessage(getErrorMessage(error));
-    }
-  };
-
   const handleAddFriend = () => {
     if (!name || !searchInput) {
       setErrorMessage('이름과 주소를 입력해주세요.');
@@ -133,16 +109,28 @@ const AddFriendModal = ({
       longitude: parseFloat(longitude),
     };
 
-    handleSaveFriend(
-      newFriend,
-      (data, headers) => axios.post(`${API_URL}/api/favs/friends/save`, data, { headers }),
-      (data) => {
-        addFriend({ ...newFriend, favFriendId: data.favFriendId });
-      }
-    );
+    const accessToken = localStorage.getItem('accessToken');
+    const headers = accessToken
+      ? { Authorization: `Bearer ${accessToken}` }
+      : {};
+
+    axios.post(`${process.env.REACT_APP_API_URL}/api/favs/friends/save`, newFriend, { headers })
+      .then((response) => {
+        if (response.data.success) {
+          addFriend({ ...newFriend, favFriendId: response.data.favFriendId });
+          clearInputs();
+          closeModal();
+        } else {
+          setErrorMessage(response.data.message);
+        }
+      })
+      .catch((error) => {
+        console.error('친구 저장 오류:', error.message);
+        setErrorMessage(getErrorMessage(error));
+      });
   };
 
-  const handleEditFriend = () => {
+  const handleEditFriend = async () => {
     if (!name || !searchInput) {
       setErrorMessage('이름과 주소를 입력해주세요.');
       return;
@@ -158,26 +146,41 @@ const AddFriendModal = ({
       return;
     }
 
-    const encodedName = encodeURIComponent(name);
-    const encodedAddress = encodeURIComponent(searchInput);
+    const updatedFriend = {
+      favFriendId: selectedFriend.favFriendId,
+      name,
+      address: searchInput,
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
+    };
 
-    handleSaveFriend(
-      null,
-      (data, headers) => axios.patch(
-        `${API_URL}/api/favs/friends/update?favFriendId=${selectedFriend.favFriendId}&name=${encodedName}&addr=${encodedAddress}`, 
-        {}, 
+    const accessToken = localStorage.getItem('accessToken');
+    const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
+    console.log(updatedFriend);
+    try {
+      const response = await axios.patch(
+        `${process.env.REACT_APP_API_URL}/api/favs/friends/update`,
+        updatedFriend,
         { headers }
-      ),
-      editFriend
-    );
+      );
+
+      if (response.data.success) {
+        editFriend({ ...updatedFriend });
+        clearInputs();
+        closeModal();
+      } else {
+        setErrorMessage(response.data.message);
+      }
+    } catch (error) {
+      console.error('친구 수정 오류:', error.message);
+      setErrorMessage(getErrorMessage(error));
+    }
   };
 
   const handleDeleteFriend = async () => {
     if (window.confirm('삭제하시겠습니까?')) {
       const accessToken = localStorage.getItem('accessToken');
-      const headers = accessToken
-        ? { Authorization: `Bearer ${accessToken}` }
-        : {};
+      const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
 
       if (!selectedFriend || !selectedFriend.favFriendId) {
         setErrorMessage('친구 정보를 찾을 수 없습니다.');
@@ -185,7 +188,10 @@ const AddFriendModal = ({
       }
 
       try {
-        const response = await axios.delete(`${API_URL}/api/favs/friends/delete?favFriendId=${selectedFriend.favFriendId}`, { headers });
+        const response = await axios.delete(
+          `${process.env.REACT_APP_API_URL}/api/favs/friends/delete?favFriendId=${selectedFriend.favFriendId}`,
+          { headers }
+        );
 
         if (response.data.success) {
           deleteFriend(selectedFriend);
@@ -278,9 +284,7 @@ const AddFriendModal = ({
       <input
         type="text"
         value={name}
-        style={{
-          ...myPageStyles.inputName,
-        }}
+        style={{ ...myPageStyles.inputName }}
         onChange={(e) => setName(e.target.value)}
         placeholder="친구 이름"
         disabled={!isEditing || loading}
@@ -289,10 +293,7 @@ const AddFriendModal = ({
         <input
           type="text"
           placeholder="주소 입력"
-          style={{
-            ...myPageStyles.inputLocate,
-            backgroundColor: 'white', // 입력 필드 배경색을 항상 흰색으로 설정
-          }}
+          style={{ ...myPageStyles.inputLocate, backgroundColor: 'white' }}
           value={searchInput}
           onChange={handleSearchInputChange}
           disabled={!isEditing || loading}
