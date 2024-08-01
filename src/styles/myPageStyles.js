@@ -291,6 +291,7 @@ export const myPageStyles = {
   },
   overlay: {
     backgroundColor: 'rgba(1, 1, 1, 0.5)',
+    zIndex:3000,
   },
   modal: {
     position: 'fixed',
