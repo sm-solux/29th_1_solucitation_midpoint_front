@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { myPageStyles } from '../styles/myPageStyles';
-import AddLocationModal from '../components/AddLocationModal';
+import { myPageStyles } from '../../../styles/myPageStyles';
+import AddLocationModal from './AddLocationModal';
 
-const FavoritesLocateComponents = () => {
+const FavoritesLocates = () => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [isAddLocationModalOpen, setIsAddLocationModalOpen] = useState(false);
-
   const [locations, setLocations] = useState([
     { id: 1, name: '집', locate: '', icon: 'homeIcon', type: 'home' },
     {
@@ -26,18 +25,14 @@ const FavoritesLocateComponents = () => {
     setIsAddLocationModalOpen(false);
   };
 
-  const handleAddLocation = (updatedLocation) => {
-    setLocations(
-      locations.map((location) =>
-        location.id === updatedLocation.id ? updatedLocation : location
-      )
-    );
-    setSelectedLocation(updatedLocation);
+  const handleAddLocation = (newLocation) => {
+    setLocations((prevLocations) => [...prevLocations, newLocation]);
+    setSelectedLocation(newLocation);
   };
 
   const handleEditLocation = (editedLocation) => {
-    setLocations(
-      locations.map((location) =>
+    setLocations((prevLocations) =>
+      prevLocations.map((location) =>
         location.id === editedLocation.id ? editedLocation : location
       )
     );
@@ -45,14 +40,11 @@ const FavoritesLocateComponents = () => {
   };
 
   const handleDeleteLocation = (locationToDelete) => {
-    setLocations(
-      locations.map((location) =>
-        location.id === locationToDelete.id
-          ? { ...location, locate: '' }
-          : location
-      )
+    setLocations((prevLocations) =>
+      prevLocations.filter((location) => location.id !== locationToDelete.id)
     );
-    setSelectedLocation({ ...locationToDelete, locate: '' });
+    setSelectedLocation(null);
+    closeAddLocationModal();
   };
 
   return (
@@ -90,11 +82,11 @@ const FavoritesLocateComponents = () => {
           editLocation={handleEditLocation}
           deleteLocation={handleDeleteLocation}
           selectedLocation={selectedLocation}
-          locationType={selectedLocation.type}
+          loading={false}
         />
       )}
     </div>
   );
 };
 
-export default FavoritesLocateComponents;
+export default FavoritesLocates;

@@ -110,8 +110,9 @@ export const myPageStyles = {
   },
   profileButtonEdit: {
     marginRight: '100px',
-    padding: '10px 30px',
-    fontSize: '16px',
+    padding: '10px 35px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
     fontWeight: 'bold',
     color: '#fff',
     backgroundColor: '#1B4345',
@@ -120,8 +121,9 @@ export const myPageStyles = {
     cursor: 'pointer',
   },
   profileButtonQuit: {
-    padding: '10px 30px',
-    fontSize: '16px',
+    padding: '10px 35px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
     fontWeight: 'bold',
     color: '#fff',
     backgroundColor: '#D00303',
@@ -132,6 +134,7 @@ export const myPageStyles = {
   profileButtonCancel: {
     marginLeft: '10px',
     padding: '10px 30px',
+    fontFamily: 'Freesentation',
     fontSize: '16px',
     fontWeight: 'bold',
     color: '#000',
@@ -215,11 +218,35 @@ export const myPageStyles = {
   deleteButton: {
     padding: '10px 30px',
     fontFamily: 'Freesentation',
-    fontSize: '16px',
+    fontSize: '18px',
     fontWeight: 'bold',
     color: '#fff',
     backgroundColor: '#D00303',
     border: 'none',
+    borderRadius: '2px',
+    cursor: 'pointer',
+  },
+  deleteCheckButton: {
+    marginRight:'80px',
+    padding: '10px 30px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
+    fontWeight: 'bold',
+    color: '#fff',
+    backgroundColor: '#D00303',
+    border: 'none',
+    borderRadius: '2px',
+    cursor: 'pointer',
+  },
+    
+  deleteConfirmationButton: {
+    padding: '10px 30px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
+    fontWeight: 'bold',
+    color: '#1B4345',
+    backgroundColor: 'transparent',
+    border: '2px solid #1B4345',
     borderRadius: '2px',
     cursor: 'pointer',
   },
@@ -264,6 +291,7 @@ export const myPageStyles = {
   },
   overlay: {
     backgroundColor: 'rgba(1, 1, 1, 0.5)',
+    zIndex:3000,
   },
   modal: {
     position: 'fixed',
@@ -368,6 +396,20 @@ export const myPageStyles = {
     fontFamily: 'Freesentation',
     fontSize: '18px',
     marginLeft: '55px',
+  },
+
+  suggestionsList: {
+    width: '400px',
+    listStyle: 'none',
+    margin: 0,
+    padding: 0,
+    backgroundColor: 'white',
+    border: '1px solid #ccc',
+    zIndex: 1000,
+  },
+  suggestionItem: {
+    padding: '10px',
+    cursor: 'pointer',
   },
 };
 

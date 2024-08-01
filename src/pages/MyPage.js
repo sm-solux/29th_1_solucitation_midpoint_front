@@ -35,7 +35,7 @@ const MyPage = () => {
   return (
     <div>
       <div>
-        <Logo />
+        <Logo bgColor='#F2F2F2' />
       </div>
       <div>
         <nav style={myPageStyles.container}>
