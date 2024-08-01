@@ -246,7 +246,7 @@ const AddFriendModal = ({
   const fetchSuggestions = async (value) => {
     if (value.trim() !== '') {
       const proxyUrl = 'https://api.allorigins.win/get?url=';
-      const targetUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${value}&components=country:kr&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&language=ko`;
+      const targetUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${value}&key=${GEOCODING_API_KEY}&language=ko`;
       try {
         const response = await axios.get(proxyUrl + encodeURIComponent(targetUrl));
         const data = JSON.parse(response.data.contents);
@@ -272,13 +272,13 @@ const AddFriendModal = ({
     setAddress(suggestion.description);
     setSearchInput(suggestion.description);
     setSuggestions([]);
-    fetchCoordinates(suggestion.description);
   };
 
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={closeModal}
+      style={{ overlay: myPageStyles.overlay, content: myPageStyles.modal }}
       contentLabel="친구 추가/편집"
     >
       <img
