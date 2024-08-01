@@ -29,7 +29,6 @@ const MyPageProfile = () => {
     password: '********',
   });
 
-  console.log(profileData);
   const [previewImage, setPreviewImage] = useState(null); // 미리보기 상태 추가
   const [isDefaultImage, setIsDefaultImage] = useState(false); // 기본 이미지 여부 상태 추가
 

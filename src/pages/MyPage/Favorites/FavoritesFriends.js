@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { myPageStyles } from '../styles/myPageStyles.js';
-import  AddFriendModal from '../components/AddFriendModal.js';
+import { myPageStyles } from '../../../styles/myPageStyles.js';
+import AddFriendModal from './AddFriendModal.js';
 
 const FavoritesFriends = () => {
   const [selectedFriend, setSelectedFriend] = useState(null);
