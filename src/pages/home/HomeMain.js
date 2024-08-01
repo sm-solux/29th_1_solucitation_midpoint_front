@@ -13,12 +13,17 @@ const Home = () => {
   const [friendCount, setFriendCount] = useState(friends.length + 1);
   const [searchResults, setSearchResults] = useState({ user: [], friends: {} });
   const [selectedFriend, setSelectedFriend] = useState(null); // 친구 선택 상태 추가
+  const [initialAddress, setInitialAddress] = useState(userInfo.address || ''); // 초기 주소 상태 추가
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     if (location.state && location.state.selectedPurpose) {
       setSelectedPurpose(location.state.selectedPurpose);
+    }
+    if (location.state && location.state.initialAddress) {
+      setInitialAddress(location.state.initialAddress);
+      setUserInfo({ ...userInfo, address: location.state.initialAddress });
     }
   }, [location.state]);
 
@@ -38,13 +43,14 @@ const Home = () => {
       });
 
       if (response.data) {
+        const userAddress = response.data.address || '';
         setUserInfo({
           ...userInfo,
           nickname: response.data.nickname || '나',
           profileImage: response.data.profileImage || '/img/default-profile.png',
-          address: response.data.address || ''
+          address: userAddress
         });
-        localStorage.setItem('userAddress', response.data.address || '');
+        setInitialAddress(userAddress); // 프로필에서 주소를 가져와 초기 주소 설정
       }
     } catch (error) {
       console.error('Error fetching user profile:', error);
@@ -58,13 +64,13 @@ const Home = () => {
     if (isLoggedIn) {
       fetchUserProfile();
     } else {
-      const storedAddress = localStorage.getItem('userAddress') || '';
       setUserInfo({
         ...userInfo,
         nickname: '나',
         profileImage: '/img/default-profile.png',
-        address: storedAddress
+        address: ''
       });
+      setInitialAddress(''); // 로그아웃 상태일 때 초기 주소를 빈칸으로 설정
     }
   }, [isLoggedIn]); // 로그인 상태가 변경될 때만 실행
 
@@ -86,7 +92,6 @@ const Home = () => {
       if (popupTarget === 'user') {
         setUserInfo({ ...userInfo, address });
         setSearchResults({ ...searchResults, user: results });
-        localStorage.setItem('userAddress', address);
       } else {
         const updatedFriends = friends.map((friend, index) => {
           if (index === popupTarget) {
@@ -105,7 +110,7 @@ const Home = () => {
     const selectedValue = event.target.value;
     setSelectedPurpose(selectedValue);
     if (selectedValue === '/test1') {
-      navigate('/test1');
+      navigate('/test1', { state: { initialAddress: userInfo.address } }); // 홈으로 돌아올 때 주소 전달
     }
   };
 
@@ -162,16 +167,16 @@ const Home = () => {
             image: place.photo ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photo}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}` : '/img/default-image.png'
           }));
   
-          navigate('/midpoint', { state: { places, district: logicResponse.data.midpointDistrict, midpoint: logicResponse.data, isLoggedIn } });
+          navigate('/midpoint', { state: { places, district: logicResponse.data.midpointDistrict, midpoint: logicResponse.data, isLoggedIn, initialAddress: userInfo.address } });
         } else {
-          navigate('/again', { state: { midpoint: { latitude, longitude }, selectedPurpose, selectedRadius: radius } });
+          navigate('/again', { state: { midpoint: { latitude, longitude }, selectedPurpose, selectedRadius: radius, initialAddress: userInfo.address } });
         }
       } else {
-        navigate('/again', { state: { midpoint: { latitude: 0, longitude: 0 }, selectedPurpose, selectedRadius: 1000 } });
+        navigate('/again', { state: { midpoint: { latitude: 0, longitude: 0 }, selectedPurpose, selectedRadius: 1000, initialAddress: userInfo.address } });
       }
     } catch (error) {
       console.error('Error finding place:', error);
-      navigate('/again', { state: { midpoint: { latitude: 0, longitude: 0 }, selectedPurpose, selectedRadius: 1000 } });
+      navigate('/again', { state: { midpoint: { latitude: 0, longitude: 0 }, selectedPurpose, selectedRadius: 1000, initialAddress: userInfo.address } });
     }
   };  
 
@@ -205,7 +210,7 @@ const Home = () => {
               type='text'
               placeholder='주소를 입력하세요'
               style={commonStyles.inputField}
-              value={userInfo.address || ''}
+              value={userInfo.address || initialAddress || ''}
               onClick={() => handlePopupOpen('user')}
               readOnly
             />
@@ -272,7 +277,7 @@ const Home = () => {
           setAddress={(address, name = '') => {
             if (popupTarget === 'user') {
               setUserInfo({ ...userInfo, address });
-              localStorage.setItem('userAddress', address);
+              setInitialAddress(address); // 주소 변경 시 초기 주소도 업데이트
             } else {
               const updatedFriends = friends.map((friend, index) => {
                 if (index === popupTarget) {
