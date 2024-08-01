@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { commonStyles, PlacesList, PlaceItem, FriendItem } from '../../styles/styles';
+import React, { useEffect, useRef, useState, useContext } from 'react';
+import { commonStyles, SearchList, SearchItem, FriendItem } from '../../styles/styles';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
+import { AppContext } from '../../contexts/AppContext';
 
-const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLoggedIn }) => {
+const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSelectedFriend }) => {
   const mapRef = useRef(null);
   const [map, setMap] = useState(null);
   const [showMap, setShowMap] = useState(false);
@@ -11,41 +12,61 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
   const [searchInput, setSearchInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
-  const [selectedFriend, setSelectedFriend] = useState(null);
-
-  const friends = [
-    { name: '친구1', address: '서울특별시 용산구 청파대로10 1층' },
-    { name: '친구2', address: '서울특별시 용산구 청파대로20 2층' },
-    { name: '친구3', address: '서울특별시 용산구 청파대로30 3층' },
-  ];
+  const [favoriteFriends, setFavoriteFriends] = useState([]); // 즐겨찾는 친구 목록 상태 추가
+  const { isLoggedIn } = useContext(AppContext);
 
   useEffect(() => {
-    const loadGoogleMaps = () => {
-      if (!window.google) {
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places&language=ko`;
-        script.async = true;
-        script.onload = () => {
-          if (mapRef.current && showMap) {
-            const mapOptions = {
-              center: new window.google.maps.LatLng(37.5665, 126.9780),
-              zoom: 10,
-            };
-            const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
-            setMap(googleMap);
-          }
-        };
-        document.head.appendChild(script);
-      } else if (mapRef.current && showMap) {
-        const mapOptions = {
-          center: new window.google.maps.LatLng(37.5665, 126.9780),
-          zoom: 10,
-        };
-        const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
-        setMap(googleMap);
-      }
-    };
+    if (isLoggedIn) {
+      fetchFavoriteFriends(); // 로그인 상태일 때 즐겨찾는 친구 목록을 가져옴
+    }
+  }, [isLoggedIn]);
 
+  const fetchFavoriteFriends = async () => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      console.error('No token found');
+      return;
+    }
+
+    try {
+      const response = await axios.get('http://3.36.150.194:8080/api/favs/friends/list', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      setFavoriteFriends(response.data);
+    } catch (error) {
+      console.error('Error fetching favorite friends:', error);
+    }
+  };
+
+  const loadGoogleMaps = () => {
+    if (!window.google) {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places&language=ko`;
+      script.async = true;
+      script.onload = () => {
+        if (mapRef.current && showMap) {
+          const mapOptions = {
+            center: new window.google.maps.LatLng(37.5665, 126.9780),
+            zoom: 10,
+          };
+          const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
+          setMap(googleMap);
+        }
+      };
+      document.head.appendChild(script);
+    } else if (mapRef.current && showMap) {
+      const mapOptions = {
+        center: new window.google.maps.LatLng(37.5665, 126.9780),
+        zoom: 10,
+      };
+      const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
+      setMap(googleMap);
+    }
+  };
+
+  useEffect(() => {
     loadGoogleMaps();
   }, [showMap]);
 
@@ -82,6 +103,7 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
     setSelectedSuggestion(suggestion);
     setSearchInput(suggestion.description);
     setSuggestions([]);
+    setShowPlacesList(false);
   };
 
   const handleSearch = async () => {
@@ -102,12 +124,11 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
           address: data.result.formatted_address,
           imgSrc: data.result.photos
             ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${data.result.photos[0].photo_reference}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`
-            : '/path/to/default/image.png',
+            : '/img/default-image.png',
         };
 
         const updatedResults = [place, ...searchResults]; // 맨 위로 추가
         setSearchResults(updatedResults);
-        setAddress(data.result.formatted_address);
         setSearchInput('');
         setSelectedSuggestion(null);
         setShowMap(false);
@@ -117,7 +138,6 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
         console.error('Error fetching place details:', error);
       }
     } else {
-      setAddress(searchInput);
       onClose(searchInput, searchResults);
     }
   };
@@ -181,9 +201,14 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
   };
 
   const handleFriendClick = (friend) => {
-    setSelectedFriend(friend);
-    setAddress(friend.address);
-    onClose(friend.address, searchResults);
+    setSelectedFriend(friend); // Home 컴포넌트의 setSelectedFriend 호출
+    setAddress(friend.address, friend.name); // 이름도 전달
+    onClose(friend.address, searchResults, friend.name);
+  };
+
+  const handleSearchItemClick = (place) => {
+    setSearchInput(place.address);
+    setShowPlacesList(false);
   };
 
   return (
@@ -234,19 +259,31 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
                   </button>
                 </div>
               </div>
-              <div style={commonStyles.popupSection2}>
+              <div style={{
+                ...commonStyles.popupSection2,
+                height: favoriteFriends.length === 0 ? '118px' : '118px',
+                width: favoriteFriends.length === 0 ? '280px' : '280px', // 필요한 너비로 설정
+                border: favoriteFriends.length === 0 ? 'none' : 'none', // 경계선 추가
+                display: favoriteFriends.length === 0 ? 'flex' : 'block', // 중앙 정렬을 위해 flex 사용
+                justifyContent: favoriteFriends.length === 0 ? 'flex-start' : 'flex-start',
+                alignItems: favoriteFriends.length === 0 ? 'flex-start' : 'flex-start'
+              }}>
                 <p style={commonStyles.popupSectionTitle}>즐겨찾는 친구</p>
                 <div style={commonStyles.favoriteFriends}>
-                  {friends.map((friend, index) => (
-                    <button
-                      key={index}
-                      style={commonStyles.favoriteFriend}
-                      onClick={() => handleFriendClick(friend)}
-                    >
-                      <img src="/img/pprofile.png" alt={friend.name} style={commonStyles.favoriteFriendImage} />
-                      <p>{friend.name}</p>
-                    </button>
-                  ))}
+                  {favoriteFriends.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '20px' }}> </div>
+                  ) : (
+                    favoriteFriends.map((friend) => (
+                      <button
+                        key={friend.favFriendId}
+                        style={commonStyles.favoriteFriend}
+                        onClick={() => handleFriendClick(friend)}
+                      >
+                        <img src="/img/pprofile.png" alt={friend.name} style={commonStyles.favoriteFriendImage} />
+                        <p>{friend.name}</p>
+                      </button>
+                    ))
+                  )}
                 </div>
               </div>
             </div>
@@ -254,34 +291,23 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, isLog
           {showPlacesList && (
             <div style={commonStyles.placesListContainer}>
               <p style={commonStyles.currentLocationText}>검색 목록</p>
-              <PlacesList>
+              <SearchList>
                 {searchResults.map((place, index) => (
-                  <PlaceItem key={index}>
-                    <img src={place.imgSrc} alt={place.name} />
+                  <SearchItem key={index} onClick={() => handleSearchItemClick(place)}>
+                    <img src={place.imgSrc || '/img/default-image.png'} alt={place.name} />
                     <div>
                       <h3>{place.name}</h3>
                       <p>{place.address}</p>
                     </div>
-                  </PlaceItem>
+                  </SearchItem>
                 ))}
-              </PlacesList>
+              </SearchList>
             </div>
           )}
           {showMap && (
             <div style={{ width: '100%', marginTop: '1rem' }}>
               <div style={commonStyles.currentLocationText}>현재 위치</div>
               <div ref={mapRef} style={{ width: '100%', height: '245px', marginTop: '0.5rem' }} />
-            </div>
-          )}
-          {selectedFriend && (
-            <div>
-              <FriendItem>
-                <img src="/img/pprofile.png" alt={selectedFriend.name} />
-                <div>
-                  <h3>{selectedFriend.name}</h3>
-                  <p>{selectedFriend.address}</p>
-                </div>
-              </FriendItem>
             </div>
           )}
         </div>

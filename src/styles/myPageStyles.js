@@ -19,7 +19,7 @@ export const myPageStyles = {
     margin: '0 55px',
     padding: '10px',
     alignItems: 'center', 
-    color:'#000',
+    color: '#000',
 
   },
   navLink: {
@@ -27,7 +27,8 @@ export const myPageStyles = {
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
-    fontSize:'17px'
+    fontSize: '20px',
+    fontFamily: 'Freesentation',
   },
   navLinkText: {
     marginLeft: '5px',
@@ -38,6 +39,7 @@ export const myPageStyles = {
   },
   profileContainer: {
     maxWidth: '600px',
+    height: '540px',
     margin: '0 auto',
     padding: '20px',
   },
@@ -65,10 +67,11 @@ export const myPageStyles = {
   },
   profileText: {
     flex: 1,
+    fontFamily: 'Freesentation',
     fontSize: '18px',
     fontWeight: 'bold',
     color: '#1B4345',
-    borderBottom: '3px solid #1B4345',
+    borderBottom: '4px solid #1B4345',
     paddingBottom: '6px',
   },
   profileEditContainer: {
@@ -79,18 +82,20 @@ export const myPageStyles = {
   profileEditText: {
     flex: 1,
     border: 'none',
-    borderBottom: '3px solid #1B4345',
+    borderBottom: '4px solid #1B4345',
     backgroundColor: 'transparent',
     color: '#1B4345',
+    fontFamily: 'Freesentation',
     fontSize: '18px',
     fontWeight: 'bold',
-    padding: '8px 0',
+    padding: '4px 0',
     outline: 'none',
   },
   profileButton: {
-    marginLeft: '10px',
-    padding: '8px 12px',
-    fontSize: '14px',
+    marginLeft: '15px',
+    padding: '8px 20px',
+    fontFamily: 'Freesentation',
+    fontSize: '15px',
     fontWeight: 'bold',
     color: '#000',
     backgroundColor: 'transparent',
@@ -104,7 +109,7 @@ export const myPageStyles = {
     marginTop: '50px',
   },
   profileButtonEdit: {
-    marginRight: '60px',
+    marginRight: '100px',
     padding: '10px 30px',
     fontSize: '16px',
     fontWeight: 'bold',
@@ -209,6 +214,7 @@ export const myPageStyles = {
   },
   deleteButton: {
     padding: '10px 30px',
+    fontFamily: 'Freesentation',
     fontSize: '16px',
     fontWeight: 'bold',
     color: '#fff',
@@ -218,6 +224,7 @@ export const myPageStyles = {
     cursor: 'pointer',
   },
 
+  //2번 즐겨찾기
   favoritesContainer: {
     display: 'flex',
     flexDirection: 'row', 
@@ -264,7 +271,7 @@ export const myPageStyles = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: '800px',
-    height: '350px',
+    height: '400px',
     backgroundColor: '#F2F2EF',
     padding: "20px",
     border: '3px solid #000',
@@ -303,7 +310,8 @@ export const myPageStyles = {
     border: 'none',
     textAlign: 'center',
     color: '#000',
-    fontSize: '15px',
+    fontSize: '20px',
+    fontFamily: 'Freesentation',
     backgroundColor: 'transparent',
     outline: 'none',
   },
@@ -312,8 +320,24 @@ export const myPageStyles = {
     height: '40px',
     border: 'none',
     borderRadius: '5px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
     textAlign: 'center',
     outline: 'none',
+  },
+  predictionsContainer: {
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    right: 0,
+    backgroundColor: '#fff',
+    zIndex: 1000,
+    maxHeight: '200px',
+    overflowY: 'auto',
+  },
+  predictionItem: {
+    padding: '10px',
+    cursor: 'pointer',
   },
   addFriendModalButton: {
     width: '100px',
@@ -321,7 +345,8 @@ export const myPageStyles = {
     color: '#ffffff',
     backgroundColor: '#1B4345',
     border: 'none',
-    fontSize: '15px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
     marginTop: '30px',
   },
   favoriteButtonEdit: {
@@ -330,7 +355,8 @@ export const myPageStyles = {
     color: '#ffffff',
     backgroundColor: '#1B4345',
     border: 'none',
-    fontSize: '15px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
     marginTop: '50px',
   },
   favoriteButtonQuit: {
@@ -339,21 +365,33 @@ export const myPageStyles = {
     color: '#fff',
     backgroundColor: '#D00303',
     border: 'none',
-    fontSize: '15px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
     marginLeft: '55px',
   },
 };
 
+//3번 검색 기록 
 export const PlaceContainer = styled.div`
   display: flex;
-  width: 100%;
+  justify-content: center;
+  align-items: center;
+  width: 800px;
+  height: 100vh; /* Ensure the container takes full viewport height */
 `;
 
-export const Left = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: center; /* WhiteBox를 가운데로 정렬 */
+export const WhiteBox = styled.div`
+  background-color: white;
   padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 800px;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 `;
 
 export const PlacesList = styled.ul`
@@ -411,35 +449,8 @@ export const PlaceItem = styled.div`
 export const BottomSection = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   margin-top: 2rem;
-`;
-
-export const Right = styled.div`
-  flex: 1;
-  padding: 1rem;
-`;
-
-export const MapContainer = styled.div`
-  h2 {
-    margin-bottom: 1rem;
-  }
-
-  iframe {
-    border: 0;
-    width: 100%;
-    height: 400px;
-  }
-`;
-
-export const WhiteBox = styled.div`
-  background-color: white;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-  width: 100%; /* Left 컨테이너 내에서의 크기를 설정 */
-  max-width: 90%; /* 최대 너비 설정 */
 `;
 
 export const ShareButton = styled.button`
@@ -460,4 +471,17 @@ export const ShareButton = styled.button`
   img {
     margin-left: 0.5rem;
   }
+`;
+
+export const MapContainer = styled.div`
+  h2 {
+    margin-bottom: 1rem;
+  }
+
+  iframe {
+    border: 0;
+    width: 100%;
+    height: 400px;
+  }
+
 `;

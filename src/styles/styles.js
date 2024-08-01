@@ -4,7 +4,7 @@ export const commonStyles = {
   header: (bgColor = "transparent") => ({
     position: "fixed",
     width: "100%",
-    height: "80px", // 적절한 높이 고정으로 수정했어요
+    height: "80px", 
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -273,7 +273,7 @@ export const commonStyles = {
   },
   resultOptionText: {
     marginTop: "1rem",
-    fontSize: "1.5rem",
+    fontSize: "1.7rem",
     fontWeight: "600",
   },
   resultButton: {
@@ -801,20 +801,23 @@ export const Left = styled.div`
   flex: 1;
   display: flex;
   justify-content: center; 
-  padding: 1rem;
+  padding: 0.3rem;
+  position: relative; 
 `;
 
 export const PlacesList = styled.ul`
   list-style: none;
-  padding: 0;
-  max-height: 200px; 
+  padding-left: 1.2rem;
+  padding-right: 1.5rem;
+  max-height: 445px; 
   overflow-y: auto;
+  margin-top: -0.7rem;
 `;
 
 export const PlaceItem = styled.div`
   display: flex;
   align-items: center;
-  background-color: #000;
+  background-color: ${props => props.isSelected ? '#000' : '#F2F2EF'};
   border-radius: 8px;
   padding: 0.5rem;
   margin-bottom: 1rem;
@@ -829,18 +832,19 @@ export const PlaceItem = styled.div`
     width: 50px;
     height: 50px;
     border-radius: 8px;
+    margin-right: 0.4rem;
   }
 
   div {
     display: flex;
     flex-direction: column;
-    background-color: #000; 
+    background-color: ${props => props.isSelected ? '#000' : '#F2F2EF'};
     border-radius: 8px;
     padding: 0.3rem;
     flex: 1;
 
     h3, p {
-      color: #fff; 
+      color: ${props => props.isSelected ? '#fff' : '#000'};
     }
 
     h3 {
@@ -876,6 +880,7 @@ export const FriendItem = styled.div`
     height: 50px;
     border-radius: 8px;
     margin-left: 0.2rem;
+    margin-right: 0.4rem;
   }
 
   div {
@@ -904,35 +909,50 @@ export const FriendItem = styled.div`
   }
 `;
 
-export const BottomSection = styled.div`
+export const WeatherInfoContainer = styled.div`
+  position: absolute;
+  bottom: 0.8rem;
+  right: 3rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-top: 2rem;
 `;
 
-export const WeatherInfo = styled.div`
+export const WeatherIcon = styled.img`
+  width: 40px; 
+  height: 40px;
+`;
+
+export const WeatherDetails = styled.div`
   display: flex;
   align-items: center;
-
-  img {
-    width: 24px;
-    height: 24px;
-    margin-right: 0.5rem;
-  }
-
+  color: #333;
+  
   span {
-    font-size: 1rem;
-    color: #666;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-right: 0.5rem;  
   }
+
+  .temperature {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-right: 0.5rem;  
 `;
 
 export const Right = styled.div`
   flex: 1;
-  padding: 1rem;
+  padding: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  height: 77vh; 
 `;
 
 export const MapContainer = styled.div`
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+  height: 100%; 
+
   h2 {
     margin-bottom: 1rem;
   }
@@ -940,7 +960,7 @@ export const MapContainer = styled.div`
   iframe {
     border: 0;
     width: 100%;
-    height: 400px;
+    height: 100%; 
   }
 `;
 
@@ -951,10 +971,36 @@ export const WhiteBox = styled.div`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
   width: 100%;
-  max-width: 90%; 
+  height: 73vh;
+  max-width: 90%;
+  position: relative; /* 상대 위치를 추가 */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 `;
 
 export const ShareButton = styled.button`
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background-color: #fff;
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 0rem; 
+
+  span {
+    font-weight: 800; 
+  }
+
+  img {
+    margin-left: 0rem;
+  }
+`;
+
+export const SaveButton = styled.button`
   display: flex;
   align-items: center;
   padding: 0.5rem 1rem;
@@ -970,6 +1016,88 @@ export const ShareButton = styled.button`
   }
 
   img {
-    margin-left: 0.5rem;
+    margin-left: 0rem;
+  }
+`;
+
+export const SelectionButton = styled.button`
+  background-color: white;
+  color: gray;
+  border: 1px solid white;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: bold;
+`;
+
+export const CancelButton = styled.button`
+  background-color: white;
+  color: gray;
+  border: 1px solid white;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: bold;
+`;
+
+export const BottomSection = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 0.1rem;
+  position: absolute;
+  bottom: 0.7rem;
+  left: 1.2rem;
+`;
+
+export const SearchList = styled.ul`
+  list-style: none;
+  padding: 0;
+  max-height: 200px; 
+  overflow-y: auto;
+`;
+
+export const SearchItem = styled.div`
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  img {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    margin-right: 0.4rem;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff; 
+    border-radius: 8px;
+    padding: 0.3rem;
+    flex: 1;
+
+    h3, p {
+      color: #000; 
+    }
+
+    h3 {
+      font-size: 1rem;
+      margin: 0;
+      margin-bottom: 0.3rem;
+    }
+
+    p {
+      font-size: 0.8rem;
+      margin: 0;
+    }
   }
 `;

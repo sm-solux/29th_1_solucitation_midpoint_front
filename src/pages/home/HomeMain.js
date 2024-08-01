@@ -1,31 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { commonStyles } from '../../styles/styles';
 import { Logo } from '../../components/CommonComponents';
 import HomePopup from './HomePopup';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { AppContext } from '../../contexts/AppContext';
 
 const Home = () => {
-  const [userInfo, setUserInfo] = useState({ name: '본인', profileImage: '/img/default-profile.png', address: '' });
-  const [friends, setFriends] = useState([]);
-  const [selectedPurpose, setSelectedPurpose] = useState('');
+  const { userInfo, setUserInfo, friends, setFriends, selectedPurpose, setSelectedPurpose, isLoggedIn } = useContext(AppContext);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupTarget, setPopupTarget] = useState(null); // 팝업이 열린 대상
-  const [friendCount, setFriendCount] = useState(1);
+  const [friendCount, setFriendCount] = useState(friends.length + 1);
   const [searchResults, setSearchResults] = useState({ user: [], friends: {} });
+  const [selectedFriend, setSelectedFriend] = useState(null); // 친구 선택 상태 추가
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state && location.state.selectedPurpose) {
+      setSelectedPurpose(location.state.selectedPurpose);
+    }
+  }, [location.state]);
 
   const fetchUserProfile = async () => {
     const token = localStorage.getItem('accessToken');
     if (!token) {
-      // 로그인하지 않은 경우
       console.error('No token found, setting default profile');
-      setUserInfo({ name: '본인', profileImage: '/img/default-profile.png', address: '' });
       return;
     }
 
     try {
-      const response = await axios.get('http://3.36.150.194:8080/midpoint/api/member/profile', {
+      const response = await axios.get('http://3.36.150.194:8080/api/member/profile', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -35,33 +40,37 @@ const Home = () => {
       if (response.data) {
         setUserInfo({
           ...userInfo,
-          name: response.data.nickname,
-          profileImage: response.data.profileImage,
+          nickname: response.data.nickname || '나',
+          profileImage: response.data.profileImage || '/img/default-profile.png',
           address: response.data.address || ''
         });
       }
     } catch (error) {
       console.error('Error fetching user profile:', error);
-      setUserInfo({ name: '본인', profileImage: '/img/default-profile.png', address: '' });
       if (error.response && error.response.status === 401) {
-        // 인증 오류가 발생한 경우 로그인 페이지로 리다이렉트
         navigate('/login');
       }
     }
   };
 
   useEffect(() => {
-    fetchUserProfile();
-  }, []);
-
-  const isLoggedIn = !!localStorage.getItem('accessToken'); // 로그인 여부 확인
+    if (isLoggedIn) {
+      fetchUserProfile();
+    } else {
+      setUserInfo({
+        ...userInfo,
+        nickname: '나',
+        profileImage: '/img/default-profile.png',
+        address: ''
+      });
+    }
+  }, [isLoggedIn]); // 로그인 상태가 변경될 때만 실행
 
   const handleAddInput = () => {
-    const newFriendName = `친구 ${friendCount}`;
     setFriendCount(friendCount + 1);
     setFriends([
       ...friends,
-      { profile: '/img/default-profile.png', name: newFriendName, address: '' },
+      { profile: '/img/default-profile.png', name: `친구 ${friendCount}`, address: '' },
     ]);
   };
 
@@ -70,7 +79,7 @@ const Home = () => {
     setIsPopupOpen(true);
   };
 
-  const handlePopupClose = (address, results) => {
+  const handlePopupClose = (address, results, name = '') => {
     if (address) {
       if (popupTarget === 'user') {
         setUserInfo({ ...userInfo, address });
@@ -78,7 +87,7 @@ const Home = () => {
       } else {
         const updatedFriends = friends.map((friend, index) => {
           if (index === popupTarget) {
-            return { ...friend, address };
+            return { ...friend, address, name: name || friend.name };
           }
           return friend;
         });
@@ -107,48 +116,68 @@ const Home = () => {
     try {
       const addressInputs = [userInfo, ...friends];
       const geocodedInputs = await Promise.all(addressInputs.map(async input => {
-        if (input.address) {  // 방어 코드 추가
+        if (input.address) {
           const { latitude, longitude } = await geocodeAddress(input.address);
           return { ...input, latitude, longitude };
         } else {
           return input;
         }
       }));
-      const latitudes = geocodedInputs.map(input => input.latitude).filter(Boolean);  // 방어 코드 추가
-      const longitudes = geocodedInputs.map(input => input.longitude).filter(Boolean);  // 방어 코드 추가
-
-      const logicResponse = await axios.post('http://3.36.150.194:8080/midpoint/api/logic', {
+      const latitudes = geocodedInputs.map(input => input.latitude).filter(Boolean);
+      const longitudes = geocodedInputs.map(input => input.longitude).filter(Boolean);
+  
+      const logicResponse = await axios.post('http://3.36.150.194:8080/api/logic', {
         latitudes,
         longitudes
       });
+  
+      const isSuccess = logicResponse.data.success || (logicResponse.data.latitude && logicResponse.data.longitude);
+  
+      if (isSuccess) {
+        const latitude = logicResponse.data.latitude.toFixed(6);
+        const longitude = logicResponse.data.longitude.toFixed(6);
+        const category = selectedPurpose || 'restaurant';
+        const radius = 1000; // 기본 반경 값
 
-      if (logicResponse.data.success) {
-        const placesResponse = await axios.get('http://3.36.150.194:8080/midpoint/api/places', {
+        const placesResponse = await axios.get('http://3.36.150.194:8080/api/places', {
           params: {
-            midpoint: logicResponse.data.midpoint,
-            purpose: selectedPurpose
+            latitude,
+            longitude,
+            category,
+            radius
           }
         });
-
+  
         if (placesResponse.data.length > 0) {
-          navigate('/midpoint', { state: { places: placesResponse.data, district: logicResponse.data.midpointDistrict } });
+          const places = placesResponse.data.map(place => ({
+            name: place.name,
+            address: place.address,
+            latitude: place.latitude,
+            longitude: place.longitude,
+            types: JSON.parse(place.types),
+            placeID: place.placeID,
+            image: place.photo ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photo}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}` : '/img/default-image.png'
+          }));
+  
+          navigate('/midpoint', { state: { places, district: logicResponse.data.midpointDistrict, midpoint: logicResponse.data, isLoggedIn } });
         } else {
-          navigate('/again');
+          navigate('/again', { state: { midpoint: { latitude, longitude }, selectedPurpose, selectedRadius: radius } });
         }
       } else {
-        navigate('/again');
+        navigate('/again', { state: { midpoint: { latitude: 0, longitude: 0 }, selectedPurpose, selectedRadius: 1000 } });
       }
     } catch (error) {
       console.error('Error finding place:', error);
-      navigate('/again');
+      navigate('/again', { state: { midpoint: { latitude: 0, longitude: 0 }, selectedPurpose, selectedRadius: 1000 } });
     }
-  };
+  };  
 
   const purposes = [
     { label: '목적 추천 TEST', value: '/test1' },
     { label: '맛집', value: 'restaurant' },
     { label: '카페', value: 'cafe' },
-    { label: '산책/등산', value: 'hiking' },
+    { label: '산책', value: 'walk' },
+    { label: '등산', value: 'hiking' },
     { label: '공부', value: 'study' },
     { label: '문화생활', value: 'culture' },
     { label: '핫플', value: 'hotplace' },
@@ -162,11 +191,11 @@ const Home = () => {
         <div style={commonStyles.inputContainer}>
           <div style={commonStyles.profileContainer}>
             <img
-              src={userInfo.profileImage}
+              src={userInfo.profileImage || '/img/default-profile.png'}
               alt='프로필 이미지'
               style={commonStyles.profileImg}
             />
-            <span style={commonStyles.profileName}>{userInfo.name}</span>
+            <span style={commonStyles.profileName}>{isLoggedIn ? userInfo.nickname : '나'}</span>
           </div>
           <div style={commonStyles.inputGroup}>
             <input
@@ -237,13 +266,13 @@ const Home = () => {
       {isPopupOpen && (
         <HomePopup
           onClose={handlePopupClose}
-          setAddress={(address) => {
+          setAddress={(address, name = '') => {
             if (popupTarget === 'user') {
               setUserInfo({ ...userInfo, address });
             } else {
               const updatedFriends = friends.map((friend, index) => {
                 if (index === popupTarget) {
-                  return { ...friend, address };
+                  return { ...friend, address, name: name || `친구 ${index + 1}` };
                 }
                 return friend;
               });
@@ -260,6 +289,7 @@ const Home = () => {
             }
           }))}
           isLoggedIn={isLoggedIn} // 로그인 상태 전달
+          setSelectedFriend={setSelectedFriend} // 친구 선택을 위한 함수 전달
         />
       )}
     </div>

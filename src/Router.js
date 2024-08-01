@@ -19,6 +19,7 @@ import Result2 from "./pages/home/Result2";
 import Result3 from "./pages/home/Result3";
 import Result4 from "./pages/home/Result4";
 import Midpoint from "./pages/home/Midpoint";
+import { AppProvider } from './contexts/AppContext';
 
 function Router() {
   const [answers, setAnswers] = useState({});
@@ -31,38 +32,31 @@ function Router() {
   };
 
   return (
-    <AppRouter>
-      <Routes>
-        <Route path="/" element={<MainPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/login/direct" element={<DirectLoginPage />} />
-        <Route path="/login/findpassword" element={<FindPassword />} />
-        <Route path="/login/join" element={<Join />} />
-        <Route path="/login/resetpassword" element={<ResetPassword />} />
-        <Route path="/api/auth/oauth2/code/kakao" element={<OAuth />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/Review" element={<ReviewPage />} />
-        <Route path="/Mypage" element={<MyPage />} />
-        <Route path="/again" element={<Again />} />
-        <Route
-          path="/test1"
-          element={<Test1 updateAnswers={updateAnswers} answers={answers} />}
-        />
-        <Route
-          path="/test2"
-          element={<Test2 updateAnswers={updateAnswers} answers={answers} />}
-        />
-        <Route
-          path="/test3"
-          element={<Test3 updateAnswers={updateAnswers} answers={answers} />}
-        />
-        <Route path="/result1" element={<Result1 />} />
-        <Route path="/result2" element={<Result2 />} />
-        <Route path="/result3" element={<Result3 />} />
-        <Route path="/result4" element={<Result4 />} />
-        <Route path="/midpoint" element={<Midpoint />} />
-      </Routes>
-    </AppRouter>
+    <AppProvider>
+      <AppRouter>
+        <Routes>
+          <Route path="/" element={<MainPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login/direct" element={<DirectLoginPage />} />
+          <Route path="/login/findpassword" element={<FindPassword />} />
+          <Route path="/login/join" element={<Join />} />
+          <Route path="/login/resetpassword" element={<ResetPassword/>} />
+          <Route path="/api/auth/oauth2/code/kakao" element={<OAuth />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/Review" element={<ReviewPage />} />
+          <Route path="/Mypage" element={<MyPage />} />
+          <Route path="/again" element={<Again />} />
+          <Route path="/test1" element={<Test1 updateAnswers={updateAnswers} answers={answers} />} />
+          <Route path="/test2" element={<Test2 updateAnswers={updateAnswers} answers={answers} />} />
+          <Route path="/test3" element={<Test3 updateAnswers={updateAnswers} answers={answers} />} />
+          <Route path="/result1" element={<Result1 />} />
+          <Route path="/result2" element={<Result2 />} />
+          <Route path="/result3" element={<Result3 />} />
+          <Route path="/result4" element={<Result4 />} />
+          <Route path="/midpoint" element={<Midpoint />} />
+        </Routes>
+      </AppRouter>
+    </AppProvider>
   );
 }
 

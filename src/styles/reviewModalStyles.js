@@ -1,6 +1,7 @@
 export const reviewModalStyles = {
   overlay: {
     backgroundColor: 'rgba(1, 1, 1, 0.5)',
+    zIndex:3000,
   },
   modal: {
     position: 'fixed',
@@ -43,11 +44,13 @@ export const reviewModalStyles = {
     flexDirection: 'column',
   },
   profileName: {
+    fontFamily: 'Freesentation',
     fontSize: '20px',
     fontWeight: 'bold',
     color: '#1B4345',
   },
   date: {
+    fontFamily: 'Freesentation',
     fontSize: '14px',
     fontWeight: 'bold',
     color: '#1B4345',
@@ -57,7 +60,8 @@ export const reviewModalStyles = {
   },
   placeName: {
     marginBottom: '10px',
-    fontSize: '24px',
+    fontFamily: 'Freesentation',
+    fontSize: '30px',
     fontWeight: 'bold',
     textDecoration: 'underline',
     color: '#1B4345',
@@ -90,27 +94,15 @@ export const reviewModalStyles = {
     display: 'flex',
     alignItems: 'center',
     marginBottom: '10px',
-  },
-  likeButton: {
-    fontSize: '20px',
-    color: '#1B4345',
-    border: 'none',
-    background: 'none',
-    cursor: 'pointer',
-    marginRight: '5px',
-  },
-  likeButtonActive: {
-    fontSize: '20px',
-    color: '#1B4345',
-    border: 'none',
-    cursor: 'pointer',
-    marginRight: '5px',
+    flexDirection: 'row',
   },
   like: {
-    fontSize: '14px',
+    marginLeft: '10px',
+    fontSize: '17px',
     fontWeight: 'bold',
     color: '#1B4345',
   },
+  // ...
   tags: {
     marginTop: '20px',
   },

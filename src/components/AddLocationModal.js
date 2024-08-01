@@ -1,73 +1,93 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import axios from 'axios';
+import debounce from 'lodash.debounce';
 import Modal from 'react-modal';
 import { myPageStyles } from '../styles/myPageStyles';
 
 Modal.setAppElement('#root');
 
-const AddLocationModal = ({
-  isOpen,
-  closeModal,
-  addLocation,
-  editLocation,
-  deleteLocation,
-  selectedLocation,
-}) => {
-  const [locateName, setLocateName] = useState('');
-  const [locateAddress, setLocateAddress] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
-  const [isAdded, setIsAdded] = useState(false);
+const loadScript = (url) => {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = url;
+    script.async = true;
+    script.defer = true;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+};
+
+const AddLocationModal = ({ isOpen, closeModal, addLocation, selectedLocation }) => {
+  const [searchInput, setSearchInput] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [selectedSuggestion, setSelectedSuggestion] = useState(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     if (selectedLocation) {
-      setLocateName(selectedLocation.name);
-      setLocateAddress(selectedLocation.locate);
-      setIsEditing(false);
-      setIsAdded(selectedLocation.locate.trim() !== '');
+      setSearchInput(selectedLocation.locate);
     } else {
-      setLocateName('');
-      setLocateAddress('');
-      setIsAdded(false);
+      clearInputs();
     }
   }, [selectedLocation]);
 
+  useEffect(() => {
+    if (isOpen) {
+      loadGoogleMaps().catch((error) => {
+        console.error('Error loading Google Maps', error);
+      });
+    }
+  }, [isOpen]);
+
+  const loadGoogleMaps = () => {
+    return loadScript(`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`);
+  };
+
   const clearInputs = () => {
-    setLocateName('');
-    setLocateAddress('');
+    setSearchInput('');
+    setSuggestions([]);
+  };
+
+  const fetchSuggestions = async (value) => {
+    if (value.trim() !== '') {
+      const targetUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${value}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&language=ko`;
+      try {
+        const response = await axios.get(targetUrl);
+        setSuggestions(response.data.predictions.slice(0, 3)); // 최대 3개의 제안만 설정
+      } catch (error) {
+        console.error('Error fetching suggestions:', error);
+      }
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const debouncedFetchSuggestions = debounce(fetchSuggestions, 300);
+
+  const handleSearchInputChange = (e) => {
+    const value = e.target.value;
+    setSearchInput(value);
+    debouncedFetchSuggestions(value);
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setSelectedSuggestion(suggestion);
+    setSearchInput(suggestion.description);
+    setSuggestions([]);
   };
 
   const handleAddLocation = () => {
-    const updatedLocation = {
-      ...selectedLocation,
-      locate: locateAddress,
+    const newLocation = {
+      id: Math.random(),
+      name: searchInput,
+      locate: searchInput,
     };
-    addLocation(updatedLocation);
-    setIsAdded(true);
-    setIsEditing(false);
+    addLocation(newLocation);
     clearInputs();
+    closeModal();
   };
 
-  const handleEditLocation = () => {
-    const editedLocation = {
-      ...selectedLocation,
-      locate: locateAddress,
-    };
-    editLocation(editedLocation);
-    setIsEditing(false);
-    clearInputs();
-  };
-
-  const handleDeleteLocation = () => {
-    const updatedLocation = {
-      ...selectedLocation,
-      locate: '',
-    };
-    deleteLocation(updatedLocation);
-    setIsAdded(false);
-    setIsEditing(false);
-    setLocateAddress('');
-  };
-
-  //장소 추가가 타이핑이 아니라 api 지도로 수정 해야함
   return (
     <Modal
       isOpen={isOpen}
@@ -76,70 +96,37 @@ const AddLocationModal = ({
       contentLabel='AddEditLocationModal'
     >
       <div style={myPageStyles.modalContent}>
-        <img
-          src={`/img/${
-            selectedLocation ? selectedLocation.icon : 'homeIcon'
-          }.png`}
-          style={myPageStyles.addImg}
-          alt='addLocation'
-        />
         <h3>{selectedLocation ? selectedLocation.name : '장소 추가'}</h3>
-        <input
-          type='text'
-          value={locateAddress || ''}
-          style={{
-            ...myPageStyles.inputLocate,
-            backgroundColor: isEditing || !isAdded ? '#fff' : '#fff',
-            color: isEditing || !isAdded ? '#1B4345' : '#1B4345',
-          }}
-          disabled={isAdded && !isEditing}
-          onChange={(e) => setLocateAddress(e.target.value)}
-          placeholder='등록할 장소 또는 주소 입력'
-        />
-        {!isAdded ? (
-          <button
-            onClick={handleAddLocation}
-            style={myPageStyles.addFriendModalButton}
-          >
-            추가
-          </button>
-        ) : (
-          selectedLocation && (
-            <div>
-              {isEditing ? (
-                <>
-                  <button
-                    onClick={handleEditLocation}
-                    style={myPageStyles.favoriteButtonEdit}
-                  >
-                    저장
-                  </button>
-                  <button
-                    onClick={() => setIsEditing(false)}
-                    style={myPageStyles.favoriteButtonQuit}
-                  >
-                    취소
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    style={myPageStyles.favoriteButtonEdit}
-                  >
-                    편집
-                  </button>
-                  <button
-                    onClick={handleDeleteLocation}
-                    style={myPageStyles.favoriteButtonQuit}
-                  >
-                    삭제
-                  </button>
-                </>
-              )}
+        <div style={{ position: 'relative' }}>
+          <input
+            ref={inputRef}
+            id='location-input'
+            type='text'
+            value={searchInput}
+            style={myPageStyles.inputLocate}
+            onChange={handleSearchInputChange}
+            placeholder='검색어를 입력하세요'
+          />
+          {suggestions.length > 0 && (
+            <div style={myPageStyles.predictionsContainer}>
+              {suggestions.map((suggestion) => (
+                <div
+                  key={suggestion.place_id}
+                  onClick={() => handleSuggestionClick(suggestion)}
+                  style={myPageStyles.predictionItem}
+                >
+                  {suggestion.description}
+                </div>
+              ))}
             </div>
-          )
-        )}
+          )}
+        </div>
+        <button
+          onClick={handleAddLocation}
+          style={myPageStyles.addFriendModalButton}
+        >
+          추가
+        </button>
         <button onClick={closeModal} style={myPageStyles.closeButton}>
           X
         </button>
