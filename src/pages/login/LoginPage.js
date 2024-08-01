@@ -138,8 +138,8 @@ const OAuth = () => {
           console.error("Error occurred while fetching OAuth data:", error);
         }
       };
-
       fetchOAuthData(code);
+      window.location.reload();
     } else {
       console.error("No OAuth code found in URL");
     }
