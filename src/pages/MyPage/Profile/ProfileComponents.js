@@ -13,6 +13,7 @@ export const ProfileField = ({ field, value, editMode, handleInputChange, placeh
           value={value}
           onChange={handleInputChange}
           placeholder={placeholder}
+          autoComplete="off" // 밑에 출력되는 내용 삭제
         />
       </div>
     ) : (
@@ -37,7 +38,6 @@ export const ProfilePassword = ({ password = '', passwordEditMode, editMode, tog
   </div>
 );
 
-
 export const ProfileImage = ({ profileImage, editMode, handleFileChange, handleImageClick, fileInputRef }) => (
   <div style={myPageStyles.profilePictureItem}>
     <div style={myPageStyles.profileLabel}>프로필 사진</div>
@@ -52,7 +52,16 @@ export const ProfileImage = ({ profileImage, editMode, handleFileChange, handleI
           marginTop: '10px',
           cursor: editMode ? 'pointer' : 'default',
         }}
-        onClick={editMode ? handleImageClick : undefined}
+        onClick={() => {
+          if (editMode) {
+            const confirmed = window.confirm('기본 이미지를 사용하시겠습니까?');
+            if (confirmed) {
+              handleFileChange({ target: { files: [null] } });
+            } else {
+              handleImageClick();
+            }
+          }
+        }}
       />
       {editMode && (
         <input
@@ -66,3 +75,4 @@ export const ProfileImage = ({ profileImage, editMode, handleFileChange, handleI
     </div>
   </div>
 );
+

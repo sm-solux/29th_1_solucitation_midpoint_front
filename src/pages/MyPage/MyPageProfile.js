@@ -29,8 +29,8 @@ const MyPageProfile = () => {
     password: '********',
   });
 
-  const [previewImage, setPreviewImage] = useState(null); // 미리보기 상태 추가
-  const [isDefaultImage, setIsDefaultImage] = useState(false); // 기본 이미지 여부 상태 추가
+  const [previewImage, setPreviewImage] = useState(null); // 미리보기 이미지 보여주기
+  const [isDefaultImage, setIsDefaultImage] = useState(false); // 기본 이미지 여부 상태
 
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
@@ -47,7 +47,6 @@ const MyPageProfile = () => {
 
         const data = response.data;
 
-        // URL이 기본 이미지인지 확인
         const isDefault = data.profileImageUrl.endsWith('profile-images/default_image.png');
 
         setProfileData({
@@ -58,7 +57,7 @@ const MyPageProfile = () => {
           profileImage: data.profileImageUrl,
           password: profileData.password,
         });
-        setIsDefaultImage(isDefault); // 기본 이미지 여부 상태 업데이트
+        setIsDefaultImage(isDefault);
       } catch (error) {
         if (error.response) {
           if (error.response.status === 401) {
@@ -112,74 +111,77 @@ const MyPageProfile = () => {
   };
 
   const handleFileChange = (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    // 파일 미리보기 URL 생성
-    const previewUrl = URL.createObjectURL(file);
-    setPreviewImage(previewUrl); // 상태에 저장
-  }
-};
+    const file = e.target.files[0];
 
-const handleSave = async () => {
-  // 유효성 검사
-  if (!profileData.name.trim()) {
-    alert('이름을 입력해 주세요.');
-    return;
-  }
+    if (file === null) {
+      // 기본 이미지로 변경
+      setProfileData(prev => ({
+        ...prev,
+        profileImage: `${process.env.PUBLIC_URL}/img/default-profile.png`
+      }));
+      setPreviewImage(`${process.env.PUBLIC_URL}/img/default-profile.png`);
+      setIsDefaultImage(true);
+    } else if (file) {
 
-  if (!profileData.nickname.trim()) {
-    alert('닉네임을 입력해 주세요.');
-    return;
-  }
-
-  try {
-    const accessToken = localStorage.getItem('accessToken');
-
-    // 기본 이미지 여부 결정
-    const useDefaultImage = !previewImage && profileData.profileImage === 'defaultImagePath'; // 기본 이미지 경로를 'defaultImagePath'로 가정
-
-    // 프로필 업데이트 데이터 준비
-    const profileUpdateRequestDto = {
-      nickname: profileData.nickname,
-      name: profileData.name,
-      useDefaultImage,
-    };
-
-    // 전송할 데이터 객체 생성
-    const data = {
-      profileUpdateRequestDto,
-      profileImage: previewImage || null, // 미리보기 이미지가 있으면 전송, 없으면 null
-    };
-
-    console.log(data);
-    // JSON 형식으로 요청 보내기
-    await axios.patch(`${process.env.REACT_APP_API_URL}/api/member/profile`, data, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json', // JSON 데이터 전송을 위한 설정
-      },
-    });
-
-    // 상태 업데이트
-    setState({ ...state, editMode: false, passwordEditMode: false });
-
-    // 프로필 이미지 업데이트
-    setProfileData(prev => ({
-      ...prev,
-      profileImage: previewImage || prev.profileImage,
-    }));
-  } catch (error) {
-    if (error.response) {
-      console.error('프로필 저장 중 에러 발생:', error.response.data);
-    } else {
-      console.error('프로필 저장 중 에러 발생:', error.message);
+      const previewUrl = URL.createObjectURL(file);
+      setPreviewImage(previewUrl); 
+      setIsDefaultImage(false);
     }
-  }
-};
+  };
+
+  const handleSave = async () => {
+    if (!profileData.name.trim()) {
+      alert('이름을 입력해 주세요.');
+      return;
+    }
+
+    if (!profileData.nickname.trim()) {
+      alert('닉네임을 입력해 주세요.');
+      return;
+    }
+
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      const useDefaultImage = isDefaultImage;
+
+      const profileUpdateRequestDto = {
+        nickname: profileData.nickname,
+        name: profileData.name,
+        useDefaultImage,
+      };
+
+      const formData = new FormData();
+      formData.append('profileUpdateRequestDto', JSON.stringify(profileUpdateRequestDto));
+      if (!useDefaultImage && previewImage) {
+        formData.append('profileImage', fileInputRef.current.files[0]);
+      }
+
+      await axios.patch(`${process.env.REACT_APP_API_URL}/api/member/profile`, formData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      setState({ ...state, editMode: false, passwordEditMode: false });
+
+      setProfileData(prev => ({
+        ...prev,
+        profileImage: previewImage || prev.profileImage,
+      }));
+      alert('수정 되었습니다');
+    } catch (error) {
+      if (error.response) {
+        console.error('프로필 저장 중 에러 발생:', error.response.data);
+      } else {
+        console.error('프로필 저장 중 에러 발생:', error.message);
+      }
+    }
+  };
 
   const handleCancel = () => {
     setState({ ...state, editMode: false, passwordEditMode: false });
-    setPreviewImage(null); // 미리보기 초기화
+    setPreviewImage(null);
   };
 
   const handleDeleteAccount = () => {
@@ -316,8 +318,8 @@ const handleSave = async () => {
         togglePasswordEditMode={togglePasswordEditMode}
       />
       <ProfileImage
-        profileImage={previewImage || profileData.profileImage} // 미리보기 이미지 또는 프로필 이미지
-        editMode={state.editMode} // Edit mode 적용
+        profileImage={previewImage || profileData.profileImage}
+        editMode={state.editMode}
         handleFileChange={handleFileChange}
         handleImageClick={() => fileInputRef.current?.click()}
         fileInputRef={fileInputRef}

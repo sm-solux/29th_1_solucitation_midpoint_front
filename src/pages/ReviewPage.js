@@ -187,7 +187,7 @@ const ReviewPage = () => {
   const closeReviewModal = async () => {
     setReviewModalIsOpen(false);
     await fetchReviews(); // 모달을 닫을 때 리뷰 새로고침
-    window.location.reload();
+    //window.location.reload(); 새로 고침
   };
 
   const handleWriteButtonClick = async () => {
