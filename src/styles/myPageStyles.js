@@ -396,6 +396,20 @@ export const myPageStyles = {
     fontSize: '18px',
     marginLeft: '55px',
   },
+
+  suggestionsList: {
+    width: '400px',
+    listStyle: 'none',
+    margin: 0,
+    padding: 0,
+    backgroundColor: 'white',
+    border: '1px solid #ccc',
+    zIndex: 1000,
+  },
+  suggestionItem: {
+    padding: '10px',
+    cursor: 'pointer',
+  },
 };
 
 //3번 검색 기록 

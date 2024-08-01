@@ -3,7 +3,6 @@ import Modal from 'react-modal';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { myPageStyles } from '../styles/myPageStyles';
-import { commonStyles } from '../styles/styles';
 
 Modal.setAppElement('#root');
 
@@ -300,11 +299,11 @@ const AddFriendModal = ({
         />
       </div>
       {suggestions.length > 0 && (
-        <ul style={commonStyles.suggestionsList}>
+        <ul style={myPageStyles.suggestionsList}>
           {suggestions.map((suggestion) => (
             <li
               key={suggestion.place_id}
-              style={commonStyles.suggestionItem}
+              style={myPageStyles.suggestionItem}
               onClick={() => handleSuggestionClick(suggestion)}
             >
               {suggestion.description}
