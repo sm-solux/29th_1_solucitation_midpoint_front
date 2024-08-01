@@ -30,7 +30,7 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults }) => 
     }
 
     try {
-      const response = await axios.get('http://localhost:8080/api/favs/friends/list', {
+      const response = await axios.get('http://3.36.150.194:8080/api/favs/friends/list', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
