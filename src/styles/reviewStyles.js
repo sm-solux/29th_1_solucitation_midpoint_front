@@ -50,29 +50,6 @@ export const reviewStyles = {
     backgroundColor: '#EC5630',
     fontSize: '14px',
   },
-  likeButtonContainer: {
-    border: 'none',
-  },
-  likeButton: {
-    width: '25px',
-    height: '25px',
-    marginRight:'13px',
-    border: 'none',
-    cursor: 'pointer',
-  },
-  likeButtonActive: {
-    width: '25px',
-    height: '25px',
-    marginRight:'13px',
-    border: 'none',
-    cursor: 'pointer',
-  },
-  like: {
-    fontSize: '15px',
-    color: '#1B4345',
-    cursor: 'pointer',
-    marginLeft: '10px',
-  },
   placeName: {
     marginTop: '10px',
     marginLeft: '4px',
@@ -81,14 +58,6 @@ export const reviewStyles = {
     fontWeight: 'bold',
     color: '#1B4345',
   },
-  /*
-  content: {
-    marginTop: '5px',
-    marginLeft:'3px',
-    marginBottom: '5px',
-    color: '#1B4345',
-    fontSize: '14px',
-  },*/
   writeButton: {
     width: '70px',
     height: '70px',

@@ -1,40 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
-import { reviewModalStyles } from '../styles/reviewModalStyles';
+import { reviewModalStyles } from '../../styles/reviewModalStyles';
+import LikeButton, { useToggleLike } from '../../components/LikeButtonComponents';
 
-const ReviewModal = ({
-  isOpen,
-  review,
-  closeModal,
-  openEditModal,
-  deleteReview,
-  toggleLike,
-  setReviews,
-}) => {
-  const [liked, setLiked] = useState(review.likes);
-  const [likeCount, setLikeCount] = useState(review.likeCnt);
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+
+  return `${year}. ${month}. ${day}. ${hours}:${minutes}`;
+};
+
+const ReviewModal = ({ isOpen, review, closeModal, openEditModal, deleteReview }) => {
   const [profileData, setProfileData] = useState(null);
   const [error, setError] = useState(null);
+  const { liked, likeCount, toggleLike, error: likeError } = useToggleLike(review.postId, review.likes, review.likeCnt);
 
   useEffect(() => {
     if (isOpen) {
       const fetchProfileData = async () => {
         try {
           const accessToken = localStorage.getItem('accessToken');
+          
+          if (!accessToken) {
+            return;
+          }
+          
           const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/member/profile`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
+            headers: { Authorization: `Bearer ${accessToken}` },
           });
 
           const data = response.data;
           setProfileData({
             nickname: data.nickname,
-            profileImage: data.profileImage || '/img/default-profile.png',
+            profileImage: data.profileImageUrl,
           });
         } catch (error) {
-          console.error('프로필 정보를 불러오는 중 에러 발생:', error);
           setError('프로필 정보를 불러오는 중 에러 발생');
         }
       };
@@ -43,24 +48,8 @@ const ReviewModal = ({
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    setLiked(review.likes);
-    setLikeCount(review.likeCnt);
-  }, [review]);
-
-  const handleToggleLike = async () => {
-    try {
-      await toggleLike(review.postId); // review.postId를 직접 전달
-      setLiked(!liked);
-      setLikeCount(liked ? likeCount - 1 : likeCount + 1);
-    } catch (error) {
-      setError('좋아요 상태를 변경하는 중 오류가 발생하였습니다.');
-    }
-  };
-
   const handleEditClick = () => {
-    console.log('handleEditClick called', { review });
-    openEditModal(review); // 수정 모드로 열기
+    openEditModal(review);
     closeModal();
   };
 
@@ -69,9 +58,7 @@ const ReviewModal = ({
       try {
         const accessToken = localStorage.getItem('accessToken');
         await axios.delete(`${process.env.REACT_APP_API_URL}/api/posts/${review.postId}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+          headers: { Authorization: `Bearer ${accessToken}` },
         });
         deleteReview(review);
         closeModal();
@@ -121,13 +108,15 @@ const ReviewModal = ({
       </button>
       <div style={reviewModalStyles.profileContainer}>
         <img
-          src={profileData?.profileImage || '/img/default-profile.png'}
+          src={review.profileImageUrl}
           alt="profile"
           style={reviewModalStyles.profileImg}
         />
         <div style={reviewModalStyles.profileInfo}>
           <div style={reviewModalStyles.profileName}>{review.nickname}</div>
-          <div style={reviewModalStyles.date}>{review.createDate}</div>
+          <div style={reviewModalStyles.date}>
+            {formatDate(review.createDate)}
+          </div>
         </div>
       </div>
       <div style={reviewModalStyles.contentContainer}>
@@ -149,21 +138,7 @@ const ReviewModal = ({
       </div>
       <div style={reviewModalStyles.footer}>
         <div style={reviewModalStyles.likeSection}>
-          <button onClick={handleToggleLike} style={reviewModalStyles.likeButton}>
-            {liked ? (
-              <img
-                src={`${process.env.PUBLIC_URL}/img/activeLiked.png`}
-                alt="Active Liked Icon"
-                style={reviewModalStyles.icon}
-              />
-            ) : (
-              <img
-                src={`${process.env.PUBLIC_URL}/img/Liked.png`}
-                alt="Like Icon"
-                style={reviewModalStyles.icon}
-              />
-            )}
-          </button>
+          <LikeButton liked={liked} toggleLike={toggleLike} />
           <span style={reviewModalStyles.like}>좋아요 {likeCount.toString()}</span>
         </div>
         <div style={reviewModalStyles.tags}>
@@ -191,6 +166,7 @@ const ReviewModal = ({
         )}
       </div>
       {error && <p style={{ color: 'red' }}>{error}</p>}
+      {likeError && <p style={{ color: 'red' }}>{likeError}</p>}
     </Modal>
   );
 };
