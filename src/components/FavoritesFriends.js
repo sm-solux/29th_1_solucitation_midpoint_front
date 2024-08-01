@@ -1,56 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { myPageStyles } from '../styles/myPageStyles.js';
-import { AddFriendModal } from '../components/AddFriendModal.js';
+import AddFriendModal from '../components/AddFriendModal.js';
+import { refreshAccessToken } from './refreshAccess';
 
 const FavoritesFriends = () => {
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [isAddFriendModalOpen, setIsAddFriendModalOpen] = useState(false);
   const [friends, setFriends] = useState([]);
-
-  const favoriteFriends = [
-    {
-      id: 1,
-      name: '김규희',
-      profileImage: '/img/default-profile.png',
-      locate: '서울특별시 용산구',
-    },
-    {
-      id: 2,
-      name: '김소영',
-      profileImage: '/img/default-profile.png',
-      locate: '서울특별시 동작구',
-    },
-    {
-      id: 3,
-      name: '김채현',
-      profileImage: '/img/default-profile.png',
-      locate: '서울특별시 구로구',
-    },
-    {
-      id: 4,
-      name: '노경희',
-      profileImage: '/img/default-profile.png',
-      locate: '서울특별시 노원구',
-    },
-    {
-      id: 5,
-      name: '문서현',
-      profileImage: '/img/default-profile.png',
-      locate: '서울특별시 종로구',
-    },
-    {
-      id: 6,
-      name: '이혜지',
-      profileImage: '/img/default-profile.png',
-      locate: '서울특별시 강서구',
-    },
-    {
-      id: 7,
-      name: '최연재',
-      profileImage: '/img/default-profile.png',
-      locate: '서울특별시 마포구',
-    },
-  ];
+  const [loading, setLoading] = useState(false);
 
   const openAddFriendModal = () => {
     setSelectedFriend(null);
@@ -61,33 +19,113 @@ const FavoritesFriends = () => {
     setIsAddFriendModalOpen(false);
   };
 
+  const fetchFriends = async () => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/favs/friends/list`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+
+      if (response.data) {
+        setFriends(response.data);
+      }
+    } catch (error) {
+      if (error.response?.status === 401 && error.response?.data?.error === 'access_token_expired') {
+        try {
+          const refreshToken = localStorage.getItem('refreshToken');
+          if (!refreshToken) {
+            throw new Error('No refresh token available.');
+          }
+          const newAccessToken = await refreshAccessToken(refreshToken);
+          const headers = { Authorization: `Bearer ${newAccessToken}` };
+          const retryResponse = await axios.get(
+            `${process.env.REACT_APP_API_URL}/api/favs/friends/list`,
+            { headers }
+          );
+
+          if (retryResponse.data) {
+            setFriends(retryResponse.data);
+          }
+        } catch (refreshError) {
+          console.error('Failed to refresh access token:', refreshError);
+        }
+      } else {
+        console.error('Error fetching friends:', error);
+      }
+    }
+  };
+
   useEffect(() => {
-    setFriends(favoriteFriends);
+    fetchFriends();
   }, []);
 
   const handleAddFriend = (newFriend) => {
-    setFriends([...friends, newFriend]);
+    setFriends((prevFriends) => [...prevFriends, newFriend]);
     setSelectedFriend(newFriend);
   };
 
   const handleEditFriend = (editedFriend) => {
-    setFriends(
-      friends.map((friend) =>
-        friend.id === editedFriend.id ? editedFriend : friend
+    setFriends((prevFriends) =>
+      prevFriends.map((friend) =>
+        friend.favFriendId === editedFriend.favFriendId ? editedFriend : friend
       )
     );
     setSelectedFriend(editedFriend);
   };
 
   const handleDeleteFriend = (friendToDelete) => {
-    setFriends(friends.filter((friend) => friend.id !== friendToDelete.id));
+    setFriends((prevFriends) =>
+      prevFriends.filter((friend) => friend.favFriendId !== friendToDelete.favFriendId)
+    );
     setSelectedFriend(null);
     closeAddFriendModal();
   };
 
-  const handleFriendSelect = (friend) => {
-    setSelectedFriend(friend);
-    setIsAddFriendModalOpen(true);
+  const handleFriendSelect = async (friend) => {
+    setLoading(true);
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/favs/friends/details?favFriendId=${friend.favFriendId}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+
+      if (response.data) {
+        setSelectedFriend(response.data);
+        setIsAddFriendModalOpen(true);
+      }
+    } catch (error) {
+      if (error.response?.status === 401 && error.response?.data?.error === 'access_token_expired') {
+        try {
+          const refreshToken = localStorage.getItem('refreshToken');
+          if (!refreshToken) {
+            throw new Error('No refresh token available.');
+          }
+          const newAccessToken = await refreshAccessToken(refreshToken);
+          const headers = { Authorization: `Bearer ${newAccessToken}` };
+          const retryResponse = await axios.get(
+            `${process.env.REACT_APP_API_URL}/api/favs/friends/details?favFriendId=${friend.favFriendId}`,
+            { headers }
+          );
+
+          if (retryResponse.data) {
+            setSelectedFriend(retryResponse.data);
+            setIsAddFriendModalOpen(true);
+          }
+        } catch (refreshError) {
+          console.error('Failed to refresh access token:', refreshError);
+        }
+      } else {
+        console.error('Error fetching friend details:', error);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -104,7 +142,7 @@ const FavoritesFriends = () => {
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
         {friends.map((friend) => (
           <div
-            key={friend.id}
+            key={friend.favFriendId}
             style={{
               width: 'calc(33.33% - 20px)',
               margin: '10px',
@@ -115,7 +153,7 @@ const FavoritesFriends = () => {
           >
             <div>
               <img
-                src={friend.profileImage || '/img/default-profile.png'}
+                src={'/img/default-profile.png'}
                 width='50'
                 height='50'
                 alt='profile'
@@ -125,6 +163,7 @@ const FavoritesFriends = () => {
           </div>
         ))}
         <div
+          key="add-friend-button"
           style={{
             width: 'calc(33.33% - 20px)',
             margin: '10px',
@@ -150,9 +189,12 @@ const FavoritesFriends = () => {
         editFriend={handleEditFriend}
         deleteFriend={handleDeleteFriend}
         selectedFriend={selectedFriend}
+        loading={loading}
       />
     </div>
   );
 };
 
 export default FavoritesFriends;
+
+

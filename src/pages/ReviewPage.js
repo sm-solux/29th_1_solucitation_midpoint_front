@@ -20,7 +20,7 @@ const useAuth = () => {
 
       if (accessToken && refreshToken) {
         try {
-          await refreshAccessToken(refreshToken); // 토큰 갱신 시도
+          await refreshAccessToken(refreshToken);
           setIsLoggedIn(true);
           setCurrentUser(JSON.parse(localStorage.getItem('currentUser')));
         } catch (error) {
@@ -76,6 +76,7 @@ const useFetchReviews = (isLoggedIn) => {
         likes: isLoggedIn ? review.likes : false,
       }));
 
+      console.log(fetchedReviews);
       setReviews(fetchedReviews);
       setFilteredReviews(fetchedReviews);
     } catch (error) {
@@ -86,7 +87,7 @@ const useFetchReviews = (isLoggedIn) => {
 
   useEffect(() => {
     fetchReviews();
-  }, []);
+  }, [isLoggedIn]);
 
   return {
     reviews,
@@ -95,6 +96,7 @@ const useFetchReviews = (isLoggedIn) => {
     error,
     setError,
     setReviews,
+    fetchReviews,
   };
 };
 
@@ -107,6 +109,7 @@ const ReviewPage = () => {
     error,
     setError,
     setReviews,
+    fetchReviews,
   } = useFetchReviews(isLoggedIn);
   const [writeModalIsOpen, setWriteModalIsOpen] = useState(false);
   const [editModalIsOpen, setEditModalIsOpen] = useState(false);
@@ -141,13 +144,25 @@ const ReviewPage = () => {
         likes: response.data.likes,
       };
 
+      console.log(fetchedReviewDetails);
       setSelectedReview(fetchedReviewDetails);
-      setReviewModalIsOpen(true);
     } catch (error) {
       setError('해당 게시글 조회 중 오류가 발생하였습니다.');
       console.error('Fetch review details error:', error);
     }
   }, []);
+
+  const handleLikeToggle = (postId, newLikeStatus) => {
+    setReviews((prevReviews) =>
+      prevReviews.map((review) =>
+        review.postId === postId ? { ...review, likes: newLikeStatus } : review
+      )
+    );
+
+    if (selectedReview && selectedReview.postId === postId) {
+      setSelectedReview({ ...selectedReview, likes: newLikeStatus });
+    }
+  };
 
   const openWriteModal = () => {
     setWriteModalIsOpen(true);
@@ -169,10 +184,13 @@ const ReviewPage = () => {
   const openReviewModal = async (postId) => {
     await fetchReviewDetails(postId);
     setReviewModalIsOpen(true);
+    //document.querySelector('#root').setAttribute('inert', 'true'); // 가끔 있는 button 에러 때문에 구현,, 뺄 지 고민 배경 요소 비활성화
   };
 
-  const closeReviewModal = () => {
+  const closeReviewModal = async () => {
     setReviewModalIsOpen(false);
+    await fetchReviews(); // 모달을 닫을 때 리뷰 새로고침
+    //document.querySelector('#root').removeAttribute('inert'); // 배경 요소 활성화
   };
 
   const handleWriteButtonClick = async () => {
@@ -194,7 +212,7 @@ const ReviewPage = () => {
 
   return (
     <div>
-      <Logo bgColor='#F2F2F2' />
+      <Logo bgColor="#F2F2F2" />
       <div style={{ marginTop: '120px' }}>
         <SearchBox
           setFilteredReviews={setFilteredReviews}
@@ -208,12 +226,24 @@ const ReviewPage = () => {
           <p>{error}</p>
         ) : (
           (filteredReviews.length > 0 ? filteredReviews : reviews).map((review) => (
-            <ReviewCard key={review.postId} review={review} onReviewClick={openReviewModal} />
+            <ReviewCard
+              key={review.postId}
+              review={review}
+              onReviewClick={openReviewModal}
+              onLikeToggle={handleLikeToggle}
+            />
           ))
         )}
       </div>
-      <button onClick={handleWriteButtonClick} style={reviewStyles.writeButton}>
-        <img src='/img/WriteButtonIcon.png' alt='write button' style={reviewStyles.writeButton} />
+      <button
+        onClick={handleWriteButtonClick}
+        style={reviewStyles.writeButton}
+      >
+        <img
+          src="/img/WriteButtonIcon.png"
+          alt="write button"
+          style={reviewStyles.writeButton}
+        />
       </button>
       <WriteModal
         isOpen={writeModalIsOpen}
@@ -236,8 +266,11 @@ const ReviewPage = () => {
           review={selectedReview}
           closeModal={closeReviewModal}
           openEditModal={openEditModal}
+          onLikeToggle={handleLikeToggle}
           deleteReview={(review) => {
-            setReviews((prevReviews) => prevReviews.filter((r) => r.postId !== review.postId));
+            setReviews((prevReviews) =>
+              prevReviews.filter((r) => r.postId !== review.postId)
+            );
           }}
         />
       )}

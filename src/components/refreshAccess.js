@@ -11,22 +11,19 @@ export const refreshAccessToken = async (refreshToken) => {
         },
       }
     );
-    localStorage.setItem("accessToken", response.data.accessToken);
-    localStorage.setItem("refreshToken", response.data.refreshToken);
+    localStorage.setItem('accessToken', response.data.accessToken);
+    localStorage.setItem('refreshToken', response.data.refreshToken);
     return response.data.accessToken;
   } catch (error) {
-    console.error(
-      "Failed to refresh access token:",
-      error.response.data.message
-    );
+    console.error('Failed to refresh access token:', error.response?.data?.message || error.message);
     if (
-      error.response.data.error === "refresh_token_expired" ||
-      error.response.data.error === "invalid_token"
+      error.response?.data?.error === 'refresh_token_expired' ||
+      error.response?.data?.error === 'invalid_token'
     ) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      throw error;
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      throw new Error('Refresh token has expired or is invalid. Please log in again.');
     }
-    throw error;
+    throw new Error(error.response?.data?.message || 'An unknown error occurred while refreshing the token.');
   }
 };
