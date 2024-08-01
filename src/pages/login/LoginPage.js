@@ -139,7 +139,7 @@ const OAuth = () => {
         }
       };
       fetchOAuthData(code);
-      window.location.reload();
+      
     } else {
       console.error("No OAuth code found in URL");
     }

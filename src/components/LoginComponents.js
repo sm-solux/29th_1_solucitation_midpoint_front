@@ -57,9 +57,9 @@ const LoginForm = ({ inputs, buttonText, onLoginSuccess }) => {
       // 로컬 스토리지에 토큰 저장
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
-      
-      window.location.reload();
+
       navigate("/home");
+      window.location.reload();
 
       onLoginSuccess(response.data);
     } catch (error) {
