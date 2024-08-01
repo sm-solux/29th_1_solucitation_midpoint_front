@@ -12,9 +12,8 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
   const [searchInput, setSearchInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
-  const [selectedFriend, setSelectedFriendLocal] = useState(null);
   const [favoriteFriends, setFavoriteFriends] = useState([]); // 즐겨찾는 친구 목록 상태 추가
-  const { userInfo, isLoggedIn } = useContext(AppContext);
+  const { isLoggedIn } = useContext(AppContext);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -203,9 +202,9 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
 
   const handleFriendClick = (friend) => {
     setSelectedFriend(friend); // Home 컴포넌트의 setSelectedFriend 호출
-    setAddress(friend.address);
+    setAddress(friend.address, friend.name); // 이름도 전달
     onClose(friend.address, searchResults, friend.name);
-  };  
+  };
 
   const handleSearchItemClick = (place) => {
     setSearchInput(place.address);
@@ -260,13 +259,13 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
                   </button>
                 </div>
               </div>
-              <div style={{ 
-                ...commonStyles.popupSection2, 
-                height: favoriteFriends.length === 0 ? '118px' : '118px', 
+              <div style={{
+                ...commonStyles.popupSection2,
+                height: favoriteFriends.length === 0 ? '118px' : '118px',
                 width: favoriteFriends.length === 0 ? '280px' : '280px', // 필요한 너비로 설정
                 border: favoriteFriends.length === 0 ? 'none' : 'none', // 경계선 추가
                 display: favoriteFriends.length === 0 ? 'flex' : 'block', // 중앙 정렬을 위해 flex 사용
-                justifyContent: favoriteFriends.length === 0 ? 'flex-start' : 'flex-start', 
+                justifyContent: favoriteFriends.length === 0 ? 'flex-start' : 'flex-start',
                 alignItems: favoriteFriends.length === 0 ? 'flex-start' : 'flex-start'
               }}>
                 <p style={commonStyles.popupSectionTitle}>즐겨찾는 친구</p>
@@ -311,21 +310,10 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
               <div ref={mapRef} style={{ width: '100%', height: '245px', marginTop: '0.5rem' }} />
             </div>
           )}
-          {selectedFriend && (
-            <div>
-              <FriendItem>
-                <img src="/img/pprofile.png" alt={selectedFriend.name} />
-                <div>
-                  <h3>{selectedFriend.name}</h3>
-                  <p>{selectedFriend.address}</p>
-                </div>
-              </FriendItem>
-            </div>
-          )}
         </div>
       </div>
     </div>
-  );  
+  );
 };
 
 export default HomePopup;

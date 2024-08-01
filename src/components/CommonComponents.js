@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { commonStyles } from "../styles/styles";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { refreshAccessToken } from "../components/refreshAccess"; // refreshAccessToken 함수 import
+import { refreshAccessToken } from "./refreshAccess"; // refreshAccessToken 함수 import
 
 // 헤더 (배경색 설정 가능 / default는 transparent)
 function Logo({ exist = true, bgColor = "transparent" }) {

@@ -12,7 +12,7 @@ const Home = () => {
   const [popupTarget, setPopupTarget] = useState(null); // 팝업이 열린 대상
   const [friendCount, setFriendCount] = useState(friends.length + 1);
   const [searchResults, setSearchResults] = useState({ user: [], friends: {} });
-  const [selectedFriend, setSelectedFriend] = useState({ name: '', address: '' }); // 선택된 친구의 상태 추가
+  const [selectedFriend, setSelectedFriend] = useState(null); // 친구 선택 상태 추가
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -67,11 +67,10 @@ const Home = () => {
   }, [isLoggedIn]); // 로그인 상태가 변경될 때만 실행
 
   const handleAddInput = () => {
-    const newFriendName = selectedFriend.name || `친구 ${friendCount}`;
     setFriendCount(friendCount + 1);
     setFriends([
       ...friends,
-      { profile: '/img/default-profile.png', name: newFriendName, address: selectedFriend.address || '' },
+      { profile: '/img/default-profile.png', name: `친구 ${friendCount}`, address: '' },
     ]);
   };
 
@@ -88,14 +87,13 @@ const Home = () => {
       } else {
         const updatedFriends = friends.map((friend, index) => {
           if (index === popupTarget) {
-            return { ...friend, address, name };
+            return { ...friend, address, name: name || friend.name };
           }
           return friend;
         });
         setFriends(updatedFriends);
         setSearchResults({ ...searchResults, friends: { ...searchResults.friends, [popupTarget]: results } });
       }
-      setSelectedFriend({ name, address });
     }
     setIsPopupOpen(false);
   };
@@ -268,13 +266,13 @@ const Home = () => {
       {isPopupOpen && (
         <HomePopup
           onClose={handlePopupClose}
-          setAddress={(address) => {
+          setAddress={(address, name = '') => {
             if (popupTarget === 'user') {
               setUserInfo({ ...userInfo, address });
             } else {
               const updatedFriends = friends.map((friend, index) => {
                 if (index === popupTarget) {
-                  return { ...friend, address };
+                  return { ...friend, address, name: name || `친구 ${index + 1}` };
                 }
                 return friend;
               });

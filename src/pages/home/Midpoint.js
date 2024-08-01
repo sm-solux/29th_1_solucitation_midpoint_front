@@ -19,11 +19,12 @@ import {
 } from '../../styles/styles';
 import { Logo } from '../../components/CommonComponents';
 import { AppContext } from '../../contexts/AppContext';
+import { refreshAccessToken } from '../../components/refreshAccess';
 
 function Midpoint() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { places, midpoint } = location.state;
+  const { places, midpoint } = location.state || { places: [], midpoint: null };
   const [weather, setWeather] = useState(null);
   const [selectedPlaces, setSelectedPlaces] = useState([]);
   const [midpointDistrict, setMidpointDistrict] = useState('');
@@ -131,56 +132,61 @@ function Midpoint() {
 
     console.log('Save Data:', JSON.stringify(saveData, null, 2));
 
-    try {
-      const response = await axios.post('http://3.36.150.194:8080/api/search-history-v2', saveData, {
-        headers: {
-          'ACCESS_TOKEN': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.status === 201) {
-        alert('장소를 저장하였습니다.');
-      } else {
-        console.error('Unexpected response status:', response.status);
-      }
-    } catch (error) {
-      if (error.response) {
-        const { status, data } = error.response;
-        if (status === 400) {
-          alert(`에러: ${data.errors.map(err => `${err.field}: ${err.message}`).join(', ')}`);
-        } else if (status === 401 && data.error === "access_token_expired" && data.message === "Access Token이 만료되었습니다.") {
-          try {
-            const refreshToken = localStorage.getItem('refreshToken');
-            if (!refreshToken) {
-              throw new Error('No refresh token found.');
-            }
-
-            const tokenResponse = await axios.post('http://3.36.150.194:8080/api/auth/refresh-token', {}, {
-              headers: {
-                'Authorization': `Bearer ${refreshToken}`
-              }
-            });
-
-            const { accessToken: newAccessToken } = tokenResponse.data;
-            localStorage.setItem('accessToken', newAccessToken);
-            handleSave(); // Retry the save operation with the new token
-          } catch (tokenError) {
-            console.error('Error refreshing token:', tokenError);
-            alert('로그인이 필요합니다. 다시 로그인해주세요.');
-            navigate('/login');
+    const attemptSave = async (retryAttempt = false) => {
+      const accessToken = retryAttempt ? localStorage.getItem('accessToken') : token;
+      try {
+        const response = await axios.post('http://3.36.150.194:8080/api/search-history-v2', saveData, {
+          headers: {
+            'ACCESS_TOKEN': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
           }
-        } else if (status === 404) {
-          alert('사용자를 찾을 수 없습니다.');
-        } else if (status === 500) {
-          alert('서버 오류가 발생했습니다. 다시 시도해주세요.');
+        });
+
+        if (response.status === 201) {
+          alert('장소를 저장하였습니다.');
         } else {
-          console.error('Error saving places:', error.response.data);
+          console.error('Unexpected response status:', response.status);
         }
-      } else {
-        console.error('Error saving places:', error);
+      } catch (error) {
+        if (error.response) {
+          const { status, data } = error.response;
+          if (status === 400) {
+            alert(`에러: ${data.errors.map(err => `${err.field}: ${err.message}`).join(', ')}`);
+          } else if (status === 401 && data.error === "invalid_token" && data.message === "유효하지 않은 Access Token입니다.") {
+            if (retryAttempt) {
+              console.error('Failed to refresh token or retry save:', error);
+              alert('로그인이 필요합니다. 다시 로그인해주세요.');
+              navigate('/login');
+              return;
+            }
+            try {
+              const refreshToken = localStorage.getItem('refreshToken');
+              if (!refreshToken) {
+                throw new Error('No refresh token found.');
+              }
+
+              const newAccessToken = await refreshAccessToken(refreshToken);
+              const headers = { Authorization: `Bearer ${newAccessToken}` };
+              await attemptSave(true); // Retry the save operation with the new token
+            } catch (tokenError) {
+              console.error('Error refreshing token:', tokenError);
+              alert('로그인이 필요합니다. 다시 로그인해주세요.');
+              navigate('/login');
+            }
+          } else if (status === 404) {
+            alert('사용자를 찾을 수 없습니다.');
+          } else if (status === 500) {
+            alert('서버 오류가 발생했습니다. 다시 시도해주세요.');
+          } else {
+            console.error('Error saving places:', error.response.data);
+          }
+        } else {
+          console.error('Error saving places:', error);
+        }
       }
-    }
+    };
+
+    await attemptSave();
   };
 
   const handleSelectButtonClick = () => {
