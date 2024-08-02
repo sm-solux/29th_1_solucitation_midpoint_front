@@ -241,7 +241,7 @@ function Midpoint() {
                 </WeatherDetails>
               )}
             </WeatherInfoContainer>
-            {selectedPlaces.length > 0 && (
+            {(selectedPlaces.length > 0 || selecting) && (
               <BottomSection>
                 <ShareButton onClick={handleKakaoShare}>
                   <img src="/img/katokshare.png" alt="Kakao Share" style={{ width: '30px', marginRight: '7px' }} />
