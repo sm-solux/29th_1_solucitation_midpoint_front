@@ -252,7 +252,6 @@ const SearchBox = ({
           </div>
         </div>
       </div>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
     </>
   );
 };

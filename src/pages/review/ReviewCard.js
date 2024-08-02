@@ -36,7 +36,6 @@ const ReviewCard = ({ review, onReviewClick, onLikeToggle }) => {
         <LikeButton liked={liked} toggleLike={handleLike} likeCount={likeCount} />
       </div>
       <div style={reviewStyles.placeName}>{truncatedTitle}</div>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 };

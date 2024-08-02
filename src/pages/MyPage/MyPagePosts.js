@@ -107,7 +107,7 @@ const MyPagePosts = () => {
 
       const fetchedReviewDetails = {
         postId: postId,
-        profileImageUrl: response.data.profileImageUrl,
+        profileImageUrl: response.data.profileImagerUrl,
         nickname: response.data.nickname,
         title: response.data.title,
         content: response.data.content,
