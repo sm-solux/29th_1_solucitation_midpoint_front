@@ -18,7 +18,7 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
 
   useEffect(() => {
     if (isLoggedIn) {
-      fetchFavoriteFriends(); // 로그인 상태일 때 즐겨찾는 친구 목록을 가져옴
+      fetchFavoriteFriends(); 
       fetchFavoritePlaces(); // 로그인 상태일 때 즐겨찾는 장소 목록을 가져옴
     }
   }, [isLoggedIn]);
@@ -31,7 +31,7 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
     }
 
     try {
-      const response = await axios.get('http://3.36.150.194:8080/api/favs/friends/list', {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/favs/friends/list`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -50,7 +50,7 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
     }
 
     try {
-      const response = await axios.get('http://3.36.150.194:8080/api/favs/places/list', {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/favs/places/list`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -273,7 +273,7 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
         <div style={commonStyles.popupContent}>
           <div style={commonStyles.locationContainer} onClick={handleUseCurrentLocation}>
             <img src="/img/location.png" alt="현재 위치 사용" style={commonStyles.locationIcon} />
-            <span>현재 위치 사용</span>
+            <span style={{ fontSize: '1rem', fontFamily: 'Freesentation, sans-serif', fontWeight: '600' }}>현재 위치 사용</span>
           </div>
           {isLoggedIn && (
             <div style={commonStyles.popupSections}>
@@ -285,20 +285,20 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
                     onClick={() => handleFavoritePlaceClick(favoritePlaces.home)}
                   >
                     <img src="/img/home.png" alt="집" style={commonStyles.favoritePlaceImage} />
-                    <p>집</p>
+                    <p style={{ fontSize: '1rem', fontFamily: 'Freesentation, sans-serif', fontWeight: '500' }}>집</p>
                   </button>
                   <button 
                     style={commonStyles.favoritePlace}
                     onClick={() => handleFavoritePlaceClick(favoritePlaces.work)}
                   >
                     <img src="/img/work.png" alt="직장/학교" style={commonStyles.favoritePlaceImage} />
-                    <p>직장/학교</p>
+                    <p style={{ fontSize: '1rem', fontFamily: 'Freesentation, sans-serif', fontWeight: '500' }}>직장/학교</p>
                   </button>
                 </div>
               </div>
               <div style={{
                 ...commonStyles.popupSection2,
-                height: favoriteFriends.length === 0 ? '118px' : '118px',
+                height: favoriteFriends.length === 0 ? '118px' : '125px',
                 width: favoriteFriends.length === 0 ? '280px' : '280px', // 필요한 너비로 설정
                 border: favoriteFriends.length === 0 ? 'none' : 'none', // 경계선 추가
                 display: favoriteFriends.length === 0 ? 'flex' : 'block', // 중앙 정렬을 위해 flex 사용
@@ -317,7 +317,7 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
                         onClick={() => handleFriendClick(friend)}
                       >
                         <img src="/img/pprofile.png" alt={friend.name} style={commonStyles.favoriteFriendImage} />
-                        <p>{friend.name}</p>
+                        <p style={{ fontSize: '1rem', fontFamily: 'Freesentation, sans-serif', fontWeight: '500'}}>{friend.name}</p>
                       </button>
                     ))
                   )}

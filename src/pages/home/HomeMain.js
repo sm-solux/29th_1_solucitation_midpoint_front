@@ -1,3 +1,4 @@
+// src/components/Home.js
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { commonStyles } from '../../styles/styles';
@@ -39,7 +40,7 @@ const Home = () => {
     }
 
     try {
-      const response = await axios.get('http://3.36.150.194:8080/api/member/profile', {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/member/profile`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -138,7 +139,7 @@ const Home = () => {
       const latitudes = geocodedInputs.map(input => input.latitude).filter(Boolean);
       const longitudes = geocodedInputs.map(input => input.longitude).filter(Boolean);
   
-      const logicResponse = await axios.post('http://3.36.150.194:8080/api/logic', {
+      const logicResponse = await axios.post(`${process.env.REACT_APP_API_URL}/api/logic`, {
         latitudes,
         longitudes
       });
@@ -151,7 +152,7 @@ const Home = () => {
         const category = selectedPurpose || 'restaurant';
         const radius = selectedRadius; // 선택한 반경 사용
 
-        const placesResponse = await axios.get('http://3.36.150.194:8080/api/places', {
+        const placesResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/places`, {
           params: {
             latitude,
             longitude,
