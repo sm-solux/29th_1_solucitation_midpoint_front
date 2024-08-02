@@ -6,6 +6,7 @@ import WriteModal from '../review/WriteModal';
 import EditModal from '../review/EditModal';
 import { reviewStyles } from '../../styles/reviewStyles';
 import { refreshAccessToken } from '../../components/refreshAccess';
+import { myPageStyles } from '../../styles/myPageStyles';
 
 const useAuth = () => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -36,6 +37,7 @@ const useAuth = () => {
 
   return { currentUser, isLoggedIn, setIsLoggedIn };
 };
+
 const hashtagMap = {
   1: '#식사',
   2: '#카페',
@@ -78,7 +80,9 @@ const useFetchMyReviews = (isLoggedIn) => {
   };
 
   useEffect(() => {
-    fetchReviewsMine();
+    if (isLoggedIn) {
+      fetchReviewsMine();
+    }
   }, [isLoggedIn]);
 
   return { reviews, setReviews, error, setError };
@@ -91,7 +95,6 @@ const MyPagePosts = () => {
   const [editModalIsOpen, setEditModalIsOpen] = useState(false);
   const [reviewModalIsOpen, setReviewModalIsOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
 
   const fetchReviewDetails = useCallback(async (postId) => {
     try {
@@ -104,7 +107,7 @@ const MyPagePosts = () => {
 
       const fetchedReviewDetails = {
         postId: postId,
-        profileImageUrl: response.data.profileImagerUrl,
+        profileImageUrl: response.data.profileImageUrl,
         nickname: response.data.nickname,
         title: response.data.title,
         content: response.data.content,
@@ -157,7 +160,6 @@ const MyPagePosts = () => {
 
   const closeReviewModal = async () => {
     setReviewModalIsOpen(false);
-    //await fetchReviews(); // 모달을 닫을 때 리뷰 새로고침
     window.location.reload();
   };
 
@@ -172,14 +174,18 @@ const MyPagePosts = () => {
         {error ? (
           <p>{error}</p>
         ) : (
-          reviews.map((review) => (
-            <ReviewCard
-              key={review.postId}
-              review={review}
-              onReviewClick={openReviewModal}
-              onLikeToggle={handleLikeToggle}
-            />
-          ))
+          reviews.length > 0 ? (
+            reviews.map((review) => (
+              <ReviewCard
+                key={review.postId}
+                review={review}
+                onReviewClick={openReviewModal}
+                onLikeToggle={handleLikeToggle}
+              />
+            ))
+          ) : (
+            <div style={myPageStyles.postsNone}>작성한 글이 없습니다.</div>
+          )
         )}
       </div>
       <button
