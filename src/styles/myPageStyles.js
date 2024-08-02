@@ -2,7 +2,7 @@ export const myPageStyles = {
   container: {
     maxWidth: '1000px',
     height:'40px',
-    margin: '110px auto 35px auto',
+    margin: '120px auto 35px auto',
     backgroundColor: '#000',
     marginTop: '110px'
   },
@@ -410,11 +410,23 @@ export const myPageStyles = {
     cursor: 'pointer',
   },
 
-  //3번 검색 기록 
+  //3번 검색 기록
+  historyContainerEmpty: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '60vh',
+  },
+  historyNone: {
+    border: 'none',
+    fontFamily: 'Freesentation',
+    fontSize: '30px',
+    backgroundColor: 'transparent',
+    textAlign: 'center',
+  },
     historyContainer: {
         width: '800px',
         margin: '50px auto',
-        fontFamily: 'Freesentation, Arial, sans-serif',
         border: '2px solid #000',
         backgroundColor: 'white',
     },
@@ -497,5 +509,17 @@ export const myPageStyles = {
         alignItems: 'center',
         cursor: 'pointer',
         fontSize: '12px',
-    },
+  },
+  //4번 내가 작성한 글보기
+  postsNone: {
+    border: 'none',
+    fontFamily: 'Freesentation',
+    fontSize: '30px',
+    backgroundColor: 'transparent',
+    textAlign: 'center',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+  },
 };

@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { refreshAccessToken } from '../../components/refreshAccess';
 import { myPageStyles } from '../../styles/myPageStyles';
 
-
 const MyPageSearchHistory = () => {
     const [data, setData] = useState([]);
     const [error, setError] = useState(null);
@@ -30,8 +29,8 @@ const MyPageSearchHistory = () => {
                     imageUrl: 'https://via.placeholder.com/50',
                     placeName: '상호명',
                     placeAddress: '서울특별시 용산구 청파대로101층',
-              },
-                                {
+                },
+                {
                     imageUrl: 'https://via.placeholder.com/50',
                     placeName: '상호명',
                     placeAddress: '서울특별시 용산구 청파대로101층',
@@ -116,9 +115,8 @@ const MyPageSearchHistory = () => {
             setError('로그인이 필요합니다.');
             navigate('/login');
         } else {
-            // 가상 데이터 설정
-            setData(dummyData);
-            // fetchData(accessToken); // 실제 API 호출
+            fetchData(accessToken); // 실제 API 호출
+            // setData(dummyData); // 가상 데이터 설정
         }
     }, [navigate]);
 
@@ -127,9 +125,9 @@ const MyPageSearchHistory = () => {
     }
 
     return (
-        <div style={myPageStyles.historyContainer}>
+        <div style={data.length === 0 ? myPageStyles.historyContainerEmpty : myPageStyles.historyContainer}>
             {data.length === 0 ? (
-                <div>No search history available.</div>
+                <div style={myPageStyles.historyNone}>검색한 기록이 없습니다.</div>
             ) : (
                 data.map((rec, index) => (
                     <div style={myPageStyles.dateSection} key={index}>
@@ -164,8 +162,8 @@ const MyPageSearchHistory = () => {
                             </div>
                         </div>
                         <div style={myPageStyles.shareColumn}>
-                          <div>공유</div>
-                          <img src="../img/katokshare.png" style={myPageStyles.shareIcon}alt="kakaoshare"/>
+                            <div>공유</div>
+                            <img src="../img/katokshare.png" style={myPageStyles.shareIcon} alt="kakaoshare" />
                         </div>
                     </div>
                 ))
