@@ -281,6 +281,13 @@ export const myPageStyles = {
     paddingBottom: '15px',
     cursor:'pointer',
   },
+  goLocates: {
+    marginLeft: 'auto',
+    padding: '0 10px',
+    fontSize: '18px',
+    fontWeight: 'bold',
+    color: '#1B4345',
+  },
   addFriendButton: {
     border: 'none',
     backgroundColor: 'transparent',
