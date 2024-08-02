@@ -143,6 +143,8 @@ export const SubmitButton = styled.button`
   padding: 5px 20px;
   bottom: 30px;
   right: 40px;
+  cursor: pointer;
 `;
+
 
 export default writeModalStyles;

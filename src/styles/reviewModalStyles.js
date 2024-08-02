@@ -128,13 +128,15 @@ export const reviewModalStyles = {
     position: 'absolute',
     bottom: '60px',
     right: '120px',
+    cursor: 'pointer',
   },
   delButton: {
-    backgroundColor: 'transparent',
-    border: 'none',
-    color: '#1B4345',
     position: 'absolute',
     bottom: '60px',
     right: '50px',
+    backgroundColor: 'transparent',
+    border: 'none',
+    color: '#1B4345',
+    cursor: 'pointer',
   },
 };
