@@ -217,7 +217,7 @@ const AddFriendModal = ({
         }
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          setErrorMessage('존재하지 않는 친구입니다.');
+          alert('존재하지 않는 친구입니다.');
         } else {
           console.error('친구 삭제 오류:', error.message);
           setErrorMessage(getErrorMessage(error));
