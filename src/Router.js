@@ -19,6 +19,7 @@ import Result3 from "./pages/home/Result3";
 import Result4 from "./pages/home/Result4";
 import Midpoint from "./pages/home/Midpoint";
 import { AppProvider } from './contexts/AppContext';
+import RedirectIfLoggedIn from './components/RedirectIfLoggedIn';
 
 function Router() {
   const [answers, setAnswers] = useState({});
@@ -35,11 +36,31 @@ function Router() {
       <AppRouter>
         <Routes>
           <Route path="/" element={<MainPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/login/direct" element={<DirectLoginPage />} />
-          <Route path="/login/findpassword" element={<FindPassword />} />
-          <Route path="/login/join" element={<Join />} />
-          <Route path="/login/resetpassword" element={<ResetPassword/>} />
+          <Route path="/login" element={
+            <RedirectIfLoggedIn>
+              <LoginPage />
+            </RedirectIfLoggedIn>
+          } />
+          <Route path="/login/direct" element={
+            <RedirectIfLoggedIn>
+              <DirectLoginPage />
+            </RedirectIfLoggedIn>
+          } />
+          <Route path="/login/findpassword" element={
+            <RedirectIfLoggedIn>
+              <FindPassword />
+            </RedirectIfLoggedIn>
+          } />
+          <Route path="/login/join" element={
+            <RedirectIfLoggedIn>
+              <Join />
+            </RedirectIfLoggedIn>
+          } />
+          <Route path="/login/resetpassword" element={
+            <RedirectIfLoggedIn>
+              <ResetPassword />
+            </RedirectIfLoggedIn>
+          } />
           <Route path="/api/auth/oauth2/code/kakao" element={<OAuth />} />
           <Route path="/home" element={<Home />} />
           <Route path="/Review" element={<ReviewPage />} />
