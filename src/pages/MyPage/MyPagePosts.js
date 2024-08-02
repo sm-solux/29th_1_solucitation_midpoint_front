@@ -67,7 +67,7 @@ const useFetchMyReviews = (isLoggedIn) => {
         firstImageUrl: review.firstImageUrl,
         title: review.title,
         hashtags: review.hashtags.map((tagId) => hashtagMap[tagId]),
-        likes: isLoggedIn ? review.likes : false,
+        likes: review.likes,
       }));
 
       setReviews(fetchedReviews);
@@ -153,13 +153,11 @@ const MyPagePosts = () => {
   const openReviewModal = async (postId) => {
     await fetchReviewDetails(postId);
     setReviewModalIsOpen(true);
-    //document.querySelector('#root').setAttribute('inert', 'true'); // 가끔 있는 button 에러 때문에 구현,, 뺄 지 고민 배경 요소 비활성화
   };
 
   const closeReviewModal = async () => {
     setReviewModalIsOpen(false);
     //await fetchReviews(); // 모달을 닫을 때 리뷰 새로고침
-    //document.querySelector('#root').removeAttribute('inert'); // 배경 요소 활성화
   };
 
   const handleWriteButtonClick = () => {

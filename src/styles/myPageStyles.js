@@ -110,8 +110,9 @@ export const myPageStyles = {
   },
   profileButtonEdit: {
     marginRight: '100px',
-    padding: '10px 30px',
-    fontSize: '16px',
+    padding: '10px 35px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
     fontWeight: 'bold',
     color: '#fff',
     backgroundColor: '#1B4345',
@@ -120,8 +121,9 @@ export const myPageStyles = {
     cursor: 'pointer',
   },
   profileButtonQuit: {
-    padding: '10px 30px',
-    fontSize: '16px',
+    padding: '10px 35px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
     fontWeight: 'bold',
     color: '#fff',
     backgroundColor: '#D00303',
@@ -132,6 +134,7 @@ export const myPageStyles = {
   profileButtonCancel: {
     marginLeft: '10px',
     padding: '10px 30px',
+    fontFamily: 'Freesentation',
     fontSize: '16px',
     fontWeight: 'bold',
     color: '#000',
@@ -215,11 +218,35 @@ export const myPageStyles = {
   deleteButton: {
     padding: '10px 30px',
     fontFamily: 'Freesentation',
-    fontSize: '16px',
+    fontSize: '18px',
     fontWeight: 'bold',
     color: '#fff',
     backgroundColor: '#D00303',
     border: 'none',
+    borderRadius: '2px',
+    cursor: 'pointer',
+  },
+  deleteCheckButton: {
+    marginRight:'80px',
+    padding: '10px 30px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
+    fontWeight: 'bold',
+    color: '#fff',
+    backgroundColor: '#D00303',
+    border: 'none',
+    borderRadius: '2px',
+    cursor: 'pointer',
+  },
+    
+  deleteConfirmationButton: {
+    padding: '10px 30px',
+    fontFamily: 'Freesentation',
+    fontSize: '18px',
+    fontWeight: 'bold',
+    color: '#1B4345',
+    backgroundColor: 'transparent',
+    border: '2px solid #1B4345',
     borderRadius: '2px',
     cursor: 'pointer',
   },
@@ -264,6 +291,7 @@ export const myPageStyles = {
   },
   overlay: {
     backgroundColor: 'rgba(1, 1, 1, 0.5)',
+    zIndex:3000,
   },
   modal: {
     position: 'fixed',
@@ -369,119 +397,107 @@ export const myPageStyles = {
     fontSize: '18px',
     marginLeft: '55px',
   },
+
+  suggestionsList: {
+    width: '400px',
+    listStyle: 'none',
+    margin: 0,
+    padding: 0,
+    backgroundColor: 'white',
+    border: '1px solid #ccc',
+    zIndex: 1000,
+  },
+  suggestionItem: {
+    padding: '10px',
+    cursor: 'pointer',
+  },
+
+  //3번 검색 기록 
+    historyContainer: {
+        width: '800px',
+        margin: '50px auto',
+        fontFamily: 'Freesentation, Arial, sans-serif',
+        border: '2px solid #000',
+        backgroundColor: 'white',
+    },
+    dateSection: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        padding: '10px',
+        borderBottom: '1px solid #ccc',
+    },
+    dateColumn: {
+      width: '15%',
+      margin:'5px 20px',
+      fontFamily: 'Freesentation',
+      fontWeight: 'bold',
+      fontSize: '24px',
+      color: '#333',
+      marginRight: '10px',
+    },
+    neighborhoodTitle: {
+      marginTop:'5px',
+        fontFamily: 'Freesentation',
+        fontWeight: 'bold',
+        fontSize: '24px',
+    },
+    recommendationContainer: {
+      width: '400px',
+    },
+    recommendationList: {
+      display: 'flex',
+      flexDirection: 'column',
+      margin:'15px 0',
+      border: '1px solid #ccc',
+      padding: '10px',
+      borderRadius: '5px',
+      backgroundColor: '#f9f9f9',
+
+    },
+    recommendationItemContainer: {
+        marginBottom: '10px',
+    },
+    recommendationItem: {
+        display: 'flex',
+      alignItems: 'center',
+        marginTop:'5px'
+    },
+    recommendationItemLastChild: {
+        marginBottom: '0',
+    },
+    itemImage: {
+        width: '50px',
+        height: '50px',
+        backgroundColor: '#ddd',
+        marginRight: '10px',
+    },
+    itemContent: {
+        flexGrow: '1',
+    },
+    itemTitle: {
+        fontSize: '16px',
+        fontWeight: 'bold',
+    },
+    itemAddress: {
+        fontSize: '14px',
+        color: '#555',
+    },
+    shareColumn: {
+        width: '20%',
+        display: 'flex',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+    },
+    shareIcon: {
+        width: '40px',
+      height: '40px',
+        margin:'0 15px',
+        borderRadius: '50%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        cursor: 'pointer',
+        fontSize: '12px',
+    },
 };
-
-//3번 검색 기록 
-export const PlaceContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 800px;
-  height: 100vh; /* Ensure the container takes full viewport height */
-`;
-
-export const WhiteBox = styled.div`
-  background-color: white;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 800px;
-  max-width: 90%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-`;
-
-export const PlacesList = styled.ul`
-  list-style: none;
-  padding: 0;
-`;
-
-export const PlaceItem = styled.div`
-  display: flex;
-  align-items: center;
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-
-  img {
-    width: 50px;
-    height: 50px;
-    margin-right: 1rem;
-    border-radius: 8px;
-  }
-
-  div {
-    display: flex;
-    flex-direction: column;
-    background-color: #000; /* 배경색을 검은색으로 변경 */
-    border-radius: 8px;
-    padding: 0.5rem;
-    flex: 1;
-
-    h3, p {
-      color: #fff; /* 글자색을 흰색으로 변경 */
-    }
-
-    h3 {
-      font-size: 1rem;
-      margin: 0;
-      margin-bottom: 0.3rem;
-    }
-
-    p {
-      font-size: 0.8rem;
-      margin: 0;
-    }
-  }
-`;
-
-export const BottomSection = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 2rem;
-`;
-
-export const ShareButton = styled.button`
-  display: flex;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  background-color: #FFF;
-  color: #000;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-
-  span {
-    font-weight: 800; /* 글씨 굵기를 설정 */
-  }
-
-  img {
-    margin-left: 0.5rem;
-  }
-`;
-
-export const MapContainer = styled.div`
-  h2 {
-    margin-bottom: 1rem;
-  }
-
-  iframe {
-    border: 0;
-    width: 100%;
-    height: 400px;
-  }
-
-`;

@@ -2,14 +2,11 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
-import { myPageStyles } from '../styles/myPageStyles';
-import { commonStyles } from '../styles/styles';
-import { refreshAccessToken } from './refreshAccess';
+import { myPageStyles } from '../../../styles/myPageStyles';
 
 Modal.setAppElement('#root');
 
 const GEOCODING_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
-const API_URL = process.env.REACT_APP_API_URL;
 
 const AddFriendModal = ({
   isOpen,
@@ -54,6 +51,12 @@ const AddFriendModal = ({
     }
   }, [searchInput]);
 
+  useEffect(() => {
+    if (!isOpen) {
+      clearInputs(); // 모달이 닫힐 때 필드 초기화
+    }
+  }, [isOpen]);
+
   const fetchCoordinates = async (address) => {
     try {
       const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
@@ -88,51 +91,6 @@ const AddFriendModal = ({
     setErrorMessage('');
   };
 
-  const handleSaveFriend = async (friendData, apiCall, successCallback) => {
-    setErrorMessage('');
-
-    const accessToken = localStorage.getItem('accessToken');
-    const headers = accessToken
-      ? { Authorization: `Bearer ${accessToken}` }
-      : {};
-
-    try {
-      const response = await apiCall(friendData, headers);
-      if (response.data.success) {
-        successCallback(response.data);
-        clearInputs();
-        closeModal();
-      } else {
-        setErrorMessage(response.data.message);
-      }
-    } catch (error) {
-      if (error.response?.status === 401 && error.response?.data?.error === 'access_token_expired') {
-        try {
-          const refreshToken = localStorage.getItem('refreshToken');
-          if (!refreshToken) {
-            throw new Error('No refresh token available.');
-          }
-          const newAccessToken = await refreshAccessToken(refreshToken);
-          const headers = { Authorization: `Bearer ${newAccessToken}` };
-          const retryResponse = await apiCall(friendData, headers);
-          if (retryResponse.data.success) {
-            successCallback(retryResponse.data);
-            clearInputs();
-            closeModal();
-          } else {
-            setErrorMessage(retryResponse.data.message);
-          }
-        } catch (refreshError) {
-          console.error('Failed to refresh access token:', refreshError);
-          setErrorMessage('토큰 갱신 중 오류가 발생하였습니다. 다시 시도해 주세요.');
-        }
-      } else {
-        console.error('친구 저장 오류:', error.message);
-        setErrorMessage(getErrorMessage(error));
-      }
-    }
-  };
-
   const handleAddFriend = () => {
     if (!name || !searchInput) {
       setErrorMessage('이름과 주소를 입력해주세요.');
@@ -156,16 +114,28 @@ const AddFriendModal = ({
       longitude: parseFloat(longitude),
     };
 
-    handleSaveFriend(
-      newFriend,
-      (data, headers) => axios.post(`${API_URL}/api/favs/friends/save`, data, { headers }),
-      (data) => {
-        addFriend({ ...newFriend, favFriendId: data.favFriendId });
-      }
-    );
+    const accessToken = localStorage.getItem('accessToken');
+    const headers = accessToken
+      ? { Authorization: `Bearer ${accessToken}` }
+      : {};
+
+    axios.post(`${process.env.REACT_APP_API_URL}/api/favs/friends/save`, newFriend, { headers })
+      .then((response) => {
+        if (response.data.success) {
+          addFriend({ ...newFriend, favFriendId: response.data.favFriendId });
+          clearInputs();
+          closeModal();
+        } else {
+          setErrorMessage(response.data.message);
+        }
+      })
+      .catch((error) => {
+        console.error('친구 저장 오류:', error.message);
+        setErrorMessage(getErrorMessage(error));
+      });
   };
 
-  const handleEditFriend = () => {
+  const handleEditFriend = async () => {
     if (!name || !searchInput) {
       setErrorMessage('이름과 주소를 입력해주세요.');
       return;
@@ -181,26 +151,41 @@ const AddFriendModal = ({
       return;
     }
 
-    const encodedName = encodeURIComponent(name);
-    const encodedAddress = encodeURIComponent(searchInput);
+    const updatedFriend = {
+      favFriendId: selectedFriend.favFriendId,
+      name,
+      address: searchInput,
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
+    };
 
-    handleSaveFriend(
-      null,
-      (data, headers) => axios.patch(
-        `${API_URL}/api/favs/friends/update?favFriendId=${selectedFriend.favFriendId}&name=${encodedName}&addr=${encodedAddress}`, 
-        {}, 
+    const accessToken = localStorage.getItem('accessToken');
+    const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
+    console.log(updatedFriend);
+    try {
+      const response = await axios.patch(
+        `${process.env.REACT_APP_API_URL}/api/favs/friends/update`,
+        updatedFriend,
         { headers }
-      ),
-      editFriend
-    );
+      );
+
+      if (response.data.success) {
+        editFriend({ ...updatedFriend });
+        clearInputs();
+        closeModal();
+      } else {
+        setErrorMessage(response.data.message);
+      }
+    } catch (error) {
+      console.error('친구 수정 오류:', error.message);
+      setErrorMessage(getErrorMessage(error));
+    }
   };
 
   const handleDeleteFriend = async () => {
     if (window.confirm('삭제하시겠습니까?')) {
       const accessToken = localStorage.getItem('accessToken');
-      const headers = accessToken
-        ? { Authorization: `Bearer ${accessToken}` }
-        : {};
+      const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
 
       if (!selectedFriend || !selectedFriend.favFriendId) {
         setErrorMessage('친구 정보를 찾을 수 없습니다.');
@@ -208,10 +193,12 @@ const AddFriendModal = ({
       }
 
       try {
-        const response = await axios.delete(`${API_URL}/api/favs/friends/delete?favFriendId=${selectedFriend.favFriendId}`, { headers });
+        const response = await axios.delete(
+          `${process.env.REACT_APP_API_URL}/api/favs/friends/delete?favFriendId=${selectedFriend.favFriendId}`,
+          { headers }
+        );
 
         if (response.data.success) {
-          alert('삭제되었습니다');
           deleteFriend(selectedFriend);
           closeModal();
           clearInputs();
@@ -220,34 +207,11 @@ const AddFriendModal = ({
           setErrorMessage(response.data.message);
         }
       } catch (error) {
-        if (error.response?.status === 401 && error.response?.data?.error === 'access_token_expired') {
-          try {
-            const refreshToken = localStorage.getItem('refreshToken');
-            if (!refreshToken) {
-              throw new Error('No refresh token available.');
-            }
-            const newAccessToken = await refreshAccessToken(refreshToken);
-            const headers = { Authorization: `Bearer ${newAccessToken}` };
-            const retryResponse = await axios.delete(`${API_URL}/api/favs/friends/delete?favFriendId=${selectedFriend.favFriendId}`, { headers });
-            if (retryResponse.data.success) {
-              deleteFriend(selectedFriend);
-              closeModal();
-              clearInputs();
-              setIsEditing(false);
-            } else {
-              setErrorMessage(retryResponse.data.message);
-            }
-          } catch (refreshError) {
-            console.error('Failed to refresh access token:', refreshError);
-            setErrorMessage('토큰 갱신 중 오류가 발생하였습니다. 다시 시도해 주세요.');
-          }
+        if (error.response && error.response.status === 404) {
+          setErrorMessage('존재하지 않는 친구입니다.');
         } else {
-          if (error.response && error.response.status === 404) {
-            setErrorMessage('존재하지 않는 친구입니다.');
-          } else {
-            console.error('친구 삭제 오류:', error.message);
-            setErrorMessage(getErrorMessage(error));
-          }
+          console.error('친구 삭제 오류:', error.message);
+          setErrorMessage(getErrorMessage(error));
         }
       }
     }
@@ -325,9 +289,7 @@ const AddFriendModal = ({
       <input
         type="text"
         value={name}
-        style={{
-          ...myPageStyles.inputName,
-        }}
+        style={{ ...myPageStyles.inputName }}
         onChange={(e) => setName(e.target.value)}
         placeholder="친구 이름"
         disabled={!isEditing || loading}
@@ -336,21 +298,18 @@ const AddFriendModal = ({
         <input
           type="text"
           placeholder="주소 입력"
-          style={{
-            ...myPageStyles.inputLocate,
-            backgroundColor: 'white', // 입력 필드 배경색을 항상 흰색으로 설정
-          }}
+          style={{ ...myPageStyles.inputLocate, backgroundColor: 'white' }}
           value={searchInput}
           onChange={handleSearchInputChange}
           disabled={!isEditing || loading}
         />
       </div>
       {suggestions.length > 0 && (
-        <ul style={commonStyles.suggestionsList}>
+        <ul style={myPageStyles.suggestionsList}>
           {suggestions.map((suggestion) => (
             <li
               key={suggestion.place_id}
-              style={commonStyles.suggestionItem}
+              style={myPageStyles.suggestionItem}
               onClick={() => handleSuggestionClick(suggestion)}
             >
               {suggestion.description}

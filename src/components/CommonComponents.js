@@ -49,79 +49,86 @@ function Logo({ exist = true, bgColor = "transparent" }) {
   };
 
   // 로그아웃 부분
-  const handleLogout = async () => {
-    const accessToken = localStorage.getItem("accessToken");
-    const refreshToken = localStorage.getItem("refreshToken");
+ const handleLogout = async () => {
+  const isConfirmed = window.confirm('로그아웃 하시겠습니까?');
+  
+  if (!isConfirmed) {
+    return; // 사용자가 취소를 눌렀을 때
+  }
 
-    if (!accessToken || !refreshToken) {
-      console.error("No tokens found for logout.");
-      setIsLoggedIn(false);
-      navigate("/home");
-      return;
-    }
+  const accessToken = localStorage.getItem("accessToken");
+  const refreshToken = localStorage.getItem("refreshToken");
 
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/member/logout`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "logout-token": `Bearer ${refreshToken}`,
-          },
-        }
-      );
-      console.log("Logout Successful:", response.data.message);
+  if (!accessToken || !refreshToken) {
+    console.error("No tokens found for logout.");
+    setIsLoggedIn(false);
+    navigate("/home");
+    return;
+  }
 
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      setIsLoggedIn(false);
-      navigate("/home");
-      window.location.reload();
-    } catch (error) {
-      if (error.response) {
-        const { status, data } = error.response;
-        if (status === 401) {
-          if (data.error === "access_token_expired") {
-            try {
-              const newAccessToken = await refreshAccessToken(refreshToken);
-              const retryResponse = await axios.post(
-                `${process.env.REACT_APP_API_URL}/api/member/logout`,
-                {},
-                {
-                  headers: {
-                    Authorization: `Bearer ${newAccessToken}`,
-                    "logout-token": `Bearer ${refreshToken}`,
-                  },
-                }
-              );
-              console.log("Logout Successful:", retryResponse.data.message);
-              localStorage.removeItem("accessToken");
-              localStorage.removeItem("refreshToken");
-              setIsLoggedIn(false);
-              navigate("/home");
-            } catch (retryError) {
-              console.error(
-                "Retry logout failed:",
-                retryError.response?.data?.message || retryError.message
-              );
-              setIsLoggedIn(false);
-              navigate("/home");
-            }
-            console.error("The access token has expired.");
-          } else if (data.error === "invalid_token") {
-            console.error("The access token is invalid.");
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL}/api/member/logout`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "logout-token": `Bearer ${refreshToken}`,
+        },
+      }
+    );
+    console.log("Logout Successful:", response.data.message);
+
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    setIsLoggedIn(false);
+    navigate("/home");
+    window.location.reload();
+  } catch (error) {
+    if (error.response) {
+      const { status, data } = error.response;
+      if (status === 401) {
+        if (data.error === "access_token_expired") {
+          try {
+            const newAccessToken = await refreshAccessToken(refreshToken);
+            const retryResponse = await axios.post(
+              `${process.env.REACT_APP_API_URL}/api/member/logout`,
+              {},
+              {
+                headers: {
+                  Authorization: `Bearer ${newAccessToken}`,
+                  "logout-token": `Bearer ${refreshToken}`,
+                },
+              }
+            );
+            console.log("Logout Successful:", retryResponse.data.message);
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            setIsLoggedIn(false);
+            navigate("/home");
+          } catch (retryError) {
+            console.error(
+              "Retry logout failed:",
+              retryError.response?.data?.message || retryError.message
+            );
+            setIsLoggedIn(false);
+            navigate("/home");
           }
-        } else {
-          console.error("Logout failed:", data.message || error.message);
+          console.error("The access token has expired.");
+        } else if (data.error === "invalid_token") {
+          console.error("The access token is invalid.");
         }
       } else {
-        console.error("Logout failed:", error.message);
+        console.error("Logout failed:", data.message || error.message);
       }
-      setIsLoggedIn(false);
-      navigate("/home");
+    } else {
+      console.error("Logout failed:", error.message);
     }
-  };
+    setIsLoggedIn(false);
+    navigate("/home");
+  }
+};
+
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
