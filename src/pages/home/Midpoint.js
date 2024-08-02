@@ -97,7 +97,7 @@ function Midpoint() {
       setSelectedPlaces([place]);
 
       try {
-        const response = await axios.get(`http://3.36.150.194:8080/api/reviews?placeId=${place.placeID}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/reviews?placeId=${place.placeID}`);
         const googleReviewUrl = response.data.url;
         window.open(googleReviewUrl, '_blank');
       } catch (error) {
@@ -114,7 +114,7 @@ function Midpoint() {
 
     try {
       const placeInfoPromises = selectedPlaces.map(async place => {
-        const response = await axios.get(`http://3.36.150.194:8080/api/reviews?placeId=${place.placeID}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/reviews?placeId=${place.placeID}`);
         const googleReviewUrl = response.data.url;
         return `${place.name}: ${place.translatedAddress || place.address}\n리뷰: ${googleReviewUrl}`;
       });
@@ -172,7 +172,7 @@ function Midpoint() {
     const attemptSave = async (retryAttempt = false) => {
       const tokenToUse = retryAttempt ? localStorage.getItem('accessToken') : accessToken;
       try {
-        const response = await axios.post('http://3.36.150.194:8080/api/search-history-v2', saveData, {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/search-history-v2`, saveData, {
           headers: {
             Authorization: `Bearer ${tokenToUse}`,
             'Content-Type': 'application/json'
@@ -239,9 +239,9 @@ function Midpoint() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h2 style={{ marginLeft: '20px', marginTop: '15px' }}>{midpointDistrict} 주변 장소 추천</h2>
               {selecting ? (
-                <button onClick={handleCancelButtonClick} style={{ marginRight: '40px', background: 'white', color: 'gray', border: '1px solid white', borderRadius: '4px', padding: '0.5rem 0.5rem', cursor: 'pointer', fontWeight: 'bold' }}>취소</button>
+                <button onClick={handleCancelButtonClick} style={{ fontSize: '1rem', fontFamily: 'Freesentation, sans-serif', marginRight: '40px', background: 'white', color: 'gray', border: '1px solid white', borderRadius: '4px', padding: '0.5rem 0.5rem', cursor: 'pointer', fontWeight: '600' }}>취소</button>
               ) : (
-                <button onClick={handleSelectButtonClick} style={{ marginRight: '40px', background: 'white', color: 'gray', border: '1px solid white', borderRadius: '4px', padding: '0.5rem 0.5rem', cursor: 'pointer', fontWeight: 'bold' }}>장소 선택하기</button>
+                <button onClick={handleSelectButtonClick} style={{ fontSize: '1rem', fontFamily: 'Freesentation, sans-serif', marginRight: '40px', background: 'white', color: 'gray', border: '1px solid white', borderRadius: '4px', padding: '0.5rem 0.5rem', cursor: 'pointer', fontWeight: '600' }}>장소 선택하기</button>
               )}
             </div>
             <PlacesList>
@@ -262,7 +262,7 @@ function Midpoint() {
             <WeatherInfoContainer>
               {weather && (
                 <WeatherDetails>
-                  <span>{midpointDistrict}</span>
+                  <span style={{ fontSize: '1.2rem', fontFamily: 'Freesentation, sans-serif', fontWeight: '700'}}>{midpointDistrict}</span>
                   <span className="temperature">{weather.main.temp}°C</span>
                   <WeatherIcon src={`https://openweathermap.org/img/w/${weather.weather[0].icon}.png`} alt="Weather" />
                 </WeatherDetails>
@@ -272,11 +272,11 @@ function Midpoint() {
               <BottomSection>
                 <ShareButton onClick={handleKakaoShare}>
                   <img src="/img/katokshare.png" alt="Kakao Share" style={{ width: '30px', marginRight: '7px' }} />
-                  <span>공유</span>
+                  <span style={{ fontSize: '1.1rem', fontFamily: 'Freesentation, sans-serif', fontWeight: '700'}}>공유</span>
                 </ShareButton>
                 <SaveButton onClick={handleSave}>
                   <img src="/img/save.png" alt="Save" style={{ width: '20px', marginRight: '7px' }} />
-                  <span>저장</span>
+                  <span style={{ fontSize: '1.1rem', fontFamily: 'Freesentation, sans-serif', fontWeight: '700'}}>저장</span>
                 </SaveButton>
               </BottomSection>
             )}
