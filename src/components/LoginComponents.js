@@ -100,6 +100,7 @@ const LoginForm = ({ inputs, buttonText, onLoginSuccess }) => {
     </LoginFormContainer>
   );
 };
+
 // 회원가입 폼
 const JoinForm = ({
   inputs,
@@ -528,6 +529,7 @@ const FindPasswordForm = ({ inputs, onSubmit }) => {
     }
   };
 
+  // 코드 재전송 함수
   const resend = async (event) => {
     event.preventDefault();
 
@@ -564,6 +566,7 @@ const FindPasswordForm = ({ inputs, onSubmit }) => {
     }
   };
 
+  // 코드 검증 함수
   const verify = async (event) => {
     event.preventDefault();
     try {

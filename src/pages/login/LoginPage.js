@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { Logo } from "../../components/CommonComponents";
 import { LoginTitle } from "../../components/LoginComponents";
 import { commonStyles, LoginText } from "../../styles/styles";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
+// login button 스타일 정의
 const LoginButton = styled.button`
   font-size: 1.25rem;
   font-weight: 800;
@@ -33,6 +33,7 @@ function LoginPage() {
 
   const [kakaoConfig, setKakaoConfig] = useState(null);
 
+  // 카카오 설정 데이터를 가져오기
   useEffect(() => {
     const fetchKakaoConfig = async () => {
       try {
@@ -45,21 +46,19 @@ function LoginPage() {
             },
           }
         );
-
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-
         const configData = await response.json();
         setKakaoConfig(configData);
       } catch (error) {
         console.error("Failed to fetch Kakao configuration:", error);
       }
     };
-
     fetchKakaoConfig();
   }, []);
 
+  // 카카오 로그인 URL로 리디렉션
   const kakaoLogin = () => {
     if (kakaoConfig) {
       const { clientId, redirectUri } = kakaoConfig;
@@ -101,11 +100,26 @@ function LoginPage() {
   );
 }
 
+// 로딩 중 rotate 함수 구현
+const rotate = keyframes`
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+`;
+const RotatingImage = styled.img`
+  animation: ${rotate} 2s linear infinite;
+  width: 10rem;
+  height: 10rem;
+  margin-top: 50%;
+`;
+
+// 인가코드 값 백에 보내주고, response token 저장
 const OAuth = () => {
   const code = new URL(window.location.href).searchParams.get("code");
-  const [oauthData, setOauthData] = useState(null);
-  const [error, setError] = useState(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (code) {
       const fetchOAuthData = async (code) => {
@@ -117,8 +131,8 @@ const OAuth = () => {
               method: "POST",
             }
           );
-
           console.log("Fetch response:", response);
+
           if (!response.ok) {
             const errorData = await response.json();
             console.error("Error data from server:", errorData);
@@ -128,31 +142,32 @@ const OAuth = () => {
               }, Details: ${JSON.stringify(errorData)}`
             );
           }
-
           const data = await response.json();
           console.log("Server response data:", data);
-          setOauthData(data);
           console.log("Access Token:", data.accessToken);
+
+          const { accessToken, refreshToken } = data;
+
+          localStorage.setItem("accessToken", accessToken);
+          localStorage.setItem("refreshToken", refreshToken);
+
+          navigate("/home");
+          window.location.reload();
         } catch (error) {
-          setError(error.message);
           console.error("Error occurred while fetching OAuth data:", error);
         }
       };
       fetchOAuthData(code);
-      
     } else {
       console.error("No OAuth code found in URL");
     }
-  }, [code]);
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  }, [code, navigate]);
 
-  if (oauthData) {
-    return <div>로그인 성공! Access Token: {oauthData.accessToken}</div>;
-  }
-
-  return <div>로그인 중입니다.</div>;
+  return (
+    <div style={commonStyles.centerContainer}>
+      <RotatingImage src="/img/loading.png" alt="Loading" />
+    </div>
+  );
 };
 
 export { LoginPage, OAuth };

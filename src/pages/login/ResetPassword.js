@@ -4,8 +4,7 @@ import {
   LoginTitle,
   ResetPasswordForm,
 } from "../../components/LoginComponents";
-import { commonStyles, LoginText } from "../../styles/styles";
-import { useNavigate } from "react-router-dom";
+import { commonStyles} from "../../styles/styles";
 
 const inputs = [
   { label: "새 비밀번호", type: "password", id: "password", required: true },
@@ -16,7 +15,6 @@ const inputs = [
     required: true,
   },
 ];
-
 
 function ResetPassword() {
   const [values, setValues] = useState({});

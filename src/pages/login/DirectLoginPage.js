@@ -1,10 +1,8 @@
 import { React, useState } from "react";
-import styled from "styled-components";
 import { Logo } from "../../components/CommonComponents";
 import { LoginTitle, LoginForm } from "../../components/LoginComponents";
 import { commonStyles, LoginText } from "../../styles/styles";
-import { Navigate, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const inputs = [
   {

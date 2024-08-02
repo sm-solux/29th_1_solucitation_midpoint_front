@@ -31,6 +31,8 @@ function Midpoint() {
   const [selecting, setSelecting] = useState(false);
   const { userInfo, isLoggedIn } = useContext(AppContext);
 
+  const [translatedAddresses, setTranslatedAddresses] = useState([]);
+
   useEffect(() => {
     if (!midpoint) {
       console.error('Midpoint 정보가 없습니다.');
@@ -65,7 +67,21 @@ function Midpoint() {
   }, [midpoint]);
 
   useEffect(() => {
-    console.log('Places:', places);
+    const fetchTranslatedAddresses = async () => {
+      const translated = await Promise.all(places.map(async (place) => {
+        try {
+          const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${place.address}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&language=ko`);
+          const translatedAddress = response.data.results[0].formatted_address;
+          return { ...place, translatedAddress };
+        } catch (error) {
+          console.error('Error translating address:', error);
+          return place;
+        }
+      }));
+      setTranslatedAddresses(translated);
+    };
+
+    fetchTranslatedAddresses();
   }, [places]);
 
   const handlePlaceClick = async (place) => {
@@ -90,22 +106,33 @@ function Midpoint() {
     }
   };
 
-  const handleKakaoShare = () => {
+  const handleKakaoShare = async () => {
     if (!selectedPlaces.length) {
       alert('공유할 장소를 선택해주세요.');
       return;
     }
 
-    const placeInfo = selectedPlaces.map(place => `${place.name}: ${place.address}`).join('\n');
-    window.Kakao.Link.sendDefault({
-      objectType: 'text',
-      text: `추천 장소:\n${placeInfo}`,
-      link: {
-        webUrl: window.location.href,
-        mobileWebUrl: window.location.href,
-      },
-      buttonTitle: '장소 보기',
-    });
+    try {
+      const placeInfoPromises = selectedPlaces.map(async place => {
+        const response = await axios.get(`http://3.36.150.194:8080/api/reviews?placeId=${place.placeID}`);
+        const googleReviewUrl = response.data.url;
+        return `${place.name}: ${place.translatedAddress || place.address}\n리뷰: ${googleReviewUrl}`;
+      });
+
+      const placeInfoArray = await Promise.all(placeInfoPromises);
+      const placeInfo = placeInfoArray.join('\n\n');
+
+      window.Kakao.Link.sendDefault({
+        objectType: 'text',
+        text: `추천 장소:\n${placeInfo}`,
+        link: {
+          webUrl: window.location.href,
+          mobileWebUrl: window.location.href,
+        },
+      });
+    } catch (error) {
+      console.error('Error fetching Google review URLs for sharing:', error);
+    }
   };
 
   const handleSave = async () => {
@@ -218,7 +245,7 @@ function Midpoint() {
               )}
             </div>
             <PlacesList>
-              {places.map((place, index) => (
+              {translatedAddresses.map((place, index) => (
                 <PlaceItem
                   key={index}
                   isSelected={selectedPlaces.includes(place)}
@@ -227,7 +254,7 @@ function Midpoint() {
                   <img src={place.image || '/img/default-image.png'} alt={place.name} />
                   <div>
                     <h3>{place.name}</h3>
-                    <p>{place.address}</p>
+                    <p>{place.translatedAddress || place.address}</p>
                   </div>
                 </PlaceItem>
               ))}

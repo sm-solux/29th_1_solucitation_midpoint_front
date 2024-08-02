@@ -26,8 +26,8 @@ const Result4 = () => {
           <div 
             style={{ 
               ...commonStyles.resultOptionBox, 
-              backgroundColor: activeButton === 'hotplace' ? '#1B4345' : '#fff',
-              color: activeButton === 'hotplace' ? '#fff' : '#1B4345',
+              backgroundColor: activeButton === 'hot-place' ? '#1B4345' : '#fff',
+              color: activeButton === 'hot-place' ? '#fff' : '#1B4345',
               transition: 'background-color 0.3s, color 0.3s'
             }} 
             onClick={() => handleNavigate('hotplace')}
@@ -35,7 +35,7 @@ const Result4 = () => {
             <img src="/img/hotple.png" alt="핫플" style={commonStyles.resultOptionImg} />
             <span style={{
               ...commonStyles.resultOptionText,
-              color: activeButton === 'hotplace' ? '#fff' : '#1B4345'
+              color: activeButton === 'hot-place' ? '#fff' : '#1B4345'
             }}>핫플</span>
           </div>
           <div 
