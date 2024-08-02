@@ -62,7 +62,7 @@ const MyPageSearchHistory = () => {
 
     const fetchData = async (accessToken) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/search-history`, {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/search-history-v2`, {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
                 },
