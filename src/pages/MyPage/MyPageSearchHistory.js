@@ -9,57 +9,6 @@ const MyPageSearchHistory = () => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
-    // 가상 데이터 사용
-    const dummyData = [
-        {
-            neighborhood: "청파동",
-            searchTime: '2024.06.24',
-            places: [
-                {
-                    imageUrl: 'https://via.placeholder.com/50',
-                    placeName: '상호명',
-                    placeAddress: '서울특별시 용산구 청파대로101층',
-                },
-                {
-                    imageUrl: 'https://via.placeholder.com/50',
-                    placeName: '상호명',
-                    placeAddress: '서울특별시 용산구 청파대로101층',
-                },
-                {
-                    imageUrl: 'https://via.placeholder.com/50',
-                    placeName: '상호명',
-                    placeAddress: '서울특별시 용산구 청파대로101층',
-                },
-                {
-                    imageUrl: 'https://via.placeholder.com/50',
-                    placeName: '상호명',
-                    placeAddress: '서울특별시 용산구 청파대로101층',
-                },
-            ],
-        },
-        {
-            neighborhood: "청파동",
-            searchTime: '2024.03.02',
-            places: [
-                {
-                    imageUrl: 'https://via.placeholder.com/50',
-                    placeName: '상호명',
-                    placeAddress: '서울특별시 용산구 청파대로101층',
-                },
-                {
-                    imageUrl: 'https://via.placeholder.com/50',
-                    placeName: '상호명',
-                    placeAddress: '서울특별시 용산구 청파대로101층',
-                },
-                {
-                    imageUrl: 'https://via.placeholder.com/50',
-                    placeName: '상호명',
-                    placeAddress: '서울특별시 용산구 청파대로101층',
-                },
-            ],
-        },
-    ];
-
     const fetchData = async (accessToken) => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/search-history-v2`, {
@@ -67,7 +16,11 @@ const MyPageSearchHistory = () => {
                     'Authorization': `Bearer ${accessToken}`,
                 },
             });
-            setData(response.data);
+            const formattedData = response.data.map(item => ({
+                ...item,
+                searchTime: formatDate(item.serachTime) // 서버에서 잘못된 철자 수정
+            }));
+            setData(formattedData);
         } catch (err) {
             if (err.response?.status === 401 && err.response?.data?.error === 'access_token_expired') {
                 try {
@@ -109,6 +62,14 @@ const MyPageSearchHistory = () => {
         }
     };
 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}.${month}.${day}`;
+    };
+
     useEffect(() => {
         const accessToken = localStorage.getItem('accessToken');
         if (!accessToken) {
@@ -116,7 +77,6 @@ const MyPageSearchHistory = () => {
             navigate('/login');
         } else {
             fetchData(accessToken); // 실제 API 호출
-            // setData(dummyData); // 가상 데이터 설정
         }
     }, [navigate]);
 
