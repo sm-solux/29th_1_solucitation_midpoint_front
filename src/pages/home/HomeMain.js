@@ -14,6 +14,7 @@ const Home = () => {
   const [searchResults, setSearchResults] = useState({ user: [], friends: {} });
   const [selectedFriend, setSelectedFriend] = useState(null); // 친구 선택 상태 추가
   const [initialAddress, setInitialAddress] = useState(userInfo.address || ''); // 초기 주소 상태 추가
+  const [selectedRadius, setSelectedRadius] = useState('1000'); // 반경 추가
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -24,6 +25,9 @@ const Home = () => {
     if (location.state && location.state.initialAddress) {
       setInitialAddress(location.state.initialAddress);
       setUserInfo({ ...userInfo, address: location.state.initialAddress });
+    }
+    if (location.state && location.state.selectedRadius) {
+      setSelectedRadius(location.state.selectedRadius); // 반경 설정
     }
   }, [location.state]);
 
@@ -110,7 +114,7 @@ const Home = () => {
     const selectedValue = event.target.value;
     setSelectedPurpose(selectedValue);
     if (selectedValue === '/test1') {
-      navigate('/test1', { state: { initialAddress: userInfo.address } }); // 홈으로 돌아올 때 주소 전달
+      navigate('/test1', { state: { initialAddress: userInfo.address, selectedRadius } }); // 홈으로 돌아올 때 주소 및 반경 전달
     }
   };
 
@@ -145,7 +149,7 @@ const Home = () => {
         const latitude = logicResponse.data.latitude.toFixed(6);
         const longitude = logicResponse.data.longitude.toFixed(6);
         const category = selectedPurpose || 'restaurant';
-        const radius = 1000; // 기본 반경 값
+        const radius = selectedRadius; // 선택한 반경 사용
 
         const placesResponse = await axios.get('http://3.36.150.194:8080/api/places', {
           params: {
@@ -188,7 +192,7 @@ const Home = () => {
     { label: '등산', value: 'hiking' },
     { label: '공부', value: 'study' },
     { label: '문화생활', value: 'culture' },
-    { label: '핫플', value: 'hotplace' },
+    { label: '핫플', value: 'hot-place' },
     { label: '친목', value: 'social' },
   ];
 

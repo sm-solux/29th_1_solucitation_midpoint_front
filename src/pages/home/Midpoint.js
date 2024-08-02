@@ -31,6 +31,8 @@ function Midpoint() {
   const [selecting, setSelecting] = useState(false);
   const { userInfo, isLoggedIn } = useContext(AppContext);
 
+  const [translatedAddresses, setTranslatedAddresses] = useState([]);
+
   useEffect(() => {
     if (!midpoint) {
       console.error('Midpoint 정보가 없습니다.');
@@ -65,7 +67,21 @@ function Midpoint() {
   }, [midpoint]);
 
   useEffect(() => {
-    console.log('Places:', places);
+    const fetchTranslatedAddresses = async () => {
+      const translated = await Promise.all(places.map(async (place) => {
+        try {
+          const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${place.address}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&language=ko`);
+          const translatedAddress = response.data.results[0].formatted_address;
+          return { ...place, translatedAddress };
+        } catch (error) {
+          console.error('Error translating address:', error);
+          return place;
+        }
+      }));
+      setTranslatedAddresses(translated);
+    };
+
+    fetchTranslatedAddresses();
   }, [places]);
 
   const handlePlaceClick = async (place) => {
@@ -90,22 +106,33 @@ function Midpoint() {
     }
   };
 
-  const handleKakaoShare = () => {
+  const handleKakaoShare = async () => {
     if (!selectedPlaces.length) {
       alert('공유할 장소를 선택해주세요.');
       return;
     }
 
-    const placeInfo = selectedPlaces.map(place => `${place.name}: ${place.address}`).join('\n');
-    window.Kakao.Link.sendDefault({
-      objectType: 'text',
-      text: `추천 장소:\n${placeInfo}`,
-      link: {
-        webUrl: window.location.href,
-        mobileWebUrl: window.location.href,
-      },
-      buttonTitle: '장소 보기',
-    });
+    try {
+      const placeInfoPromises = selectedPlaces.map(async place => {
+        const response = await axios.get(`http://3.36.150.194:8080/api/reviews?placeId=${place.placeID}`);
+        const googleReviewUrl = response.data.url;
+        return `${place.name}: ${place.translatedAddress || place.address}\n리뷰: ${googleReviewUrl}`;
+      });
+
+      const placeInfoArray = await Promise.all(placeInfoPromises);
+      const placeInfo = placeInfoArray.join('\n\n');
+
+      window.Kakao.Link.sendDefault({
+        objectType: 'text',
+        text: `추천 장소:\n${placeInfo}`,
+        link: {
+          webUrl: window.location.href,
+          mobileWebUrl: window.location.href,
+        },
+      });
+    } catch (error) {
+      console.error('Error fetching Google review URLs for sharing:', error);
+    }
   };
 
   const handleSave = async () => {
@@ -113,35 +140,45 @@ function Midpoint() {
       alert('로그인 후 사용해주세요.');
       return;
     }
-
-    const token = localStorage.getItem('accessToken');
-    if (!token) {
+  
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!accessToken || !refreshToken) {
       console.error('No token found.');
+      alert('로그인이 필요합니다. 다시 로그인해주세요.');
+      navigate('/login');
       return;
     }
 
+    // 데이터 잘라내기 함수
+    const trimData = (data, maxLength) => {
+      return data.length > maxLength ? data.substring(0, maxLength) : data;
+    };
+  
+    const maxLength = 255;
+  
     const saveData = {
-      neighborhood: midpointDistrict,
+      neighborhood: trimData(midpointDistrict, maxLength),
       historyDto: selectedPlaces.map(place => ({
-        placeId: place.placeID,
-        placeName: place.name,
-        placeAddress: place.address,
-        imageUrl: place.image
+        placeId: trimData(place.placeID, maxLength),
+        placeName: trimData(place.name, maxLength),
+        placeAddress: trimData(place.address, maxLength),
+        imageUrl: trimData(place.image, maxLength)
       }))
     };
-
+  
     console.log('Save Data:', JSON.stringify(saveData, null, 2));
-
+  
     const attemptSave = async (retryAttempt = false) => {
-      const accessToken = retryAttempt ? localStorage.getItem('accessToken') : token;
+      const tokenToUse = retryAttempt ? localStorage.getItem('accessToken') : accessToken;
       try {
         const response = await axios.post('http://3.36.150.194:8080/api/search-history-v2', saveData, {
           headers: {
-            'ACCESS_TOKEN': `Bearer ${accessToken}`,
+            Authorization: `Bearer ${tokenToUse}`,
             'Content-Type': 'application/json'
           }
         });
-
+  
         if (response.status === 201) {
           alert('장소를 저장하였습니다.');
         } else {
@@ -152,27 +189,22 @@ function Midpoint() {
           const { status, data } = error.response;
           if (status === 400) {
             alert(`에러: ${data.errors.map(err => `${err.field}: ${err.message}`).join(', ')}`);
-          } else if (status === 401 && data.error === "invalid_token" && data.message === "유효하지 않은 Access Token입니다.") {
-            if (retryAttempt) {
-              console.error('Failed to refresh token or retry save:', error);
-              alert('로그인이 필요합니다. 다시 로그인해주세요.');
-              navigate('/login');
-              return;
-            }
+          } else if (status === 401 && !retryAttempt) {
+            // Access token이 만료된 경우, Refresh token을 사용하여 갱신 시도
             try {
-              const refreshToken = localStorage.getItem('refreshToken');
-              if (!refreshToken) {
-                throw new Error('No refresh token found.');
-              }
-
               const newAccessToken = await refreshAccessToken(refreshToken);
-              const headers = { Authorization: `Bearer ${newAccessToken}` };
+              localStorage.setItem('accessToken', newAccessToken);
               await attemptSave(true); // Retry the save operation with the new token
             } catch (tokenError) {
               console.error('Error refreshing token:', tokenError);
               alert('로그인이 필요합니다. 다시 로그인해주세요.');
               navigate('/login');
             }
+          } else if (status === 401 && retryAttempt) {
+            // Refresh token도 유효하지 않은 경우
+            console.error('Failed to refresh token or retry save:', error);
+            alert('로그인이 필요합니다. 다시 로그인해주세요.');
+            navigate('/login');
           } else if (status === 404) {
             alert('사용자를 찾을 수 없습니다.');
           } else if (status === 500) {
@@ -185,9 +217,9 @@ function Midpoint() {
         }
       }
     };
-
+  
     await attemptSave();
-  };
+  };  
 
   const handleSelectButtonClick = () => {
     setSelecting(true);
@@ -213,7 +245,7 @@ function Midpoint() {
               )}
             </div>
             <PlacesList>
-              {places.map((place, index) => (
+              {translatedAddresses.map((place, index) => (
                 <PlaceItem
                   key={index}
                   isSelected={selectedPlaces.includes(place)}
@@ -222,7 +254,7 @@ function Midpoint() {
                   <img src={place.image || '/img/default-image.png'} alt={place.name} />
                   <div>
                     <h3>{place.name}</h3>
-                    <p>{place.address}</p>
+                    <p>{place.translatedAddress || place.address}</p>
                   </div>
                 </PlaceItem>
               ))}
@@ -236,7 +268,7 @@ function Midpoint() {
                 </WeatherDetails>
               )}
             </WeatherInfoContainer>
-            {selectedPlaces.length > 0 && (
+            {(selectedPlaces.length > 0 || selecting) && (
               <BottomSection>
                 <ShareButton onClick={handleKakaoShare}>
                   <img src="/img/katokshare.png" alt="Kakao Share" style={{ width: '30px', marginRight: '7px' }} />

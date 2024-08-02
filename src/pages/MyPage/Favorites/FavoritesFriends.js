@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { myPageStyles } from '../styles/myPageStyles.js';
-import AddFriendModal from '../components/AddFriendModal.js';
-import { refreshAccessToken } from './refreshAccess';
+import { myPageStyles } from '../../../styles/myPageStyles.js';
+import AddFriendModal from './AddFriendModal.js';
 
 const FavoritesFriends = () => {
   const [selectedFriend, setSelectedFriend] = useState(null);
@@ -19,46 +18,25 @@ const FavoritesFriends = () => {
     setIsAddFriendModalOpen(false);
   };
 
-  const fetchFriends = async () => {
-    try {
-      const accessToken = localStorage.getItem('accessToken');
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/favs/friends/list`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
-
-      if (response.data) {
-        setFriends(response.data);
-      }
-    } catch (error) {
-      if (error.response?.status === 401 && error.response?.data?.error === 'access_token_expired') {
-        try {
-          const refreshToken = localStorage.getItem('refreshToken');
-          if (!refreshToken) {
-            throw new Error('No refresh token available.');
+  useEffect(() => {
+    const fetchFriends = async () => {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/favs/friends/list`,
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
           }
-          const newAccessToken = await refreshAccessToken(refreshToken);
-          const headers = { Authorization: `Bearer ${newAccessToken}` };
-          const retryResponse = await axios.get(
-            `${process.env.REACT_APP_API_URL}/api/favs/friends/list`,
-            { headers }
-          );
+        );
 
-          if (retryResponse.data) {
-            setFriends(retryResponse.data);
-          }
-        } catch (refreshError) {
-          console.error('Failed to refresh access token:', refreshError);
+        if (response.data) {
+          setFriends(response.data);
         }
-      } else {
+      } catch (error) {
         console.error('Error fetching friends:', error);
       }
-    }
-  };
+    };
 
-  useEffect(() => {
     fetchFriends();
   }, []);
 
@@ -100,29 +78,7 @@ const FavoritesFriends = () => {
         setIsAddFriendModalOpen(true);
       }
     } catch (error) {
-      if (error.response?.status === 401 && error.response?.data?.error === 'access_token_expired') {
-        try {
-          const refreshToken = localStorage.getItem('refreshToken');
-          if (!refreshToken) {
-            throw new Error('No refresh token available.');
-          }
-          const newAccessToken = await refreshAccessToken(refreshToken);
-          const headers = { Authorization: `Bearer ${newAccessToken}` };
-          const retryResponse = await axios.get(
-            `${process.env.REACT_APP_API_URL}/api/favs/friends/details?favFriendId=${friend.favFriendId}`,
-            { headers }
-          );
-
-          if (retryResponse.data) {
-            setSelectedFriend(retryResponse.data);
-            setIsAddFriendModalOpen(true);
-          }
-        } catch (refreshError) {
-          console.error('Failed to refresh access token:', refreshError);
-        }
-      } else {
-        console.error('Error fetching friend details:', error);
-      }
+      console.error('Error fetching friend details:', error);
     } finally {
       setLoading(false);
     }
@@ -196,5 +152,3 @@ const FavoritesFriends = () => {
 };
 
 export default FavoritesFriends;
-
-

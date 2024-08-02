@@ -6,9 +6,9 @@ import { Logo } from '../../components/CommonComponents';
 const Again = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { midpoint, selectedPurpose: initialPurpose, selectedRadius: initialRadius } = location.state || {};
-  const [selectedPurpose, setSelectedPurpose] = useState(initialPurpose || '');
-  const [selectedRadius, setSelectedRadius] = useState(initialRadius || '1000');
+  const { midpoint } = location.state || {};
+  const [selectedPurpose, setSelectedPurpose] = useState('');
+  const [selectedRadius, setSelectedRadius] = useState('');
   const [places, setPlaces] = useState([]);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ const Again = () => {
   }, [midpoint]);
 
   const handleRetry = () => {
-    navigate('/home', { state: { selectedPurpose } });
+    navigate('/home', { state: { selectedPurpose, selectedRadius } });
   };
 
   const selectStyle = {
@@ -32,13 +32,13 @@ const Again = () => {
     fontSize: '16px',
     fontWeight: 'bold',
     color: '#1B4345',
-    appearance: 'none', // 기본 화살표 삭제
-    WebkitAppearance: 'none', // 기본 화살표 삭제 (사파리용)
-    MozAppearance: 'none', // 기본 화살표 삭제 (파이어폭스용)
+    appearance: 'none',
+    WebkitAppearance: 'none',
+    MozAppearance: 'none',
     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='none' d='M0 0h10v10H0z'/%3E%3Cpath d='M2.5 3.5a.5.5 0 01.7 0L5 5.3l1.8-1.8a.5.5 0 01.7.7L5.5 6.5a.5.5 0 01-.7 0L2.5 4.2a.5.5 0 010-.7z' fill='%231B4345'/%3E%3C/svg%3E")`,
     backgroundPosition: 'calc(100% - 0.5rem) center',
     backgroundRepeat: 'no-repeat',
-    backgroundSize: '20px', // 화살표 크기 조정
+    backgroundSize: '20px',
   };
 
   return (
@@ -63,6 +63,7 @@ const Again = () => {
                 <option value="social">친목</option>
               </select>
               <select style={selectStyle} value={selectedRadius} onChange={(e) => setSelectedRadius(e.target.value)}>
+                <option value="" disabled hidden>반경 선택</option>
                 <option value="1000">1km 이내</option>
                 <option value="2000">2km 이내</option>
                 <option value="3000">3km 이내</option>

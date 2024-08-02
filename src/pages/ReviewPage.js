@@ -52,7 +52,7 @@ const hashtagMap = {
   10: '#혼자',
 };
 
-const useFetchReviews = (isLoggedIn) => {
+const useFetchReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [filteredReviews, setFilteredReviews] = useState([]);
   const [error, setError] = useState('');
@@ -73,10 +73,9 @@ const useFetchReviews = (isLoggedIn) => {
         firstImageUrl: review.firstImageUrl,
         title: review.title,
         hashtags: review.hashtags.map((tagId) => hashtagMap[tagId]),
-        likes: isLoggedIn ? review.likes : false,
+        likes: review.likes,
       }));
 
-      console.log(fetchedReviews);
       setReviews(fetchedReviews);
       setFilteredReviews(fetchedReviews);
     } catch (error) {
@@ -87,7 +86,7 @@ const useFetchReviews = (isLoggedIn) => {
 
   useEffect(() => {
     fetchReviews();
-  }, [isLoggedIn]);
+  }, []);
 
   return {
     reviews,
@@ -110,7 +109,7 @@ const ReviewPage = () => {
     setError,
     setReviews,
     fetchReviews,
-  } = useFetchReviews(isLoggedIn);
+  } = useFetchReviews();
   const [writeModalIsOpen, setWriteModalIsOpen] = useState(false);
   const [editModalIsOpen, setEditModalIsOpen] = useState(false);
   const [reviewModalIsOpen, setReviewModalIsOpen] = useState(false);
@@ -144,7 +143,6 @@ const ReviewPage = () => {
         likes: response.data.likes,
       };
 
-      console.log(fetchedReviewDetails);
       setSelectedReview(fetchedReviewDetails);
     } catch (error) {
       setError('해당 게시글 조회 중 오류가 발생하였습니다.');
@@ -184,13 +182,12 @@ const ReviewPage = () => {
   const openReviewModal = async (postId) => {
     await fetchReviewDetails(postId);
     setReviewModalIsOpen(true);
-    //document.querySelector('#root').setAttribute('inert', 'true'); // 가끔 있는 button 에러 때문에 구현,, 뺄 지 고민 배경 요소 비활성화
   };
 
   const closeReviewModal = async () => {
     setReviewModalIsOpen(false);
     await fetchReviews(); // 모달을 닫을 때 리뷰 새로고침
-    //document.querySelector('#root').removeAttribute('inert'); // 배경 요소 활성화
+    //window.location.reload(); 새로 고침
   };
 
   const handleWriteButtonClick = async () => {
@@ -213,27 +210,27 @@ const ReviewPage = () => {
   return (
     <div>
       <Logo bgColor="#F2F2F2" />
-      <div style={{ marginTop: '120px' }}>
+      <div id="content" style={{ marginTop: '120px' }}>
         <SearchBox
           setFilteredReviews={setFilteredReviews}
           setSearchTerm={setSearchTerm}
           clickedTags={clickedTags}
           setClickedTags={setClickedTags}
         />
-      </div>
-      <div style={reviewStyles.reviewContainer}>
-        {error ? (
-          <p>{error}</p>
-        ) : (
-          (filteredReviews.length > 0 ? filteredReviews : reviews).map((review) => (
-            <ReviewCard
-              key={review.postId}
-              review={review}
-              onReviewClick={openReviewModal}
-              onLikeToggle={handleLikeToggle}
-            />
-          ))
-        )}
+        <div style={reviewStyles.reviewContainer}>
+          {error ? (
+            <p>{error}</p>
+          ) : (
+            (filteredReviews.length > 0 ? filteredReviews : reviews).map((review) => (
+              <ReviewCard
+                key={review.postId}
+                review={review}
+                onReviewClick={openReviewModal}
+                onLikeToggle={handleLikeToggle}
+              />
+            ))
+          )}
+        </div>
       </div>
       <button
         onClick={handleWriteButtonClick}
