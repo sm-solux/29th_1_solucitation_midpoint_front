@@ -260,7 +260,7 @@ const AddFriendModal = ({
         const response = await axios.get(proxyUrl + encodeURIComponent(targetUrl));
         const data = JSON.parse(response.data.contents);
         const filteredSuggestions = data.predictions.filter(prediction => 
-          prediction.description.includes(value)
+          prediction.description.toLowerCase().includes(value.toLowerCase())
         );
         setSuggestions(filteredSuggestions.slice(0, 4));
       } catch (error) {
@@ -278,10 +278,12 @@ const AddFriendModal = ({
     fetchSuggestions(value);
   };
 
-  const handleSuggestionClick = (suggestion) => {
-    setAddress(suggestion.description);
-    setSearchInput(suggestion.description);
+  const handleSuggestionClick = async (suggestion) => {
+    const address = suggestion.description;
+    setAddress(address);
+    setSearchInput(address);
     setSuggestions([]);
+    await fetchCoordinates(address);
   };
 
   return (
