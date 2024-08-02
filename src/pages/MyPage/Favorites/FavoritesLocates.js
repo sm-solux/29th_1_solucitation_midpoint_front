@@ -6,14 +6,8 @@ const FavoritesLocates = () => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [isAddLocationModalOpen, setIsAddLocationModalOpen] = useState(false);
   const [locations, setLocations] = useState([
-    { id: 1, name: '집', locate: '', icon: 'homeIcon', type: 'home' },
-    {
-      id: 2,
-      name: '직장/학교',
-      locate: '서울특별시 동작구',
-      icon: 'schoolIcon',
-      type: 'work',
-    },
+    { name: '집', locate: '', icon: 'homeIcon', type: 'HOME' },
+    { name: '직장/학교', locate: '', icon: 'workIcon', type: 'WORK' },
   ]);
 
   const openAddLocationModal = (location) => {
@@ -23,27 +17,24 @@ const FavoritesLocates = () => {
 
   const closeAddLocationModal = () => {
     setIsAddLocationModalOpen(false);
+    setSelectedLocation(null);
   };
 
-  const handleAddLocation = (newLocation) => {
-    setLocations((prevLocations) => [...prevLocations, newLocation]);
-    setSelectedLocation(newLocation);
-  };
-
-  const handleEditLocation = (editedLocation) => {
+  const handleAddOrEditLocation = (newLocation) => {
     setLocations((prevLocations) =>
       prevLocations.map((location) =>
-        location.id === editedLocation.id ? editedLocation : location
+        location.type === newLocation.addrType ? { ...location, ...newLocation } : location
       )
     );
-    setSelectedLocation(editedLocation);
+    closeAddLocationModal();
   };
 
   const handleDeleteLocation = (locationToDelete) => {
     setLocations((prevLocations) =>
-      prevLocations.filter((location) => location.id !== locationToDelete.id)
+      prevLocations.map((location) =>
+        location.type === locationToDelete.addrType ? { ...location, locate: '' } : location
+      )
     );
-    setSelectedLocation(null);
     closeAddLocationModal();
   };
 
@@ -60,9 +51,9 @@ const FavoritesLocates = () => {
       </h3>
       {locations.map((location) => (
         <div
-          key={location.id}
+          key={location.type}
           onClick={() => openAddLocationModal(location)}
-          style={myPageStyles.locateontainer}
+          style={myPageStyles.locateContainer}
         >
           <img
             src={`/img/${location.icon}.png`}
@@ -74,12 +65,12 @@ const FavoritesLocates = () => {
           {'                         >'}
         </div>
       ))}
-      {selectedLocation && (
+      {isAddLocationModalOpen && (
         <AddLocationModal
           isOpen={isAddLocationModalOpen}
           closeModal={closeAddLocationModal}
-          addLocation={handleAddLocation}
-          editLocation={handleEditLocation}
+          addLocation={handleAddOrEditLocation}
+          editLocation={handleAddOrEditLocation}
           deleteLocation={handleDeleteLocation}
           selectedLocation={selectedLocation}
           loading={false}

@@ -1,5 +1,3 @@
-import styled from "styled-components";
-
 export const myPageStyles = {
   container: {
     maxWidth: '1000px',
@@ -274,7 +272,7 @@ export const myPageStyles = {
     borderRadius: "8px",
     padding: '10px',
   },
-  locateontainer: {
+  locateContainer: {
     display: 'flex',
     alignItems: 'center',
     gap: '15px',
