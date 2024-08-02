@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Logo } from '../components/CommonComponents';
-import SearchBox from '../components/SearchComponents';
+import SearchComponents from '../components/SearchComponents';
 import ReviewCard from './review/ReviewCard';
 import ReviewModal from './review/ReviewModal';
 import WriteModal from './review/WriteModal';
@@ -211,7 +211,7 @@ const ReviewPage = () => {
     <div>
       <Logo bgColor="#F2F2F2" />
       <div id="content" style={{ marginTop: '120px' }}>
-        <SearchBox
+        <SearchComponents
           setFilteredReviews={setFilteredReviews}
           setSearchTerm={setSearchTerm}
           clickedTags={clickedTags}
@@ -239,7 +239,7 @@ const ReviewPage = () => {
         <img
           src="/img/WriteButtonIcon.png"
           alt="write button"
-          style={reviewStyles.writeButton}
+          style={reviewStyles.writeButtonImage}
         />
       </button>
       <WriteModal
