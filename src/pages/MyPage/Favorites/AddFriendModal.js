@@ -91,18 +91,23 @@ const AddFriendModal = ({
   };
 
   const handleAddFriend = () => {
-    if (!name || !searchInput) {
-      setErrorMessage('이름과 주소를 입력해주세요.');
+    if (!name) {
+      alert('이름을 입력해주세요.');
+      return;
+    }
+
+    if (!searchInput) {
+      alert('주소를 입력해주세요.');
       return;
     }
 
     if (name.length < 1 || name.length > 100) {
-      setErrorMessage('이름은 최소 1글자 이상 최대 100글자 이하로 입력해야 합니다.');
+      alert('이름은 최소 1글자 이상 최대 100글자 이하로 입력해야 합니다.');
       return;
     }
 
     if (searchInput.length < 1 || searchInput.length > 255) {
-      setErrorMessage('주소는 최소 1글자 이상 최대 255글자 이하로 입력해야 합니다.');
+      alert('주소는 최소 1글자 이상 최대 255글자 이하로 입력해야 합니다.');
       return;
     }
 
@@ -135,18 +140,23 @@ const AddFriendModal = ({
   };
 
   const handleEditFriend = async () => {
-    if (!name || !searchInput) {
-      setErrorMessage('이름과 주소를 입력해주세요.');
+    if (!name) {
+      alert('이름을 입력해주세요.');
+      return;
+    }
+
+    if (!searchInput) {
+      alert('주소를 입력해주세요.');
       return;
     }
 
     if (name.length < 1 || name.length > 100) {
-      setErrorMessage('이름은 최소 1글자 이상 최대 100글자 이하로 입력해야 합니다.');
+      alert('이름은 최소 1글자 이상 최대 100글자 이하로 입력해야 합니다.');
       return;
     }
 
     if (searchInput.length < 1 || searchInput.length > 255) {
-      setErrorMessage('주소는 최소 1글자 이상 최대 255글자 이하로 입력해야 합니다.');
+      alert('주소는 최소 1글자 이상 최대 255글자 이하로 입력해야 합니다.');
       return;
     }
 

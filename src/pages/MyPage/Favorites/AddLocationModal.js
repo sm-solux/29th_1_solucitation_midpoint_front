@@ -67,7 +67,6 @@ const AddLocationModal = ({
         setDataExists(false);
       }
     } catch (error) {
-      console.error('장소 상세 정보 가져오기 오류:', error.message);
       setIsEditing(true);
       setDataExists(false);
     }
@@ -108,7 +107,7 @@ const AddLocationModal = ({
 
   const handleAddLocation = async () => {
     if (!searchInput) {
-      setErrorMessage('주소를 입력해주세요.');
+      alert('주소를 입력해주세요.');
       return;
     }
 
@@ -140,7 +139,7 @@ const AddLocationModal = ({
 
   const handleEditLocation = async () => {
     if (!searchInput) {
-      setErrorMessage('주소를 입력해주세요.');
+      alert('주소를 입력해주세요.');
       return;
     }
 
