@@ -110,7 +110,7 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
     }
   };
 
-  const debouncedFetchSuggestions = debounce(fetchSuggestions, 300);
+  const debouncedFetchSuggestions = debounce(fetchSuggestions, 0);
 
   const handleSearchInputChange = (e) => {
     const value = e.target.value;

@@ -97,6 +97,7 @@ export const commonStyles = {
     alignItems: "center",
     padding: "2rem",
     borderRadius: "8px",
+    marginTop: '60px',  // 헤더와의 간격을 유지하기 위해 여백 추가
   },
   inputContainer: {
     display: "flex",
