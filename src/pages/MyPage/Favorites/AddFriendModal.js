@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
-import debounce from 'lodash.debounce';
 import { myPageStyles } from '../../../styles/myPageStyles';
 
 Modal.setAppElement('#root');
@@ -92,18 +91,23 @@ const AddFriendModal = ({
   };
 
   const handleAddFriend = () => {
-    if (!name || !searchInput) {
-      setErrorMessage('이름과 주소를 입력해주세요.');
+    if (!name) {
+      alert('이름을 입력해주세요.');
+      return;
+    }
+
+    if (!searchInput) {
+      alert('주소를 입력해주세요.');
       return;
     }
 
     if (name.length < 1 || name.length > 100) {
-      setErrorMessage('이름은 최소 1글자 이상 최대 100글자 이하로 입력해야 합니다.');
+      alert('이름은 최소 1글자 이상 최대 100글자 이하로 입력해야 합니다.');
       return;
     }
 
     if (searchInput.length < 1 || searchInput.length > 255) {
-      setErrorMessage('주소는 최소 1글자 이상 최대 255글자 이하로 입력해야 합니다.');
+      alert('주소는 최소 1글자 이상 최대 255글자 이하로 입력해야 합니다.');
       return;
     }
 
@@ -136,18 +140,23 @@ const AddFriendModal = ({
   };
 
   const handleEditFriend = async () => {
-    if (!name || !searchInput) {
-      setErrorMessage('이름과 주소를 입력해주세요.');
+    if (!name) {
+      alert('이름을 입력해주세요.');
+      return;
+    }
+
+    if (!searchInput) {
+      alert('주소를 입력해주세요.');
       return;
     }
 
     if (name.length < 1 || name.length > 100) {
-      setErrorMessage('이름은 최소 1글자 이상 최대 100글자 이하로 입력해야 합니다.');
+      alert('이름은 최소 1글자 이상 최대 100글자 이하로 입력해야 합니다.');
       return;
     }
 
     if (searchInput.length < 1 || searchInput.length > 255) {
-      setErrorMessage('주소는 최소 1글자 이상 최대 255글자 이하로 입력해야 합니다.');
+      alert('주소는 최소 1글자 이상 최대 255글자 이하로 입력해야 합니다.');
       return;
     }
 
@@ -208,7 +217,7 @@ const AddFriendModal = ({
         }
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          setErrorMessage('존재하지 않는 친구입니다.');
+          alert('존재하지 않는 친구입니다.');
         } else {
           console.error('친구 삭제 오류:', error.message);
           setErrorMessage(getErrorMessage(error));
@@ -246,11 +255,14 @@ const AddFriendModal = ({
   const fetchSuggestions = async (value) => {
     if (value.trim() !== '') {
       const proxyUrl = 'https://api.allorigins.win/get?url=';
-      const targetUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${value}&key=${GEOCODING_API_KEY}&language=ko`;
+      const targetUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${value}&components=country:kr&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&language=ko`;
       try {
         const response = await axios.get(proxyUrl + encodeURIComponent(targetUrl));
         const data = JSON.parse(response.data.contents);
-        setSuggestions(data.predictions);
+        const filteredSuggestions = data.predictions.filter(prediction => 
+          prediction.description.includes(value)
+        );
+        setSuggestions(filteredSuggestions.slice(0, 4));
       } catch (error) {
         console.error('Error fetching suggestions:', error.message);
       }
@@ -259,13 +271,11 @@ const AddFriendModal = ({
     }
   };
 
-  const debouncedFetchSuggestions = debounce(fetchSuggestions, 300);
-
   const handleSearchInputChange = (e) => {
     const value = e.target.value;
     setSearchInput(value);
     setAddress(value);
-    debouncedFetchSuggestions(value);
+    fetchSuggestions(value);
   };
 
   const handleSuggestionClick = (suggestion) => {
@@ -317,7 +327,6 @@ const AddFriendModal = ({
           ))}
         </ul>
       )}
-      {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
       <div>
         {selectedFriend ? (
           isEditing ? (

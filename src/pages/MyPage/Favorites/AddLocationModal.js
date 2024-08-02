@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
-import debounce from 'lodash.debounce';
 import { myPageStyles } from '../../../styles/myPageStyles';
 
-// 모달 컴포넌트를 앱 루트 요소와 연결
 Modal.setAppElement('#root');
 
 const GEOCODING_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
@@ -31,9 +29,8 @@ const AddLocationModal = ({
 
   useEffect(() => {
     if (selectedLocation) {
-      const locationType = selectedLocation.name === '집' ? 'HOME' : 'WORK';
-      setAddrType(locationType);
-      fetchLocationDetails(selectedLocation.favPlaceId);
+      setAddrType(selectedLocation.type);
+      fetchLocationDetails(selectedLocation.type);
     } else {
       clearInputs();
       setIsEditing(true);
@@ -43,16 +40,19 @@ const AddLocationModal = ({
 
   useEffect(() => {
     if (!isOpen) {
-      clearInputs(); // 모달이 닫힐 때 필드 초기화
+      clearInputs();
     }
   }, [isOpen]);
 
-  const fetchLocationDetails = async (locationId) => {
+  const fetchLocationDetails = async (addrType) => {
     try {
       const accessToken = localStorage.getItem('accessToken');
       const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
 
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/favs/places/details?favPlaceId=${locationId}`, { headers });
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/favs/places/details`, {
+        params: { addrType },
+        headers
+      });
 
       if (response.data) {
         setAddress(response.data.addr || '');
@@ -67,7 +67,6 @@ const AddLocationModal = ({
         setDataExists(false);
       }
     } catch (error) {
-      console.error('장소 상세 정보 가져오기 오류:', error.message);
       setIsEditing(true);
       setDataExists(false);
     }
@@ -106,9 +105,9 @@ const AddLocationModal = ({
     setErrorMessage('');
   };
 
-  const handleAddLocation = () => {
+  const handleAddLocation = async () => {
     if (!searchInput) {
-      setErrorMessage('주소를 입력해주세요.');
+      alert('주소를 입력해주세요.');
       return;
     }
 
@@ -120,34 +119,31 @@ const AddLocationModal = ({
     };
 
     const accessToken = localStorage.getItem('accessToken');
-    const headers = accessToken
-      ? { Authorization: `Bearer ${accessToken}` }
-      : {};
+    const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
 
-    axios.post(`${process.env.REACT_APP_API_URL}/api/favs/places/save`, newLocation, { headers })
-      .then((response) => {
-        if (response.data.success) {
-          addLocation({ ...newLocation, favPlaceId: response.data.favPlaceId });
-          clearInputs();
-          closeModal();
-        } else {
-          setErrorMessage(response.data.message);
-        }
-      })
-      .catch((error) => {
-        console.error('장소 저장 오류:', error.message);
-        setErrorMessage(getErrorMessage(error));
-      });
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/favs/places/save`, newLocation, { headers });
+
+      if (response.data.success) {
+        addLocation({ ...newLocation, favPlaceId: response.data.favPlaceId });
+        clearInputs();
+        closeModal();
+      } else {
+        setErrorMessage(response.data.message);
+      }
+    } catch (error) {
+      console.error('장소 저장 오류:', error.message);
+      setErrorMessage(getErrorMessage(error));
+    }
   };
 
   const handleEditLocation = async () => {
     if (!searchInput) {
-      setErrorMessage('주소를 입력해주세요.');
+      alert('주소를 입력해주세요.');
       return;
     }
 
     const updatedLocation = {
-      favPlaceId: selectedLocation.favPlaceId,
       addrType,
       addr: searchInput,
       latitude: parseFloat(latitude),
@@ -156,7 +152,7 @@ const AddLocationModal = ({
 
     const accessToken = localStorage.getItem('accessToken');
     const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
-    console.log(updatedLocation);
+
     try {
       const response = await axios.patch(
         `${process.env.REACT_APP_API_URL}/api/favs/places/update`,
@@ -165,7 +161,7 @@ const AddLocationModal = ({
       );
 
       if (response.data.success) {
-        editLocation({ ...updatedLocation });
+        editLocation(updatedLocation);
         clearInputs();
         closeModal();
       } else {
@@ -182,22 +178,19 @@ const AddLocationModal = ({
       const accessToken = localStorage.getItem('accessToken');
       const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
 
-      if (!selectedLocation || !selectedLocation.favPlaceId) {
-        setErrorMessage('장소 정보를 찾을 수 없습니다.');
-        return;
-      }
-
       try {
         const response = await axios.delete(
-          `${process.env.REACT_APP_API_URL}/api/favs/places/delete?favPlaceId=${selectedLocation.favPlaceId}`,
-          { headers }
+          `${process.env.REACT_APP_API_URL}/api/favs/places/delete`,
+          { 
+            params: { addrType },
+            headers
+          }
         );
 
         if (response.data.success) {
           deleteLocation(selectedLocation);
-          closeModal();
           clearInputs();
-          setIsEditing(false);
+          closeModal();
         } else {
           setErrorMessage(response.data.message);
         }
@@ -238,15 +231,16 @@ const AddLocationModal = ({
   };
 
   const fetchSuggestions = async (value) => {
-    console.log('Fetching suggestions for:', value); // 콘솔 로그 추가
     if (value.trim() !== '') {
       const proxyUrl = 'https://api.allorigins.win/get?url=';
-      const targetUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${value}&key=${GEOCODING_API_KEY}&language=ko`;
+      const targetUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${value}&components=country:kr&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&language=ko`;
       try {
         const response = await axios.get(proxyUrl + encodeURIComponent(targetUrl));
         const data = JSON.parse(response.data.contents);
-        console.log('Suggestions:', data.predictions); // 콘솔 로그 추가
-        setSuggestions(data.predictions);
+        const filteredSuggestions = data.predictions.filter(prediction => 
+          prediction.description.includes(value)
+        );
+        setSuggestions(filteredSuggestions.slice(0, 4));
       } catch (error) {
         console.error('Error fetching suggestions:', error.message);
       }
@@ -255,13 +249,11 @@ const AddLocationModal = ({
     }
   };
 
-  const debouncedFetchSuggestions = debounce(fetchSuggestions, 300);
-
   const handleSearchInputChange = (e) => {
     const value = e.target.value;
     setSearchInput(value);
     setAddress(value);
-    debouncedFetchSuggestions(value);
+    fetchSuggestions(value);
   };
 
   const handleSuggestionClick = async (suggestion) => {
@@ -269,7 +261,7 @@ const AddLocationModal = ({
     setAddress(address);
     setSearchInput(address);
     setSuggestions([]);
-    await fetchCoordinates(address); // 자동 완성된 주소를 클릭할 때 위도와 경도를 가져옴
+    await fetchCoordinates(address);
   };
 
   return (
@@ -279,7 +271,18 @@ const AddLocationModal = ({
       style={{ overlay: myPageStyles.overlay, content: myPageStyles.modal }}
       contentLabel="장소 추가/편집"
     >
-      <h3>{selectedLocation ? selectedLocation.name : '장소 추가'}</h3>
+      <div style={{ textAlign: 'center' }}>
+        {selectedLocation && (
+          <img
+            src={`/img/${selectedLocation.icon}.png`}
+            width='35'
+            height='35'
+            alt={selectedLocation.name}
+            style={{ display: 'block', margin: '0 auto' }}
+          />
+        )}
+        <h3>{selectedLocation ? selectedLocation.name : '장소 추가'}</h3>
+      </div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <input
           type="text"
@@ -303,7 +306,6 @@ const AddLocationModal = ({
           ))}
         </ul>
       )}
-      {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
       <div>
         {dataExists ? (
           isEditing ? (

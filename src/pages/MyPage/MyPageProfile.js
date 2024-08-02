@@ -1,12 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import '../../styles/global.css';
-import { myPageStyles } from '../../styles/myPageStyles';
-import { refreshAccessToken } from '../../components/refreshAccess';
-import { ProfileField, ProfilePassword, ProfileImage } from './Profile/ProfileComponents';
-import PasswordConfirmation from './Profile/PasswordConfirmation';
-import PasswordChange from './Profile/PasswordChange';
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "../../styles/global.css";
+import { myPageStyles } from "../../styles/myPageStyles";
+import { refreshAccessToken } from "../../components/refreshAccess";
+import { ProfileField, ProfilePassword, ProfileImage } from "./Profile/ProfileComponents";
+import PasswordConfirmation from "./Profile/PasswordConfirmation";
+import {
+  LoginTitle,
+  ResetPasswordForm,
+} from "../../components/LoginComponents";
+import { commonStyles, LoginText } from "../../styles/styles";
 
 const MyPageProfile = () => {
   const [state, setState] = useState({
@@ -29,8 +33,13 @@ const MyPageProfile = () => {
     password: '********',
   });
 
-  const [previewImage, setPreviewImage] = useState(null); // 미리보기 이미지 보여주기
-  const [isDefaultImage, setIsDefaultImage] = useState(false); // 기본 이미지 여부 상태
+  const [values, setValues] = useState({
+    password: '',
+    passwordVerification: '',
+  });
+
+  const [previewImage, setPreviewImage] = useState(null);
+  const [isDefaultImage, setIsDefaultImage] = useState(false);
 
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
@@ -114,7 +123,6 @@ const MyPageProfile = () => {
     const file = e.target.files[0];
 
     if (file === null) {
-      // 기본 이미지로 변경
       setProfileData(prev => ({
         ...prev,
         profileImage: `${process.env.PUBLIC_URL}/img/default-profile.png`
@@ -122,7 +130,6 @@ const MyPageProfile = () => {
       setPreviewImage(`${process.env.PUBLIC_URL}/img/default-profile.png`);
       setIsDefaultImage(true);
     } else if (file) {
-
       const previewUrl = URL.createObjectURL(file);
       setPreviewImage(previewUrl); 
       setIsDefaultImage(false);
@@ -257,16 +264,18 @@ const MyPageProfile = () => {
 
   if (state.passwordEditMode) {
     return (
-      <PasswordChange
-        onChangePassword={(newPassword) => {
-          if (newPassword.length < 8 || newPassword.length > 16) {
-            alert('비밀번호는 8자 이상 16자 이하여야 합니다.');
-            return;
-          }
-          setProfileData({ ...profileData, password: newPassword });
-          setState({ ...state, passwordEditMode: false, editMode: false });
-        }}
+    <div style={myPageStyles.passwordContainer}>
+      <h2 style={myPageStyles.passwordTitle}>비밀번호 변경</h2>
+      <ResetPasswordForm
+        inputs={[
+          { label: "새 비밀번호", type: "password", id: "password", required: true },
+          { label: "새 비밀번호 확인", type: "password", id: "passwordVerification", required: true },
+        ]}
+        values={values}
+        setValues={setValues}
+        buttonText="변경"
       />
+      </div>
     );
   }
 

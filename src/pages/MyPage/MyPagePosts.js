@@ -158,6 +158,7 @@ const MyPagePosts = () => {
   const closeReviewModal = async () => {
     setReviewModalIsOpen(false);
     //await fetchReviews(); // 모달을 닫을 때 리뷰 새로고침
+    window.location.reload();
   };
 
   const handleWriteButtonClick = () => {
