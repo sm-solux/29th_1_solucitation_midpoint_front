@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
-import debounce from 'lodash.debounce';
 import { myPageStyles } from '../../../styles/myPageStyles';
 
 Modal.setAppElement('#root');
@@ -251,13 +250,11 @@ const AddLocationModal = ({
     }
   };
 
-  const debouncedFetchSuggestions = debounce(fetchSuggestions, 300);
-
   const handleSearchInputChange = (e) => {
     const value = e.target.value;
     setSearchInput(value);
     setAddress(value);
-    debouncedFetchSuggestions(value);
+    fetchSuggestions(value);
   };
 
   const handleSuggestionClick = async (suggestion) => {
@@ -310,7 +307,6 @@ const AddLocationModal = ({
           ))}
         </ul>
       )}
-      {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
       <div>
         {dataExists ? (
           isEditing ? (
