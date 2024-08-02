@@ -1,7 +1,7 @@
-import { React, useState } from "react";
+import { React } from "react";
 import { Logo } from "../../components/CommonComponents";
 import { LoginTitle, FindPasswordForm } from "../../components/LoginComponents";
-import { commonStyles, LoginText } from "../../styles/styles";
+import { commonStyles } from "../../styles/styles";
 
 const inputs = [
   { label: "이름", type: "name", id: "name", required: true },
@@ -9,15 +9,12 @@ const inputs = [
 ];
 
 function FindPassword() {
-
   return (
     <div>
       <Logo />
       <div style={commonStyles.centerContainer}>
         <LoginTitle text="비밀번호 찾기" />
-        <FindPasswordForm
-          inputs={inputs}
-        />
+        <FindPasswordForm inputs={inputs} />
       </div>
     </div>
   );

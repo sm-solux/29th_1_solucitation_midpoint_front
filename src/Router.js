@@ -6,7 +6,6 @@ import DirectLoginPage from "./pages/login/DirectLoginPage";
 import FindPassword from "./pages/login/FindPassword";
 import Join from "./pages/login/Join";
 import ResetPassword from "./pages/login/ResetPassword";
-import KakaoRedirect from "./pages/login/KakaoRedirect";
 import Home from "./pages/home/HomeMain";
 import ReviewPage from "./pages/ReviewPage";
 import MyPage from "./pages/MyPage";
