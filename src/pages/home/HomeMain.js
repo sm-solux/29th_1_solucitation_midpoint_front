@@ -192,7 +192,7 @@ const Home = () => {
     { label: '등산', value: 'hiking' },
     { label: '공부', value: 'study' },
     { label: '문화생활', value: 'culture' },
-    { label: '핫플', value: 'hotplace' },
+    { label: '핫플', value: 'hot-place' },
     { label: '친목', value: 'social' },
   ];
 
