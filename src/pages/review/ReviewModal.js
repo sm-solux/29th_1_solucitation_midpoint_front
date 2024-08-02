@@ -190,7 +190,6 @@ const ReviewModal = ({ isOpen, review, closeModal, openEditModal, deleteReview, 
           </div>
         )}
       </div>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
       {likeError && <p style={{ color: 'red' }}>{likeError}</p>}
     </Modal>
   );
