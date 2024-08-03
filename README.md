@@ -16,3 +16,73 @@
 
 
 ## 폴더구조
+├─assets
+│  └─fonts
+│          
+├─components
+│      CommonComponents.js
+│      LikeButtonComponents.js
+│      LoginComponents.js
+│      RedirectIfLoggedIn.js
+│      refreshAccess.js
+│      SearchComponents.js
+│      
+├─contexts
+│      AppContext.js
+│      
+├─pages
+│  │  MainPage.js
+│  │  MyPage.js
+│  │  ReviewPage.js
+│  │  
+│  ├─home
+│  │      Again.js
+│  │      HomeMain.js
+│  │      HomePopup.js
+│  │      Midpoint.js
+│  │      Result1.js
+│  │      Result2.js
+│  │      Result3.js
+│  │      Result4.js
+│  │      Test1.js
+│  │      Test2.js
+│  │      Test3.js
+│  │      
+│  ├─login
+│  │      DirectLoginPage.js
+│  │      FindPassword.js
+│  │      Join.js
+│  │      LoginPage.js
+│  │      ResetPassword.js
+│  │      
+│  ├─MyPage
+│  │  │  MyPageFavorites.js
+│  │  │  MyPagePosts.js
+│  │  │  MyPageProfile.js
+│  │  │  MyPageSearchHistory.js
+│  │  │  
+│  │  ├─Favorites
+│  │  │      AddFriendModal.js
+│  │  │      AddLocationModal.js
+│  │  │      FavoritesFriends.js
+│  │  │      FavoritesLocates.js
+│  │  │      
+│  │  └─Profile
+│  │          PasswordConfirmation.js
+│  │          ProfileComponents.js
+│  │          
+│  └─review
+│          EditModal.js
+│          ReviewCard.js
+│          ReviewModal.js
+│          WriteModal.js
+│          
+└─styles
+        global.css
+        myPageStyles.js
+        reviewModalStyles.js
+        reviewStyles.js
+        searchStyles.js
+        styles.js
+        writeModalStyles.js
+        
