@@ -175,7 +175,7 @@ function Midpoint() {
         placeId: place.placeID,
         placeName: place.name,
         placeAddress: place.address,
-        imageUrl: await shortenUrl(place.photo || '/img/default-image.png'),
+        imageUrl: await shortenUrl(place.image || '/img/default-image.png'),
       })))
     };
 
