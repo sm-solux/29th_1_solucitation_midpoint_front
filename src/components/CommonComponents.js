@@ -45,6 +45,7 @@ function Logo({ exist = true, bgColor = "transparent" }) {
   };
 
   const homeRoutes = new Set([
+    "/home",
     "/again",
     "/test1",
     "/test2",

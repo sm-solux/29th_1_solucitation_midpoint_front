@@ -8,6 +8,7 @@ import {
 import axios from "axios";
 import debounce from "lodash.debounce";
 import { AppContext } from "../../contexts/AppContext";
+import { useNavigate } from "react-router-dom";
 
 const HomePopup = ({
   onClose,
@@ -29,6 +30,7 @@ const HomePopup = ({
     work: null,
   });
   const { isLoggedIn } = useContext(AppContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -276,6 +278,7 @@ const HomePopup = ({
       setSearchInput(place.addr);
     } else {
       alert("즐겨찾는 장소를 등록해주세요.");
+      navigate('/MyPage')
     }
   };
 
@@ -296,9 +299,12 @@ const HomePopup = ({
             onFocus={handleSearchInputFocus}
             onChange={handleSearchInputChange}
           />
-          <button onClick={handleSearch} style={commonStyles.popupButton}>
-            검색
-          </button>
+          {selectedSuggestion && (
+            <button onClick={handleSearch} style={commonStyles.popupButton}>
+              확인
+            </button>
+          )}
+
           <button
             onClick={() => onClose()}
             style={commonStyles.popupCloseButton}
