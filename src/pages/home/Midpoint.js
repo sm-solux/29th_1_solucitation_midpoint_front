@@ -111,29 +111,32 @@ function Midpoint() {
       alert('공유할 장소를 선택해주세요.');
       return;
     }
-
+  
     try {
       const placeInfoPromises = selectedPlaces.map(async place => {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/reviews?placeId=${place.placeID}`);
         const googleReviewUrl = response.data.url;
-        return `${place.name}: ${place.translatedAddress || place.address}\n리뷰: ${googleReviewUrl}`;
+        return `📍상호명: ${place.name}\n주소: ${place.translatedAddress || place.address}\n리뷰: ${googleReviewUrl}`;
       });
-
+  
       const placeInfoArray = await Promise.all(placeInfoPromises);
       const placeInfo = placeInfoArray.join('\n\n');
-
+  
+      const message = `추천 장소\n\n${placeInfo}`;
+  
       window.Kakao.Link.sendDefault({
         objectType: 'text',
-        text: `추천 장소:\n${placeInfo}`,
+        text: message,
         link: {
-          webUrl: window.location.href,
-          mobileWebUrl: window.location.href,
+          webUrl: '',  
+          mobileWebUrl: ''  
         },
+        buttonTitle: ' ', 
       });
     } catch (error) {
       console.error('Error fetching Google review URLs for sharing:', error);
     }
-  };
+  };  
 
   const handleSave = async () => {
     if (!isLoggedIn) {

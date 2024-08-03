@@ -25,6 +25,7 @@ const AddFriendModal = ({
   const [errorMessage, setErrorMessage] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [searchInput, setSearchInput] = useState("");
+  const [isAddressSelected, setIsAddressSelected] = useState(false); // 주소가 선택되었는지 추적하는 상태 변수
 
   useEffect(() => {
     if (selectedFriend) {
@@ -35,6 +36,7 @@ const AddFriendModal = ({
       setLongitude(selectedFriend.longitude || "");
       setOriginalFriend(selectedFriend);
       setIsEditing(false);
+      setIsAddressSelected(true); // 기존 주소가 있으므로 주소가 선택된 상태로 설정
     } else {
       clearInputs();
       setIsEditing(true);
@@ -83,6 +85,7 @@ const AddFriendModal = ({
     setLongitude("");
     setErrorMessage("");
     setSuggestions([]);
+    setIsAddressSelected(false); // 초기화 시 주소 선택 상태도 초기화
   }, []);
 
   const handleAddFriend = async () => {
@@ -91,8 +94,8 @@ const AddFriendModal = ({
       return;
     }
 
-    if (!searchInput) {
-      alert("주소를 입력해주세요.");
+    if (!searchInput || !isAddressSelected) { // 주소가 선택되지 않았을 때 추가를 막음
+      alert("정확한 주소를 입력해주세요.");
       return;
     }
 
@@ -144,8 +147,8 @@ const AddFriendModal = ({
       return;
     }
 
-    if (!searchInput) {
-      alert("주소를 입력해주세요.");
+    if (!searchInput || !isAddressSelected) { // 주소가 선택되지 않았을 때 수정을 막음
+      alert("정확한 주소를 입력해주세요.");
       return;
     }
 
@@ -283,6 +286,7 @@ const AddFriendModal = ({
     const value = e.target.value;
     setSearchInput(value);
     setAddress(value);
+    setIsAddressSelected(false); // 주소 입력이 변경되면 선택되지 않은 상태로 설정
     fetchSuggestions(value);
   };
 
@@ -291,6 +295,7 @@ const AddFriendModal = ({
     setAddress(address);
     setSearchInput(address);
     setSuggestions([]);
+    setIsAddressSelected(true); // 주소 선택 상태로 설정
     await fetchCoordinates(address);
   };
 
