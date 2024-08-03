@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { searchStyles } from '../styles/searchStyles';
 
-const SearchBox = ({
+const SearchComponents = ({
   setFilteredReviews,
   setSearchTerm,
   clickedTags,
@@ -38,7 +38,12 @@ const SearchBox = ({
   };
 
   const handleInputChange = (e) => {
-    setSearchText(e.target.value);
+    const newText = e.target.value;
+    if (newText.length <= 255) {
+      setSearchText(newText);
+    } else {
+      window.alert('검색어는 최대 255자까지 입력할 수 있습니다.');
+    }
   };
 
   const handleTagClick = (tagId) => {
@@ -58,6 +63,7 @@ const SearchBox = ({
     });
   };
 
+  // 모든 게시물 가져오기
   const fetchAllPosts = async () => {
     try {
       const accessToken = localStorage.getItem('accessToken');
@@ -93,6 +99,11 @@ const SearchBox = ({
 
   // 검색어로 검색
   const fetchBySearchTerm = async (text) => {
+    if (text.length === 0) {
+      fetchAllPosts();
+      return;
+    }
+
     try {
       const accessToken = localStorage.getItem('accessToken');
       const headers = accessToken
@@ -114,6 +125,11 @@ const SearchBox = ({
           hashtags: item.hashtags.map((tagId) => hashtagMap[tagId]),
           likes: item.likes,
         }));
+
+        if (data.length === 0) {
+          window.alert('해당하는 검색어는 존재하지 않습니다.');
+        }
+
         setFilteredReviews(data);
         setError(null);
       }
@@ -256,4 +272,4 @@ const SearchBox = ({
   );
 };
 
-export default SearchBox;
+export default SearchComponents;

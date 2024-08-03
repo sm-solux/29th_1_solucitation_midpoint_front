@@ -136,13 +136,14 @@ export const TagButton = styled.button`
 export const SubmitButton = styled.button`
   color: #ffffff;
   background-color: #1b4345;
-  border: 2px none bold;
+  border: noe;
   border-radius: 5px;
   position: absolute;
-  font-size: 15px;
+  font-size: 18px;
+  font-family: 'Freesentation', sans-serif;
   padding: 5px 20px;
-  bottom: 30px;
-  right: 40px;
+  bottom: 40px;
+  right: 50px;
   cursor: pointer;
 `;
 

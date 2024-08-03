@@ -57,8 +57,8 @@ export const reviewStyles = {
     color: '#1B4345',
   },
   writeButton: {
-    width: '70px',
-    height: '70px',
+    width: '75px',
+    height: '75px',
     position: 'fixed',
     bottom: '50px',
     right: '90px',
@@ -66,5 +66,11 @@ export const reviewStyles = {
     borderRadius: '50%',
     backgroundColor: '#1B4345',
     padding: '5px',
+  },
+  writeButtonImage: {
+    width: '90%',
+    height: '90%',
+    display: 'block',
+    margin: 'auto',
   },
 };
