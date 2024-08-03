@@ -825,4 +825,8 @@ export {
   JoinForm,
   FindPasswordForm,
   ResetPasswordForm,
+  LoginFormContainer,
+  LoginInputGroup,
+  LoginInputField,
+  JoinButton
 };
