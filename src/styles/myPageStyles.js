@@ -325,6 +325,7 @@ export const myPageStyles = {
     top: "30px",
     right: "30px",
     zIndex: "1000",
+    cursor: "pointer",
   },
   modalContent: {
     display: "flex",
@@ -380,6 +381,7 @@ export const myPageStyles = {
     fontFamily: "Freesentation",
     fontSize: "18px",
     marginTop: "30px",
+    cursor: "pointer",
   },
   favoriteButtonEdit: {
     width: "80px",
@@ -390,6 +392,7 @@ export const myPageStyles = {
     fontFamily: "Freesentation",
     fontSize: "18px",
     marginTop: "50px",
+    cursor: "pointer",
   },
   favoriteButtonQuit: {
     width: "80px",
@@ -400,6 +403,7 @@ export const myPageStyles = {
     fontFamily: "Freesentation",
     fontSize: "18px",
     marginLeft: "55px",
+    cursor: "pointer",
   },
 
   suggestionsList: {
