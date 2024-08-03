@@ -116,7 +116,7 @@ const ResetPasswordForm = ({ inputs, values, setValues, buttonText }) => {
           }
         } else {
           const errorData = await response.json();
-          console.log(errorData)
+          console.log(errorData);
           alert(
             `비밀번호 변경에 실패했습니다: ${
               errorData.message || "문제가 발생했습니다."
@@ -429,12 +429,12 @@ const MyPageProfile = () => {
       await axios.delete(`${process.env.REACT_APP_API_URL}/api/member/delete`, {
         headers: {
           "X-Delete-Token": `Bearer ${deleteToken}`,
-          "Authorization": `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
           "X-Refresh-Token": `Bearer ${refreshToken}`,
         },
       });
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
       alert("탈퇴 됐습니다.");
       navigate("/");
     } catch (error) {
@@ -452,7 +452,7 @@ const MyPageProfile = () => {
             {
               headers: {
                 "X-Delete-Token": `Bearer ${deleteToken}`,
-                "Authorization": `Bearer ${newAccessToken}`,
+                Authorization: `Bearer ${newAccessToken}`,
                 "X-Refresh-Token": `Bearer ${refreshToken}`,
               },
             }
