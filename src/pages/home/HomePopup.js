@@ -4,7 +4,7 @@ import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { AppContext } from '../../contexts/AppContext';
 
-const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSelectedFriend }) => {
+const HomePopup = ({ onClose, setAddress, searchResults = [], setSearchResults, setSelectedFriend }) => {
   const mapRef = useRef(null);
   const [map, setMap] = useState(null);
   const [showMap, setShowMap] = useState(false);
@@ -12,14 +12,14 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
   const [searchInput, setSearchInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
-  const [favoriteFriends, setFavoriteFriends] = useState([]); // 즐겨찾는 친구 목록 상태 추가
-  const [favoritePlaces, setFavoritePlaces] = useState({ home: null, work: null }); // 즐겨찾는 장소 상태 추가
+  const [favoriteFriends, setFavoriteFriends] = useState([]);
+  const [favoritePlaces, setFavoritePlaces] = useState({ home: null, work: null });
   const { isLoggedIn } = useContext(AppContext);
 
   useEffect(() => {
     if (isLoggedIn) {
-      fetchFavoriteFriends(); 
-      fetchFavoritePlaces(); // 로그인 상태일 때 즐겨찾는 장소 목록을 가져옴
+      fetchFavoriteFriends();
+      fetchFavoritePlaces();
     }
   }, [isLoggedIn]);
 
@@ -33,8 +33,8 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/favs/friends/list`, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
       setFavoriteFriends(response.data);
     } catch (error) {
@@ -52,12 +52,12 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/favs/places/list`, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
       const places = response.data;
-      const homePlace = places.find(place => place.addrType === 'HOME');
-      const workPlace = places.find(place => place.addrType === 'WORK');
+      const homePlace = places.find((place) => place.addrType === 'HOME');
+      const workPlace = places.find((place) => place.addrType === 'WORK');
       setFavoritePlaces({ home: homePlace, work: workPlace });
     } catch (error) {
       console.error('Error fetching favorite places:', error);
@@ -72,7 +72,7 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
       script.onload = () => {
         if (mapRef.current && showMap) {
           const mapOptions = {
-            center: new window.google.maps.LatLng(37.5665, 126.9780),
+            center: new window.google.maps.LatLng(37.5665, 126.978),
             zoom: 10,
           };
           const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
@@ -82,7 +82,7 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
       document.head.appendChild(script);
     } else if (mapRef.current && showMap) {
       const mapOptions = {
-        center: new window.google.maps.LatLng(37.5665, 126.9780),
+        center: new window.google.maps.LatLng(37.5665, 126.978),
         zoom: 10,
       };
       const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
@@ -151,13 +151,13 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
             : '/img/default-image.png',
         };
 
-        const updatedResults = [place, ...searchResults]; // 맨 위로 추가
+        const updatedResults = [place, ...searchResults];
         setSearchResults(updatedResults);
         setSearchInput('');
         setSelectedSuggestion(null);
         setShowMap(false);
         setShowPlacesList(false);
-        onClose(place.address, updatedResults);
+        onClose(place.address, updatedResults); // 추가된 부분
       } catch (error) {
         console.error('Error fetching place details:', error);
       }
@@ -225,15 +225,16 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
   };
 
   const handleFriendClick = (friend) => {
-    setSelectedFriend(friend); // Home 컴포넌트의 setSelectedFriend 호출
-    setAddress(friend.address, friend.name); // 이름도 전달
+    setSelectedFriend(friend);
+    setAddress(friend.address, friend.name);
     onClose(friend.address, searchResults, friend.name);
   };
 
   const handleFavoritePlaceClick = (place) => {
-    if (place) {
-      setAddress(place.addr);
-      onClose(place.addr, searchResults);
+    if (place.addr) {
+      setSearchInput(place.addr);
+    } else {
+      alert('즐겨찾는 장소를 등록해주세요.');
     }
   };
 
@@ -254,8 +255,12 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
             onFocus={handleSearchInputFocus}
             onChange={handleSearchInputChange}
           />
-          <button onClick={handleSearch} style={commonStyles.popupButton}>검색</button>
-          <button onClick={() => onClose()} style={commonStyles.popupCloseButton}>X</button>
+          <button onClick={handleSearch} style={commonStyles.popupButton}>
+            검색
+          </button>
+          <button onClick={() => onClose()} style={commonStyles.popupCloseButton}>
+            X
+          </button>
         </div>
         {suggestions.length > 0 && (
           <ul style={commonStyles.suggestionsList}>
@@ -273,38 +278,36 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
         <div style={commonStyles.popupContent}>
           <div style={commonStyles.locationContainer} onClick={handleUseCurrentLocation}>
             <img src="/img/location.png" alt="현재 위치 사용" style={commonStyles.locationIcon} />
-            <span style={{ fontSize: '1rem', fontFamily: 'Freesentation, sans-serif', fontWeight: '600' }}>현재 위치 사용</span>
+            <span style={{ fontSize: '1rem', fontFamily: 'Freesentation, sans-serif', fontWeight: '600' }}>
+              현재 위치 사용
+            </span>
           </div>
           {isLoggedIn && (
             <div style={commonStyles.popupSections}>
               <div style={commonStyles.popupSection1}>
                 <p style={commonStyles.popupSectionTitle}>즐겨찾는 장소</p>
                 <div style={commonStyles.favoritePlaces}>
-                  <button 
-                    style={commonStyles.favoritePlace} 
-                    onClick={() => handleFavoritePlaceClick(favoritePlaces.home)}
-                  >
+                  <button style={commonStyles.favoritePlace} onClick={() => handleFavoritePlaceClick(favoritePlaces.home)}>
                     <img src="/img/home.png" alt="집" style={commonStyles.favoritePlaceImage} />
                     <p style={{ fontSize: '1rem', fontFamily: 'Freesentation, sans-serif', fontWeight: '500' }}>집</p>
                   </button>
-                  <button 
-                    style={commonStyles.favoritePlace}
-                    onClick={() => handleFavoritePlaceClick(favoritePlaces.work)}
-                  >
+                  <button style={commonStyles.favoritePlace} onClick={() => handleFavoritePlaceClick(favoritePlaces.work)}>
                     <img src="/img/work.png" alt="직장/학교" style={commonStyles.favoritePlaceImage} />
                     <p style={{ fontSize: '1rem', fontFamily: 'Freesentation, sans-serif', fontWeight: '500' }}>직장/학교</p>
                   </button>
                 </div>
               </div>
-              <div style={{
-                ...commonStyles.popupSection2,
-                height: favoriteFriends.length === 0 ? '118px' : '125px',
-                width: favoriteFriends.length === 0 ? '280px' : '280px', // 필요한 너비로 설정
-                border: favoriteFriends.length === 0 ? 'none' : 'none', // 경계선 추가
-                display: favoriteFriends.length === 0 ? 'flex' : 'block', // 중앙 정렬을 위해 flex 사용
-                justifyContent: favoriteFriends.length === 0 ? 'flex-start' : 'flex-start',
-                alignItems: favoriteFriends.length === 0 ? 'flex-start' : 'flex-start'
-              }}>
+              <div
+                style={{
+                  ...commonStyles.popupSection2,
+                  height: favoriteFriends.length === 0 ? '118px' : '125px',
+                  width: favoriteFriends.length === 0 ? '280px' : '280px',
+                  border: favoriteFriends.length === 0 ? 'none' : 'none',
+                  display: favoriteFriends.length === 0 ? 'flex' : 'block',
+                  justifyContent: favoriteFriends.length === 0 ? 'flex-start' : 'flex-start',
+                  alignItems: favoriteFriends.length === 0 ? 'flex-start' : 'flex-start',
+                }}
+              >
                 <p style={commonStyles.popupSectionTitle}>즐겨찾는 친구</p>
                 <div style={commonStyles.favoriteFriends}>
                   {favoriteFriends.length === 0 ? (
@@ -317,7 +320,9 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
                         onClick={() => handleFriendClick(friend)}
                       >
                         <img src="/img/pprofile.png" alt={friend.name} style={commonStyles.favoriteFriendImage} />
-                        <p style={{ fontSize: '1rem', fontFamily: 'Freesentation, sans-serif', fontWeight: '500'}}>{friend.name}</p>
+                        <p style={{ fontSize: '1rem', fontFamily: 'Freesentation, sans-serif', fontWeight: '500' }}>
+                          {friend.name}
+                        </p>
                       </button>
                     ))
                   )}
@@ -329,7 +334,7 @@ const HomePopup = ({ onClose, setAddress, searchResults, setSearchResults, setSe
             <div style={commonStyles.placesListContainer}>
               <p style={commonStyles.currentLocationText}>검색 목록</p>
               <SearchList>
-                {searchResults.map((place, index) => (
+                {(Array.isArray(searchResults) ? searchResults : []).map((place, index) => (
                   <SearchItem key={index} onClick={() => handleSearchItemClick(place)}>
                     <img src={place.imgSrc || '/img/default-image.png'} alt={place.name} />
                     <div>

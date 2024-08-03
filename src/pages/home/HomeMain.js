@@ -1,4 +1,3 @@
-// src/components/Home.js
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { commonStyles } from '../../styles/styles';
@@ -126,6 +125,16 @@ const Home = () => {
   };
 
   const handleFindPlace = async () => {
+    // 주소와 목적이 모두 입력되었는지 확인
+    if (!userInfo.address || friends.some(friend => !friend.address)) {
+      alert('주소를 입력해 주세요.');
+      return;
+    }
+    if (!selectedPurpose) {
+      alert('목적을 선택해주세요.');
+      return;
+    }
+
     try {
       const addressInputs = [userInfo, ...friends];
       const geocodedInputs = await Promise.all(addressInputs.map(async input => {
