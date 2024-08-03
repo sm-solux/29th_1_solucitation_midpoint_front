@@ -135,25 +135,6 @@ function Midpoint() {
     }
   };
 
-  const shortenUrl = async (url) => {
-    try {
-      const response = await axios.post(
-        'https://api-ssl.bitly.com/v4/shorten',
-        { long_url: url },
-        {
-          headers: {
-            'Authorization': `Bearer ${process.env.REACT_APP_BITLY_API_KEY}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      return response.data.link;
-    } catch (error) {
-      console.error('Error shortening URL:', error);
-      return url;
-    }
-  };
-
   const handleSave = async () => {
     if (!isLoggedIn) {
       alert('로그인 후 사용해주세요.');
@@ -171,12 +152,12 @@ function Midpoint() {
 
     const saveData = {
       neighborhood: midpointDistrict,
-      historyDto: await Promise.all(selectedPlaces.map(async (place) => ({
+      historyDto: selectedPlaces.map((place) => ({
         placeId: place.placeID,
         placeName: place.name,
         placeAddress: place.address,
-        imageUrl: await shortenUrl(place.image || '/img/default-image.png'),
-      })))
+        imageUrl: place.image || '/img/default-image.png',
+      }))
     };
 
     console.log('Save Data:', JSON.stringify(saveData, null, 2));

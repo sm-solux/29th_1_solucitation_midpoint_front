@@ -62,7 +62,7 @@ const FavoritesLocates = () => {
             alt={location.name}
           />
           {location.name}
-          {'                         >'}
+          <span style ={myPageStyles.goLocates}>{'>'}</span>
         </div>
       ))}
       {isAddLocationModalOpen && (

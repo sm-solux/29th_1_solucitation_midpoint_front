@@ -104,7 +104,7 @@ const ResetPasswordForm = ({ inputs, values, setValues, buttonText }) => {
               headers: {
                 "Content-Type": "application/json",
                 "logout-token": `Bearer ${refreshToken}`,
-                "Authorization": `Bearer ${accessToken}`,
+                Authorization: `Bearer ${accessToken}`,
               },
             }
           );
@@ -402,7 +402,6 @@ const MyPageProfile = () => {
     });
   };
 
-  // 기존 비밀번호 확인
   const handlePasswordConfirmation = (deleteToken) => {
     if (state.nextMode === "delete") {
       setState((prevState) => ({
@@ -420,7 +419,6 @@ const MyPageProfile = () => {
     }
   };
 
-  // 회원 탈퇴 확인
   const handleDeleteConfirm = async () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
