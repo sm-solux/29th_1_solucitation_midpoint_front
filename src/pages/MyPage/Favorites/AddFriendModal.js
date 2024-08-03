@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import Modal from 'react-modal';
-import axios from 'axios';
-import { myPageStyles } from '../../../styles/myPageStyles';
+import React, { useState, useEffect, useCallback } from "react";
+import Modal from "react-modal";
+import axios from "axios";
+import { myPageStyles } from "../../../styles/myPageStyles";
 
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 
 const GEOCODING_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
@@ -16,23 +16,23 @@ const AddFriendModal = ({
   selectedFriend,
   loading,
 }) => {
-  const [name, setName] = useState('');
-  const [address, setAddress] = useState('');
-  const [latitude, setLatitude] = useState('');
-  const [longitude, setLongitude] = useState('');
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [originalFriend, setOriginalFriend] = useState(null);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const [suggestions, setSuggestions] = useState([]);
-  const [searchInput, setSearchInput] = useState('');
+  const [searchInput, setSearchInput] = useState("");
 
   useEffect(() => {
     if (selectedFriend) {
       setName(selectedFriend.name);
-      setAddress(selectedFriend.address || '');
-      setSearchInput(selectedFriend.address || '');
-      setLatitude(selectedFriend.latitude || '');
-      setLongitude(selectedFriend.longitude || '');
+      setAddress(selectedFriend.address || "");
+      setSearchInput(selectedFriend.address || "");
+      setLatitude(selectedFriend.latitude || "");
+      setLongitude(selectedFriend.longitude || "");
       setOriginalFriend(selectedFriend);
       setIsEditing(false);
     } else {
@@ -42,72 +42,67 @@ const AddFriendModal = ({
   }, [selectedFriend]);
 
   useEffect(() => {
-    if (searchInput.trim() !== '') {
-      fetchCoordinates(searchInput);
-    } else {
-      setLatitude('');
-      setLongitude('');
-    }
-  }, [searchInput]);
-
-  useEffect(() => {
     if (!isOpen) {
-      clearInputs(); // 모달이 닫힐 때 필드 초기화
+      clearInputs();
     }
   }, [isOpen]);
 
-  const fetchCoordinates = async (address) => {
+  const fetchCoordinates = useCallback(async (address) => {
     try {
-      const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
-        params: {
-          address,
-          key: GEOCODING_API_KEY,
-          language: 'ko',
-        },
-      });
+      const response = await axios.get(
+        "https://maps.googleapis.com/maps/api/geocode/json",
+        {
+          params: {
+            address,
+            key: GEOCODING_API_KEY,
+            language: "ko",
+          },
+        }
+      );
 
-      if (response.data.status === 'OK') {
+      if (response.data.status === "OK") {
         const location = response.data.results[0].geometry.location;
         setLatitude(location.lat);
         setLongitude(location.lng);
       } else {
-        throw new Error('주소 검색 오류');
+        throw new Error("주소 검색 오류");
       }
     } catch (error) {
-      setLatitude('');
-      setLongitude('');
-      setErrorMessage('주소 검색 오류: 주소를 다시 확인해주세요.');
-      console.error('주소 검색 오류:', error.message);
+      setLatitude("");
+      setLongitude("");
+      setErrorMessage("주소 검색 오류: 주소를 다시 확인해주세요.");
+      console.error("주소 검색 오류:", error.message);
     }
-  };
+  }, []);
 
-  const clearInputs = () => {
-    setName('');
-    setAddress('');
-    setSearchInput('');
-    setLatitude('');
-    setLongitude('');
-    setErrorMessage('');
-  };
+  const clearInputs = useCallback(() => {
+    setName("");
+    setAddress("");
+    setSearchInput("");
+    setLatitude("");
+    setLongitude("");
+    setErrorMessage("");
+    setSuggestions([]);
+  }, []);
 
-  const handleAddFriend = () => {
+  const handleAddFriend = async () => {
     if (!name) {
-      alert('이름을 입력해주세요.');
+      alert("이름을 입력해주세요.");
       return;
     }
 
     if (!searchInput) {
-      alert('주소를 입력해주세요.');
+      alert("주소를 입력해주세요.");
       return;
     }
 
     if (name.length < 1 || name.length > 100) {
-      alert('이름은 최소 1글자 이상 최대 100글자 이하로 입력해야 합니다.');
+      alert("이름은 최소 1글자 이상 최대 100글자 이하로 입력해야 합니다.");
       return;
     }
 
     if (searchInput.length < 1 || searchInput.length > 255) {
-      alert('주소는 최소 1글자 이상 최대 255글자 이하로 입력해야 합니다.');
+      alert("주소는 최소 1글자 이상 최대 255글자 이하로 입력해야 합니다.");
       return;
     }
 
@@ -118,45 +113,49 @@ const AddFriendModal = ({
       longitude: parseFloat(longitude),
     };
 
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = localStorage.getItem("accessToken");
     const headers = accessToken
       ? { Authorization: `Bearer ${accessToken}` }
       : {};
 
-    axios.post(`${process.env.REACT_APP_API_URL}/api/favs/friends/save`, newFriend, { headers })
-      .then((response) => {
-        if (response.data.success) {
-          addFriend({ ...newFriend, favFriendId: response.data.favFriendId });
-          clearInputs();
-          closeModal();
-        } else {
-          setErrorMessage(response.data.message);
-        }
-      })
-      .catch((error) => {
-        console.error('친구 저장 오류:', error.message);
-        setErrorMessage(getErrorMessage(error));
-      });
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/favs/friends/save`,
+        newFriend,
+        { headers }
+      );
+
+      if (response.data.success) {
+        addFriend({ ...newFriend, favFriendId: response.data.favFriendId });
+        clearInputs();
+        closeModal();
+      } else {
+        setErrorMessage(response.data.message);
+      }
+    } catch (error) {
+      console.error("친구 저장 오류:", error.message);
+      setErrorMessage(getErrorMessage(error));
+    }
   };
 
   const handleEditFriend = async () => {
     if (!name) {
-      alert('이름을 입력해주세요.');
+      alert("이름을 입력해주세요.");
       return;
     }
 
     if (!searchInput) {
-      alert('주소를 입력해주세요.');
+      alert("주소를 입력해주세요.");
       return;
     }
 
     if (name.length < 1 || name.length > 100) {
-      alert('이름은 최소 1글자 이상 최대 100글자 이하로 입력해야 합니다.');
+      alert("이름은 최소 1글자 이상 최대 100글자 이하로 입력해야 합니다.");
       return;
     }
 
     if (searchInput.length < 1 || searchInput.length > 255) {
-      alert('주소는 최소 1글자 이상 최대 255글자 이하로 입력해야 합니다.');
+      alert("주소는 최소 1글자 이상 최대 255글자 이하로 입력해야 합니다.");
       return;
     }
 
@@ -168,8 +167,10 @@ const AddFriendModal = ({
       longitude: parseFloat(longitude),
     };
 
-    const accessToken = localStorage.getItem('accessToken');
-    const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
+    const accessToken = localStorage.getItem("accessToken");
+    const headers = accessToken
+      ? { Authorization: `Bearer ${accessToken}` }
+      : {};
     console.log(updatedFriend);
     try {
       const response = await axios.patch(
@@ -186,18 +187,20 @@ const AddFriendModal = ({
         setErrorMessage(response.data.message);
       }
     } catch (error) {
-      console.error('친구 수정 오류:', error.message);
+      console.error("친구 수정 오류:", error.message);
       setErrorMessage(getErrorMessage(error));
     }
   };
 
   const handleDeleteFriend = async () => {
-    if (window.confirm('삭제하시겠습니까?')) {
-      const accessToken = localStorage.getItem('accessToken');
-      const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
+    if (window.confirm("삭제하시겠습니까?")) {
+      const accessToken = localStorage.getItem("accessToken");
+      const headers = accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : {};
 
       if (!selectedFriend || !selectedFriend.favFriendId) {
-        setErrorMessage('친구 정보를 찾을 수 없습니다.');
+        setErrorMessage("친구 정보를 찾을 수 없습니다.");
         return;
       }
 
@@ -209,17 +212,17 @@ const AddFriendModal = ({
 
         if (response.data.success) {
           deleteFriend(selectedFriend);
-          closeModal();
           clearInputs();
+          closeModal();
           setIsEditing(false);
         } else {
           setErrorMessage(response.data.message);
         }
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          alert('존재하지 않는 친구입니다.');
+          alert("존재하지 않는 친구입니다.");
         } else {
-          console.error('친구 삭제 오류:', error.message);
+          console.error("친구 삭제 오류:", error.message);
           setErrorMessage(getErrorMessage(error));
         }
       }
@@ -229,12 +232,12 @@ const AddFriendModal = ({
   const getErrorMessage = (error) => {
     if (error.response) {
       if (error.response.status === 401) {
-        return '인증 오류: 유효한 토큰이 필요합니다.';
+        return "인증 오류: 유효한 토큰이 필요합니다.";
       } else if (error.response.status === 400) {
-        return error.response.data.message || '잘못된 요청입니다.';
+        return error.response.data.message || "잘못된 요청입니다.";
       }
     }
-    return '친구 처리 중 오류가 발생했습니다.';
+    return "친구 처리 중 오류가 발생했습니다.";
   };
 
   const enableEditing = () => {
@@ -244,32 +247,37 @@ const AddFriendModal = ({
   const handleCancelEdit = () => {
     if (originalFriend) {
       setName(originalFriend.name);
-      setAddress(originalFriend.address || '');
-      setLatitude(originalFriend.latitude || '');
-      setLongitude(originalFriend.longitude || '');
-      setSearchInput(originalFriend.address || '');
+      setAddress(originalFriend.address || "");
+      setLatitude(originalFriend.latitude || "");
+      setLongitude(originalFriend.longitude || "");
+      setSearchInput(originalFriend.address || "");
     }
     setIsEditing(false);
   };
 
-  const fetchSuggestions = async (value) => {
-    if (value.trim() !== '') {
-      const proxyUrl = 'https://api.allorigins.win/get?url=';
-      const targetUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${value}&components=country:kr&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&language=ko`;
+  const fetchSuggestions = useCallback(async (value) => {
+    if (value.trim() !== "") {
+      const proxyUrl = "https://api.allorigins.win/get?url=";
+      const location = "37.5665,126.9780"; // 서울 위도, 경도
+      const radius = 20000; // 반경 20km
+      const targetUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${value}&components=country:kr&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&language=ko&location=${location}&radius=${radius}`;
+
       try {
-        const response = await axios.get(proxyUrl + encodeURIComponent(targetUrl));
+        const response = await axios.get(
+          proxyUrl + encodeURIComponent(targetUrl)
+        );
         const data = JSON.parse(response.data.contents);
-        const filteredSuggestions = data.predictions.filter(prediction => 
-          prediction.description.toLowerCase().includes(value.toLowerCase())
+        const filteredSuggestions = data.predictions.filter((prediction) =>
+          prediction.description.includes("서울")
         );
         setSuggestions(filteredSuggestions.slice(0, 4));
       } catch (error) {
-        console.error('Error fetching suggestions:', error.message);
+        console.error("Error fetching suggestions:", error.message);
       }
     } else {
       setSuggestions([]);
     }
-  };
+  }, []);
 
   const handleSearchInputChange = (e) => {
     const value = e.target.value;
@@ -289,7 +297,10 @@ const AddFriendModal = ({
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={closeModal}
+      onRequestClose={() => {
+        clearInputs();
+        closeModal();
+      }}
       style={{ overlay: myPageStyles.overlay, content: myPageStyles.modal }}
       contentLabel="친구 추가/편집"
     >
@@ -306,11 +317,11 @@ const AddFriendModal = ({
         placeholder="친구 이름"
         disabled={!isEditing || loading}
       />
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ display: "flex", alignItems: "center" }}>
         <input
           type="text"
           placeholder="주소 입력"
-          style={{ ...myPageStyles.inputLocate, backgroundColor: 'white' }}
+          style={{ ...myPageStyles.inputLocate, backgroundColor: "white" }}
           value={searchInput}
           onChange={handleSearchInputChange}
           disabled={!isEditing || loading}
@@ -375,7 +386,14 @@ const AddFriendModal = ({
             추가
           </button>
         )}
-        <button onClick={closeModal} style={myPageStyles.closeButton} disabled={loading}>
+        <button
+          onClick={() => {
+            clearInputs();
+            closeModal();
+          }}
+          style={myPageStyles.closeButton}
+          disabled={loading}
+        >
           X
         </button>
       </div>

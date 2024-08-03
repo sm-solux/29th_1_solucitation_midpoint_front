@@ -377,14 +377,17 @@ const AddLocationModal = ({
   const fetchSuggestions = async (value) => {
     if (value.trim() !== "") {
       const proxyUrl = "https://api.allorigins.win/get?url=";
-      const targetUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${value}&components=country:kr&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&language=ko`;
+      const location = "37.5665,126.9780"; // 서울 위도, 경도
+      const radius = 20000; // 반경 20km
+      const targetUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${value}&components=country:kr&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&language=ko&location=${location}&radius=${radius}`;
+
       try {
         const response = await axios.get(
           proxyUrl + encodeURIComponent(targetUrl)
         );
         const data = JSON.parse(response.data.contents);
         const filteredSuggestions = data.predictions.filter((prediction) =>
-          prediction.description.toLowerCase().includes(value.toLowerCase())
+          prediction.description.includes("서울")
         );
         setSuggestions(filteredSuggestions.slice(0, 4));
       } catch (error) {
