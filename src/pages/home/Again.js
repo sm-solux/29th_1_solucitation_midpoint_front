@@ -22,6 +22,7 @@ const Again = () => {
   };
 
   const selectStyle = {
+    fontFamily: 'Freesentation, sans-serif',
     padding: '0.5rem',
     borderRadius: '4px',
     border: '1px solid #F2F2EF',
@@ -29,8 +30,8 @@ const Again = () => {
     textAlign: 'center',
     width: '400px',
     height: '40px',
-    fontSize: '16px',
-    fontWeight: 'bold',
+    fontSize: '20px',
+    fontWeight: '400',
     color: '#1B4345',
     appearance: 'none',
     WebkitAppearance: 'none',
@@ -77,14 +78,16 @@ const Again = () => {
                   borderRadius: '4px', 
                   border: 'none', 
                   cursor: 'pointer', 
-                  fontWeight: 'bold', 
+                  fontWeight: '600', 
                   alignSelf: 'center', 
                   width: '140px',
-                  marginTop: '1rem' 
+                  marginTop: '1rem',
+                  fontSize: '1.3rem', 
+                  fontFamily: 'Freesentation, sans-serif'
                 }} 
                 onClick={handleRetry}
               >
-                위치 다시 검색
+                홈 화면으로
               </button>
               {places.length > 0 && (
                 <div style={{ marginTop: '1rem', width: '100%' }}>

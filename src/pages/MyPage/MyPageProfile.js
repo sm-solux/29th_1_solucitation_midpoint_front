@@ -10,7 +10,175 @@ import {
   ProfileImage,
 } from "./Profile/ProfileComponents";
 import PasswordConfirmation from "./Profile/PasswordConfirmation";
-import { ResetPasswordForm } from "../../components/LoginComponents";
+import {
+  LoginFormContainer,
+  LoginInputGroup,
+  LoginInputField,
+  JoinButton,
+} from "../../components/LoginComponents";
+
+const ResetPasswordForm = ({ inputs, values, setValues, buttonText }) => {
+  const [errors, setErrors] = useState({});
+  const [tokenForResetPassword, setTokenForResetPassword] = useState("");
+  const navigate = useNavigate();
+  const accessToken = localStorage.getItem("accessToken");
+  const refreshToken = localStorage.getItem("refreshToken");
+
+  // 입력값 검증 함수
+  const validateInputs = (id, value) => {
+    const newErrors = { ...errors };
+    if (id === "password") {
+      if (value.length < 8 || value.length > 16) {
+        newErrors.password = "비밀번호는 8자 이상 16자 이하여야 합니다.";
+      } else {
+        newErrors.password = "";
+      }
+      if (
+        values.passwordVerification &&
+        value !== values.passwordVerification
+      ) {
+        newErrors.passwordVerification = "비밀번호가 일치하지 않습니다.";
+      } else {
+        newErrors.passwordVerification = "";
+      }
+    }
+    if (id === "passwordVerification") {
+      if (value !== values.password) {
+        newErrors.passwordVerification = "비밀번호가 일치하지 않습니다.";
+      } else {
+        newErrors.passwordVerification = "";
+      }
+    }
+    return newErrors;
+  };
+
+  // 입력값 변경 처리 함수
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    const newValues = { ...values, [name]: value };
+    const newErrors = validateInputs(name, value);
+    setValues(newValues);
+    setErrors(newErrors);
+  };
+
+  // 비밀번호 재설정 요청 함수
+  const resetPassword = async (event) => {
+    event.preventDefault();
+    const formErrors = {};
+
+    inputs.forEach(({ id }) => {
+      const newErrors = validateInputs(id, values[id] || "");
+      if (newErrors[id]) {
+        formErrors[id] = newErrors[id];
+      }
+    });
+
+    setErrors(formErrors);
+
+    console.log(accessToken, refreshToken);
+
+    if (Object.keys(formErrors).length === 0) {
+      try {
+        const response = await fetch(
+          "http://3.36.150.194:8080/api/auth/reset-pw",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Reset-Password-Token": `Bearer ${tokenForResetPassword}`,
+            },
+            body: JSON.stringify({
+              newPassword: values.password,
+              newPasswordConfirm: values.passwordVerification,
+            }),
+          }
+        );
+
+        if (response.ok) {
+          alert("비밀번호 변경 완료되었습니다😊");
+
+          const logoutResponse = await fetch(
+            "http://3.36.150.194:8080/api/member/logout",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "logout-token": `Bearer ${refreshToken}`,
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+
+          if (logoutResponse.ok) {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            navigate("/login");
+          }
+        } else {
+          const errorData = await response.json();
+          console.log(errorData);
+          alert(
+            `비밀번호 변경에 실패했습니다: ${
+              errorData.message || "문제가 발생했습니다."
+            }`
+          );
+        }
+      } catch (error) {
+        console.error("비밀번호 변경 요청 중 오류 발생:", error);
+        alert(
+          "비밀번호 변경 중 오류가 발생했습니다. 나중에 다시 시도해 주세요."
+        );
+      }
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("resetPasswordToken");
+    if (token) {
+      try {
+        setTokenForResetPassword(token);
+      } catch (e) {
+        console.error("토큰 파싱 중 오류 발생:", e);
+        navigate("/login");
+      }
+    } else {
+      navigate("/login");
+    }
+
+    // 10분 후 로컬 스토리지에서 토큰 제거
+    const timer = setTimeout(() => {
+      localStorage.removeItem("resetPasswordToken");
+    }, 10 * 60 * 1000);
+
+    return () => clearTimeout(timer);
+  }, [navigate]);
+
+  return (
+    <LoginFormContainer onSubmit={resetPassword}>
+      {inputs.map(({ label, type, id, required }) => (
+        <LoginInputGroup key={id}>
+          <LoginInputField
+            type={type}
+            id={id}
+            name={id}
+            required={required}
+            onChange={handleChange}
+            placeholder={label}
+            value={values[id] || ""}
+          />
+          {errors[id] && (
+            <p style={{ color: "red", marginBottom: "0rem", fontSize: "1rem" }}>
+              {errors[id]}
+            </p>
+          )}
+        </LoginInputGroup>
+      ))}
+      <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+        <JoinButton type="submit">{buttonText}</JoinButton>
+      </div>
+    </LoginFormContainer>
+  );
+};
 
 const MyPageProfile = () => {
   const [state, setState] = useState({
@@ -162,24 +330,24 @@ const MyPageProfile = () => {
       return;
     }
 
-    const useDefaultImage = isDefaultImage;
-    const profileUpdateRequestDto = {
-      nickname: profileData.nickname,
-      name: profileData.name,
-      useDefaultImage,
-    };
-
-    const formData = new FormData();
-    formData.append(
-      "profileUpdateRequestDto",
-      JSON.stringify(profileUpdateRequestDto)
-    );
-    if (!useDefaultImage && previewImage) {
-      formData.append("profileImage", fileInputRef.current.files[0]);
-    }
-
     try {
       const accessToken = localStorage.getItem("accessToken");
+      const useDefaultImage = isDefaultImage;
+
+      const profileUpdateRequestDto = {
+        nickname: profileData.nickname,
+        name: profileData.name,
+        useDefaultImage,
+      };
+
+      const formData = new FormData();
+      formData.append(
+        "profileUpdateRequestDto",
+        JSON.stringify(profileUpdateRequestDto)
+      );
+      if (!useDefaultImage && previewImage) {
+        formData.append("profileImage", fileInputRef.current.files[0]);
+      }
 
       await axios.patch(
         `${process.env.REACT_APP_API_URL}/api/member/profile`,
@@ -300,6 +468,8 @@ const MyPageProfile = () => {
           "X-Refresh-Token": `Bearer ${refreshToken}`,
         },
       });
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
       alert("탈퇴 됐습니다.");
       navigate("/");
     } catch (error) {

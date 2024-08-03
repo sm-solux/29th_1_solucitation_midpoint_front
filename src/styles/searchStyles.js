@@ -16,12 +16,13 @@ export const searchStyles = {
   input: {
     padding: '15px',
     fontFamily: 'Freesentation',
-    fontSize: '18px',
+    fontSize: '16px',
     width: '550px',
     border: 'none',
     outline: 'none',
     textAlign: 'center',
     borderRadius: '5px',
+    fontWeight: '500',
   },
   searchButton: {
     width: '90px',
@@ -33,6 +34,7 @@ export const searchStyles = {
     backgroundColor: '#1B4345',
     border: 'none',
     borderRadius: '5px',
+    fontWeight: '500',
   },
   searchTagContainer: {
     marginTop: '15px',

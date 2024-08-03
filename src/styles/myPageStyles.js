@@ -142,22 +142,22 @@ export const myPageStyles = {
   },
 
   passwordContainer: {
-    maxWidth: "650px",
+    maxWidth: "700px",
     margin: "0 auto",
-    padding: "20px",
+    padding: "3.8rem",
     textAlign: "center",
   },
   passwordTitle: {
-    fontSize: "36px",
-    fontWeight: "bold",
-    color: "#1B4345",
+    fontSize: "53px",
+    fontWeight: "700",
+    color: "black",
     marginBottom: "60px",
   },
   passwordInputContainer: {
     marginBottom: "80px",
     display: "flex",
     alignItems: "center",
-    borderBottom: "3px solid #1B4345",
+    borderBottom: "4px solid #1B4345",
   },
   passwordLabel: {
     fontSize: "24px",

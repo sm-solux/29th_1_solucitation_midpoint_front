@@ -140,7 +140,7 @@ function Midpoint() {
       alert('로그인 후 사용해주세요.');
       return;
     }
-  
+
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
     if (!accessToken || !refreshToken) {
@@ -150,25 +150,18 @@ function Midpoint() {
       return;
     }
 
-    // 데이터 잘라내기 함수
-    const trimData = (data, maxLength) => {
-      return data.length > maxLength ? data.substring(0, maxLength) : data;
-    };
-  
-    const maxLength = 255;
-  
     const saveData = {
-      neighborhood: trimData(midpointDistrict, maxLength),
-      historyDto: selectedPlaces.map(place => ({
-        placeId: trimData(place.placeID, maxLength),
-        placeName: trimData(place.name, maxLength),
-        placeAddress: trimData(place.address, maxLength),
-        imageUrl: trimData(place.image, maxLength)
+      neighborhood: midpointDistrict,
+      historyDto: selectedPlaces.map((place) => ({
+        placeId: place.placeID,
+        placeName: place.name,
+        placeAddress: place.address,
+        imageUrl: place.image || '/img/default-image.png',
       }))
     };
-  
+
     console.log('Save Data:', JSON.stringify(saveData, null, 2));
-  
+
     const attemptSave = async (retryAttempt = false) => {
       const tokenToUse = retryAttempt ? localStorage.getItem('accessToken') : accessToken;
       try {
@@ -178,7 +171,7 @@ function Midpoint() {
             'Content-Type': 'application/json'
           }
         });
-  
+
         if (response.status === 201) {
           alert('장소를 저장하였습니다.');
         } else {
@@ -217,9 +210,9 @@ function Midpoint() {
         }
       }
     };
-  
+
     await attemptSave();
-  };  
+  };
 
   const handleSelectButtonClick = () => {
     setSelecting(true);

@@ -11,7 +11,11 @@ function Logo({ exist = true, bgColor = "transparent" }) {
   const navigate = useNavigate();
 
   const onClick = () => {
-    navigate("/home");
+    if (location.pathname === "/home") {
+      window.location.reload();
+    } else {
+      navigate("/home");
+    }
   };
 
   const loggedInLinks = [
@@ -40,8 +44,20 @@ function Logo({ exist = true, bgColor = "transparent" }) {
     textUnderlineOffset: "3px",
   };
 
+  const homeRoutes = new Set([
+    "/again",
+    "/test1",
+    "/test2",
+    "/test3",
+    "/result1",
+    "/result2",
+    "/result3",
+    "/result4",
+    "/midpoint",
+  ]);
+
   const getLinkStyle = (link) => {
-    const isActive = location.pathname.startsWith(link.path);
+    const isActive = link.name === "home" ? homeRoutes.has(location.pathname) : location.pathname.startsWith(link.path);
     if (link.name === "logout") {
       return linkStyle;
     }
