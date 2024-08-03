@@ -188,7 +188,7 @@ const MyPageSearchHistory = () => {
   }, [navigate]);
 
   if (loading) {
-    return <div>로딩 중...</div>;
+    return <div></div>;
   }
 
   if (error) {
