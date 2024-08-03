@@ -1,12 +1,7 @@
 export const myPageStyles = {
   container: {
-<<<<<<< HEAD
     maxWidth: "1020px",
     height: "43px",
-=======
-    maxWidth: "1000px",
-    height: "40px",
->>>>>>> 87135d67ab58536c7bd622253fe5ed54e0b8c9e8
     margin: "120px auto 35px auto",
     backgroundColor: "#000",
     marginTop: "110px",
@@ -19,11 +14,7 @@ export const myPageStyles = {
   },
   navItem: {
     display: "flex",
-<<<<<<< HEAD
     margin: "0 62px",
-=======
-    margin: "0 55px",
->>>>>>> 87135d67ab58536c7bd622253fe5ed54e0b8c9e8
     padding: "10px",
     alignItems: "center",
     color: "#000",
@@ -35,10 +26,7 @@ export const myPageStyles = {
     alignItems: "center",
     fontSize: "20px",
     fontFamily: "Freesentation",
-<<<<<<< HEAD
     fontWeight: "700",
-=======
->>>>>>> 87135d67ab58536c7bd622253fe5ed54e0b8c9e8
   },
   navLinkText: {
     marginLeft: "5px",
@@ -292,8 +280,6 @@ export const myPageStyles = {
     whiteSpace: "pre-wrap",
     paddingBottom: "15px",
     cursor: "pointer",
-<<<<<<< HEAD
-=======
   },
   goLocates: {
     marginLeft: "auto",
@@ -301,7 +287,6 @@ export const myPageStyles = {
     fontSize: "18px",
     fontWeight: "bold",
     color: "#1B4345",
->>>>>>> 87135d67ab58536c7bd622253fe5ed54e0b8c9e8
   },
   addFriendButton: {
     border: "none",
@@ -341,10 +326,7 @@ export const myPageStyles = {
     top: "30px",
     right: "30px",
     zIndex: "1000",
-<<<<<<< HEAD
-=======
     cursor: "pointer",
->>>>>>> 87135d67ab58536c7bd622253fe5ed54e0b8c9e8
   },
   modalContent: {
     display: "flex",
@@ -400,10 +382,7 @@ export const myPageStyles = {
     fontFamily: "Freesentation",
     fontSize: "18px",
     marginTop: "30px",
-<<<<<<< HEAD
-=======
     cursor: "pointer",
->>>>>>> 87135d67ab58536c7bd622253fe5ed54e0b8c9e8
   },
   favoriteButtonEdit: {
     width: "80px",
@@ -414,10 +393,7 @@ export const myPageStyles = {
     fontFamily: "Freesentation",
     fontSize: "18px",
     marginTop: "50px",
-<<<<<<< HEAD
-=======
     cursor: "pointer",
->>>>>>> 87135d67ab58536c7bd622253fe5ed54e0b8c9e8
   },
   favoriteButtonQuit: {
     width: "80px",
@@ -428,10 +404,7 @@ export const myPageStyles = {
     fontFamily: "Freesentation",
     fontSize: "18px",
     marginLeft: "55px",
-<<<<<<< HEAD
-=======
     cursor: "pointer",
->>>>>>> 87135d67ab58536c7bd622253fe5ed54e0b8c9e8
   },
 
   suggestionsList: {
@@ -440,11 +413,7 @@ export const myPageStyles = {
     margin: 0,
     padding: 0,
     backgroundColor: "white",
-<<<<<<< HEAD
-    border: "1.5px solid #ccc",
-=======
     border: "1px solid #ccc",
->>>>>>> 87135d67ab58536c7bd622253fe5ed54e0b8c9e8
     zIndex: 1000,
   },
   suggestionItem: {
@@ -467,22 +436,15 @@ export const myPageStyles = {
     textAlign: "center",
   },
   historyContainer: {
-<<<<<<< HEAD
     width: "820px",
     margin: "50px auto",
     border: "1.3px solid #000",
-=======
-    width: "800px",
-    margin: "50px auto",
-    border: "2px solid #000",
->>>>>>> 87135d67ab58536c7bd622253fe5ed54e0b8c9e8
     backgroundColor: "white",
   },
   dateSection: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "flex-start",
-<<<<<<< HEAD
     padding: "24px",
     borderBottom: "1.3px solid #000000",
   },
@@ -504,33 +466,11 @@ export const myPageStyles = {
   },
   recommendationContainer: {
     flex: "3",
-=======
-    padding: "10px",
-    borderBottom: "1px solid #ccc",
-  },
-  dateColumn: {
-    width: "15%",
-    margin: "5px 20px",
-    fontFamily: "Freesentation",
-    fontWeight: "bold",
-    fontSize: "24px",
-    color: "#333",
-    marginRight: "10px",
-  },
-  neighborhoodTitle: {
-    marginTop: "5px",
-    fontFamily: "Freesentation",
-    fontWeight: "bold",
-    fontSize: "24px",
-  },
-  recommendationContainer: {
->>>>>>> 87135d67ab58536c7bd622253fe5ed54e0b8c9e8
     width: "400px",
   },
   recommendationList: {
     display: "flex",
     flexDirection: "column",
-<<<<<<< HEAD
   },
   recommendationItemContainer: {
     width: "28.5rem",
@@ -541,27 +481,11 @@ export const myPageStyles = {
   },
   recommendationItem: {
     display: "flex",
-=======
-    margin: "15px 0",
-    border: "1px solid #ccc",
-    padding: "10px",
-    borderRadius: "5px",
-    backgroundColor: "#f9f9f9",
-  },
-  recommendationItemContainer: {
-    marginBottom: "10px",
-  },
-  recommendationItem: {
-    display: "flex",
-    alignItems: "center",
-    marginTop: "5px",
->>>>>>> 87135d67ab58536c7bd622253fe5ed54e0b8c9e8
   },
   recommendationItemLastChild: {
     marginBottom: "0",
   },
   itemImage: {
-<<<<<<< HEAD
     width: "110px",
     height: "110px",
     objectFit: "cover",
@@ -583,28 +507,10 @@ export const myPageStyles = {
     fontSize: "17px",
     fontWeight: "600",
     color: "black",
-=======
-    width: "70px",
-    height: "70px",
-    backgroundColor: "#ddd",
-    marginRight: "10px",
-  },
-  itemContent: {
-    flexGrow: "1",
-  },
-  itemTitle: {
-    fontSize: "20px",
-    fontWeight: "bold",
-  },
-  itemAddress: {
-    fontSize: "16px",
-    color: "#555",
->>>>>>> 87135d67ab58536c7bd622253fe5ed54e0b8c9e8
   },
   shareColumn: {
     width: "20%",
     display: "flex",
-<<<<<<< HEAD
     justifyContent: "flex-end",
     alignItems: "center",
     flex: "1",
@@ -625,18 +531,6 @@ export const myPageStyles = {
     fontFamily: "Freesentation",
     fontWeight: "bold",
     fontSize: "25px",
-=======
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    alignItems: "center",
-  },
-  shareIcon: {
-    width: "50px",
-    height: "50px",
-    margin: "10px 0",
-    borderRadius: "50%",
-    cursor: "pointer",
->>>>>>> 87135d67ab58536c7bd622253fe5ed54e0b8c9e8
   },
   //4번 내가 작성한 글보기
   postsNone: {
