@@ -73,11 +73,7 @@ const MyPageSearchHistory = () => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
-<<<<<<< HEAD
     return `${year}.${month}.${day}.`;
-=======
-    return `${year}.${month}.${day}`;
->>>>>>> 87135d67ab58536c7bd622253fe5ed54e0b8c9e8
   };
 
   useEffect(() => {
@@ -86,11 +82,7 @@ const MyPageSearchHistory = () => {
       setError("로그인이 필요합니다.");
       navigate("/login");
     } else {
-<<<<<<< HEAD
-      fetchData(accessToken); // 실제 API 호출
-=======
       fetchData(accessToken);
->>>>>>> 87135d67ab58536c7bd622253fe5ed54e0b8c9e8
     }
   }, [navigate]);
 
@@ -149,11 +141,7 @@ const MyPageSearchHistory = () => {
               </div>
             </div>
             <div style={myPageStyles.shareColumn}>
-<<<<<<< HEAD
               <div style={myPageStyles.shareText}>공유</div>
-=======
-              <div>공유</div>
->>>>>>> 87135d67ab58536c7bd622253fe5ed54e0b8c9e8
               <img
                 src="../img/katokshare.png"
                 style={myPageStyles.shareIcon}
