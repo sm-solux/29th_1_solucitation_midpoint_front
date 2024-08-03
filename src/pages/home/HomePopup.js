@@ -276,15 +276,27 @@ const HomePopup = ({
   const handleFavoritePlaceClick = (place) => {
     if (place.addr) {
       setSearchInput(place.addr);
+      setSelectedSuggestion({
+        description: place.addr,
+        place_id: place.place_id,
+      });
     } else {
       alert("즐겨찾는 장소를 등록해주세요.");
-      navigate('/MyPage')
+      navigate("/MyPage");
     }
   };
 
   const handleSearchItemClick = (place) => {
     setSearchInput(place.address);
+    setSelectedSuggestion({
+      description: place.name,
+      place_id: place.place_id,
+    });
     setShowPlacesList(false);
+  };
+
+  const handleSelectedSuggestionClick = () => {
+    handleSearch();
   };
 
   return (
@@ -300,7 +312,10 @@ const HomePopup = ({
             onChange={handleSearchInputChange}
           />
           {selectedSuggestion && (
-            <button onClick={handleSearch} style={commonStyles.popupButton}>
+            <button
+              onClick={handleSelectedSuggestionClick}
+              style={commonStyles.popupButton}
+            >
               확인
             </button>
           )}
@@ -397,15 +412,15 @@ const HomePopup = ({
               <div
                 style={{
                   ...commonStyles.popupSection2,
-                  height: '140px',  // 높이를 고정
-                  width: '280px',  // 필요한 너비로 설정
-                  border: 'none',  // 경계선 추가
-                  display: 'block',  // block으로 설정
-                  justifyContent: 'flex-start',
-                  alignItems: 'flex-start',
-                  overflowX: 'auto',  // X축 스크롤 추가
-                  overflowY: "hidden",  // Y축 스크롤 숨기기
-                  whiteSpace: 'nowrap',  // 한 줄로 표시
+                  height: "140px",
+                  width: "280px",
+                  border: "none",
+                  display: "block",
+                  justifyContent: "flex-start",
+                  alignItems: "flex-start",
+                  overflowX: "auto",
+                  overflowY: "hidden",
+                  whiteSpace: "nowrap",
                 }}
               >
                 <p style={commonStyles.popupSectionTitle}>즐겨찾는 친구</p>
