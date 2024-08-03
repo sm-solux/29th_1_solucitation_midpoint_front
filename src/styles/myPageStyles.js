@@ -478,6 +478,11 @@ export const myPageStyles = {
     backgroundColor: "#F2F2EF",
     borderRadius: "10px",
     overflow: "hidden",
+    cursor: "pointer",
+  },
+  selectedPlace: {
+    backgroundColor: "black",
+    color: "white",
   },
   recommendationItem: {
     display: "flex",
