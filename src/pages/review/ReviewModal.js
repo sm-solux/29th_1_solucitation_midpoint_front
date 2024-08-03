@@ -24,6 +24,7 @@ const ReviewModal = ({
   deleteReview,
   onLikeToggle,
   fetchReviewDetails,
+  fetchReviews,
 }) => {
   const [profileData, setProfileData] = useState(null);
   const [error, setError] = useState(null);
@@ -75,6 +76,7 @@ const ReviewModal = ({
         );
         deleteReview(review);
         closeModal();
+        await fetchReviews(); // 전체 리뷰 목록을 다시 가져오기
       } catch (error) {
         if (
           error.response?.status === 401 &&
@@ -95,6 +97,7 @@ const ReviewModal = ({
             );
             deleteReview(review);
             closeModal();
+            await fetchReviews(); // 전체 리뷰 목록을 다시 가져오기
           } catch (refreshError) {
             console.error("Failed to refresh access token:", refreshError);
             setError("토큰 갱신 중 오류가 발생하였습니다. 다시 시도해 주세요.");

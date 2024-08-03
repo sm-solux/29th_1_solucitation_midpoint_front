@@ -72,6 +72,7 @@ const useFetchMyReviews = (isLoggedIn) => {
         title: review.title,
         hashtags: review.hashtags.map((tagId) => hashtagMap[tagId]),
         likes: review.likes,
+        likeCnt: review.likeCnt,
       }));
 
       setReviews(fetchedReviews);
@@ -95,6 +96,7 @@ const useFetchMyReviews = (isLoggedIn) => {
             title: review.title,
             hashtags: review.hashtags.map((tagId) => hashtagMap[tagId]),
             likes: review.likes,
+            likeCnt: review.likeCnt,
           }));
           setReviews(fetchedReviews);
         } catch (refreshError) {
@@ -114,12 +116,12 @@ const useFetchMyReviews = (isLoggedIn) => {
     }
   }, [isLoggedIn]);
 
-  return { reviews, setReviews, error, setError };
+  return { reviews, setReviews, error, setError, fetchReviewsMine };
 };
 
 const MyPagePosts = () => {
   const { currentUser, isLoggedIn } = useAuth();
-  const { reviews, setReviews, error, setError } =
+  const { reviews, setReviews, error, setError, fetchReviewsMine } =
     useFetchMyReviews(isLoggedIn);
   const [writeModalIsOpen, setWriteModalIsOpen] = useState(false);
   const [editModalIsOpen, setEditModalIsOpen] = useState(false);
@@ -199,12 +201,30 @@ const MyPagePosts = () => {
     [setError]
   );
 
-  const handleLikeToggle = (postId, newLikeStatus) => {
-    setReviews((prevReviews) =>
-      prevReviews.map((review) =>
-        review.postId === postId ? { ...review, likes: newLikeStatus } : review
-      )
-    );
+  const handleLikeToggle = async (postId) => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (!accessToken) {
+        alert("로그인이 필요합니다.");
+        return;
+      }
+
+      const headers = { Authorization: `Bearer ${accessToken}` };
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/posts/${postId}/likes`,
+        {},
+        { headers }
+      );
+
+      if (response.status === 200) {
+        await fetchReviewsMine();
+      } else {
+        throw new Error("Failed to toggle like");
+      }
+    } catch (error) {
+      console.error("Error toggling like", error);
+      alert("좋아요를 변경하는 중 오류가 발생하였습니다.");
+    }
   };
 
   const openWriteModal = () => {
@@ -231,7 +251,7 @@ const MyPagePosts = () => {
 
   const closeReviewModal = async () => {
     setReviewModalIsOpen(false);
-    window.location.reload();
+    await fetchReviewsMine();
   };
 
   const handleWriteButtonClick = () => {
@@ -242,9 +262,7 @@ const MyPagePosts = () => {
     <div>
       <div style={{ marginTop: "100px" }}></div>
       <div style={reviewStyles.reviewContainer}>
-        {error ? (
-          <p>{error}</p>
-        ) : reviews.length > 0 ? (
+        {reviews.length > 0 ? (
           reviews.map((review) => (
             <ReviewCard
               key={review.postId}
@@ -261,7 +279,7 @@ const MyPagePosts = () => {
         <img
           src="/img/WriteButtonIcon.png"
           alt="write button"
-          style={reviewStyles.writeButton}
+          style={reviewStyles.writeButtonImage}
         />
       </button>
       <WriteModal
@@ -286,6 +304,8 @@ const MyPagePosts = () => {
           closeModal={closeReviewModal}
           openEditModal={openEditModal}
           onLikeToggle={handleLikeToggle}
+          fetchReviewDetails={fetchReviewDetails}
+          fetchReviewsMine={fetchReviewsMine}
           deleteReview={(review) => {
             setReviews((prevReviews) =>
               prevReviews.filter((r) => r.postId !== review.postId)

@@ -122,13 +122,14 @@ const ReviewPage = () => {
         { headers }
       );
 
-      if (response.status !== 200) {
+      if (response.status === 200) {
+        await fetchReviews();
+      } else {
         throw new Error("Failed to toggle like");
       }
     } catch (error) {
       console.error("Error toggling like", error);
       alert("좋아요를 변경하는 중 오류가 발생하였습니다.");
-      // 상태 복구
       setReviews((prevReviews) =>
         prevReviews.map((review) =>
           review.postId === postId
@@ -199,7 +200,6 @@ const ReviewPage = () => {
 
   const closeReviewModal = async () => {
     setReviewModalIsOpen(false);
-    await fetchReviews(); // 모달을 닫을 때 리뷰 새로고침
   };
 
   const handleWriteButtonClick = async () => {
@@ -272,6 +272,7 @@ const ReviewPage = () => {
           openEditModal={openEditModal}
           onLikeToggle={handleLikeToggle}
           fetchReviewDetails={fetchReviewDetails}
+          fetchReviews={fetchReviews}
           deleteReview={(review) => {
             setReviews((prevReviews) =>
               prevReviews.filter((r) => r.postId !== review.postId)

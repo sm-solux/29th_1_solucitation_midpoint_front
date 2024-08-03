@@ -369,44 +369,7 @@ const MyPageProfile = () => {
       alert("수정 되었습니다");
     } catch (error) {
       if (error.response) {
-        if (
-          error.response.status === 401 &&
-          error.response.data.error === "access_token_expired"
-        ) {
-          try {
-            const refreshToken = localStorage.getItem("refreshToken");
-            if (!refreshToken) {
-              throw new Error("No refresh token available.");
-            }
-            const newAccessToken = await refreshAccessToken(refreshToken);
-            const headers = {
-              Authorization: `Bearer ${newAccessToken}`,
-              "Content-Type": "multipart/form-data",
-            };
-
-            await axios.patch(
-              `${process.env.REACT_APP_API_URL}/api/member/profile`,
-              formData,
-              {
-                headers,
-              }
-            );
-
-            setState({ ...state, editMode: false, passwordEditMode: false });
-
-            setProfileData((prev) => ({
-              ...prev,
-              profileImage: previewImage || prev.profileImage,
-            }));
-            alert("수정 되었습니다");
-          } catch (refreshError) {
-            console.error("Failed to refresh access token:", refreshError);
-            alert("토큰 갱신에 실패했습니다. 로그인 페이지로 이동합니다.");
-            navigate("/login");
-          }
-        } else {
-          console.error("프로필 저장 중 에러 발생:", error.response.data);
-        }
+        console.error("프로필 저장 중 에러 발생:", error.response.data);
       } else {
         console.error("프로필 저장 중 에러 발생:", error.message);
       }

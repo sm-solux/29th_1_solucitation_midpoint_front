@@ -11,7 +11,7 @@ const ReviewCard = ({ review, onReviewClick, onLikeToggle }) => {
 
   const handleLike = (e) => {
     e.stopPropagation();
-    onLikeToggle(postId);
+    onLikeToggle(postId, likes);
   };
 
   const truncatedTitle = title.length > 20 ? `${title.slice(0, 20)}...` : title;
