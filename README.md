@@ -14,6 +14,94 @@
 * 기능
   * 목적 추천 테스트, 본인과 상대방의 중간지점 계산 및 근처 목적에 맞는 장소 추천, 날씨 정보 제공, 카톡 공유 및 검색 기록 저장, 목적과 반경 재설정 재검색
 
-
+####  [안예빈]((https://github.com/YeBin0711)
+* UI
+  * 페이지 : 게시판, 마이페이지
+* 기능
+  * 
+  
 ## 폴더구조
-       
+``` 
+│  App.css
+│  App.js
+│  App.test.js
+│  index.css
+│  index.js
+│  logo.svg
+│  reportWebVitals.js
+│  Router.js
+│  setupTests.js
+│  soluxion.txt
+│  src.txt
+│  
+├─assets
+│  └─fonts
+│          
+├─components
+│      CommonComponents.js
+│      LikeButtonComponents.js
+│      LoginComponents.js
+│      RedirectIfLoggedIn.js
+│      refreshAccess.js
+│      SearchComponents.js
+│      
+├─contexts
+│      AppContext.js
+│      
+├─pages
+│  │  MainPage.js
+│  │  MyPage.js
+│  │  ReviewPage.js
+│  │  
+│  ├─home
+│  │      Again.js
+│  │      HomeMain.js
+│  │      HomePopup.js
+│  │      Midpoint.js
+│  │      Result1.js
+│  │      Result2.js
+│  │      Result3.js
+│  │      Result4.js
+│  │      Test1.js
+│  │      Test2.js
+│  │      Test3.js
+│  │      
+│  ├─login
+│  │      DirectLoginPage.js
+│  │      FindPassword.js
+│  │      Join.js
+│  │      LoginPage.js
+│  │      ResetPassword.js
+│  │      
+│  ├─MyPage
+│  │  │  MyPageFavorites.js
+│  │  │  MyPagePosts.js
+│  │  │  MyPageProfile.js
+│  │  │  MyPageSearchHistory.js
+│  │  │  
+│  │  ├─Favorites
+│  │  │      AddFriendModal.js
+│  │  │      AddLocationModal.js
+│  │  │      FavoritesFriends.js
+│  │  │      FavoritesLocates.js
+│  │  │      
+│  │  └─Profile
+│  │          PasswordConfirmation.js
+│  │          ProfileComponents.js
+│  │          
+│  └─review
+│          EditModal.js
+│          ReviewCard.js
+│          ReviewModal.js
+│          WriteModal.js
+│          
+└─styles
+        global.css
+        myPageStyles.js
+        reviewModalStyles.js
+        reviewStyles.js
+        searchStyles.js
+        styles.js
+        writeModalStyles.js
+
+```
