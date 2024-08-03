@@ -21,7 +21,7 @@ const MyPageSearchHistory = () => {
       );
       const formattedData = response.data.map((item) => ({
         ...item,
-        searchTime: formatDate(item.serachTime),
+        searchTime: formatDate(item.searchTime),
       }));
       setData(formattedData);
     } catch (err) {
