@@ -53,9 +53,11 @@ const hashtagMap = {
 
 const useFetchMyReviews = (isLoggedIn) => {
   const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const fetchReviewsMine = async () => {
+    setLoading(true);
     try {
       const accessToken = localStorage.getItem("accessToken");
       const headers = accessToken
@@ -76,6 +78,7 @@ const useFetchMyReviews = (isLoggedIn) => {
       }));
 
       setReviews(fetchedReviews);
+      setLoading(false);
     } catch (error) {
       if (
         error.response &&
@@ -99,13 +102,16 @@ const useFetchMyReviews = (isLoggedIn) => {
             likeCnt: review.likeCnt,
           }));
           setReviews(fetchedReviews);
+          setLoading(false);
         } catch (refreshError) {
           setError("토큰 갱신에 실패했습니다. 다시 로그인해 주세요.");
           console.error("Refresh token error:", refreshError);
+          setLoading(false);
         }
       } else {
         setError("게시글 조회 중 오류가 발생하였습니다.");
         console.error("Fetch my reviews error:", error);
+        setLoading(false);
       }
     }
   };
@@ -116,12 +122,12 @@ const useFetchMyReviews = (isLoggedIn) => {
     }
   }, [isLoggedIn]);
 
-  return { reviews, setReviews, error, setError, fetchReviewsMine };
+  return { reviews, setReviews, error, setError, fetchReviewsMine, loading };
 };
 
 const MyPagePosts = () => {
   const { currentUser, isLoggedIn } = useAuth();
-  const { reviews, setReviews, error, setError, fetchReviewsMine } =
+  const { reviews, setReviews, error, setError, fetchReviewsMine, loading } =
     useFetchMyReviews(isLoggedIn);
   const [writeModalIsOpen, setWriteModalIsOpen] = useState(false);
   const [editModalIsOpen, setEditModalIsOpen] = useState(false);
@@ -262,7 +268,9 @@ const MyPagePosts = () => {
     <div>
       <div style={{ marginTop: "100px" }}></div>
       <div style={reviewStyles.reviewContainer}>
-        {reviews.length > 0 ? (
+        {loading ? (
+          <div></div>
+        ) : reviews.length > 0 ? (
           reviews.map((review) => (
             <ReviewCard
               key={review.postId}
