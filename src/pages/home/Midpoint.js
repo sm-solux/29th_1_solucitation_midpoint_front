@@ -34,6 +34,16 @@ function Midpoint() {
   const [translatedAddresses, setTranslatedAddresses] = useState([]);
 
   useEffect(() => {
+    // 화면 스크롤 방지
+    document.body.style.overflow = 'hidden';
+
+    // 컴포넌트가 언마운트될 때 스크롤 방지 해제
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
+
+  useEffect(() => {
     if (!midpoint) {
       console.error('Midpoint 정보가 없습니다.');
       return;
