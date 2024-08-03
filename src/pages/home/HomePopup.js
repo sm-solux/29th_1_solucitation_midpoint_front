@@ -1,19 +1,33 @@
-import React, { useEffect, useRef, useState, useContext } from 'react';
-import { commonStyles, SearchList, SearchItem, FriendItem } from '../../styles/styles';
-import axios from 'axios';
-import debounce from 'lodash.debounce';
-import { AppContext } from '../../contexts/AppContext';
+import React, { useEffect, useRef, useState, useContext } from "react";
+import {
+  commonStyles,
+  SearchList,
+  SearchItem,
+  FriendItem,
+} from "../../styles/styles";
+import axios from "axios";
+import debounce from "lodash.debounce";
+import { AppContext } from "../../contexts/AppContext";
 
-const HomePopup = ({ onClose, setAddress, searchResults = [], setSearchResults, setSelectedFriend }) => {
+const HomePopup = ({
+  onClose,
+  setAddress,
+  searchResults = [],
+  setSearchResults,
+  setSelectedFriend,
+}) => {
   const mapRef = useRef(null);
   const [map, setMap] = useState(null);
   const [showMap, setShowMap] = useState(false);
   const [showPlacesList, setShowPlacesList] = useState(false);
-  const [searchInput, setSearchInput] = useState('');
+  const [searchInput, setSearchInput] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
   const [favoriteFriends, setFavoriteFriends] = useState([]);
-  const [favoritePlaces, setFavoritePlaces] = useState({ home: null, work: null });
+  const [favoritePlaces, setFavoritePlaces] = useState({
+    home: null,
+    work: null,
+  });
   const { isLoggedIn } = useContext(AppContext);
 
   useEffect(() => {
@@ -24,49 +38,55 @@ const HomePopup = ({ onClose, setAddress, searchResults = [], setSearchResults, 
   }, [isLoggedIn]);
 
   const fetchFavoriteFriends = async () => {
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem("accessToken");
     if (!token) {
-      console.error('No token found');
+      console.error("No token found");
       return;
     }
 
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/favs/friends/list`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/favs/friends/list`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setFavoriteFriends(response.data);
     } catch (error) {
-      console.error('Error fetching favorite friends:', error);
+      console.error("Error fetching favorite friends:", error);
     }
   };
 
   const fetchFavoritePlaces = async () => {
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem("accessToken");
     if (!token) {
-      console.error('No token found');
+      console.error("No token found");
       return;
     }
 
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/favs/places/list`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/favs/places/list`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       const places = response.data;
-      const homePlace = places.find((place) => place.addrType === 'HOME');
-      const workPlace = places.find((place) => place.addrType === 'WORK');
+      const homePlace = places.find((place) => place.addrType === "HOME");
+      const workPlace = places.find((place) => place.addrType === "WORK");
       setFavoritePlaces({ home: homePlace, work: workPlace });
     } catch (error) {
-      console.error('Error fetching favorite places:', error);
+      console.error("Error fetching favorite places:", error);
     }
   };
 
   const loadGoogleMaps = () => {
     if (!window.google) {
-      const script = document.createElement('script');
+      const script = document.createElement("script");
       script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places&language=ko`;
       script.async = true;
       script.onload = () => {
@@ -75,7 +95,10 @@ const HomePopup = ({ onClose, setAddress, searchResults = [], setSearchResults, 
             center: new window.google.maps.LatLng(37.5665, 126.978),
             zoom: 10,
           };
-          const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
+          const googleMap = new window.google.maps.Map(
+            mapRef.current,
+            mapOptions
+          );
           setMap(googleMap);
         }
       };
@@ -95,15 +118,23 @@ const HomePopup = ({ onClose, setAddress, searchResults = [], setSearchResults, 
   }, [showMap]);
 
   const fetchSuggestions = async (value) => {
-    if (value.trim() !== '') {
-      const proxyUrl = 'https://api.allorigins.win/get?url=';
-      const targetUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${value}&components=country:kr&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&language=ko`;
+    if (value.trim() !== "") {
+      const proxyUrl = "https://api.allorigins.win/get?url=";
+      const location = "37.5665,126.9780"; // 서울 중심부의 위도와 경도
+      const radius = 20000; // 반경 20km
+      const targetUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${value}&components=country:kr&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&language=ko&location=${location}&radius=${radius}`;
+
       try {
-        const response = await axios.get(proxyUrl + encodeURIComponent(targetUrl));
+        const response = await axios.get(
+          proxyUrl + encodeURIComponent(targetUrl)
+        );
         const data = JSON.parse(response.data.contents);
-        setSuggestions(data.predictions);
+        const filteredSuggestions = data.predictions.filter((prediction) =>
+          prediction.description.includes("서울")
+        );
+        setSuggestions(filteredSuggestions.slice(0, 4));
       } catch (error) {
-        console.error('Error fetching suggestions:', error);
+        console.error("Error fetching suggestions:", error.message);
       }
     } else {
       setSuggestions([]);
@@ -132,15 +163,17 @@ const HomePopup = ({ onClose, setAddress, searchResults = [], setSearchResults, 
 
   const handleSearch = async () => {
     if (!selectedSuggestion && !searchInput) {
-      console.error('Selected suggestion or search input not found.');
+      console.error("Selected suggestion or search input not found.");
       return;
     }
 
     if (selectedSuggestion) {
-      const proxyUrl = 'https://api.allorigins.win/get?url=';
+      const proxyUrl = "https://api.allorigins.win/get?url=";
       const targetUrl = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${selectedSuggestion.place_id}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&language=ko`;
       try {
-        const response = await axios.get(proxyUrl + encodeURIComponent(targetUrl));
+        const response = await axios.get(
+          proxyUrl + encodeURIComponent(targetUrl)
+        );
         const data = JSON.parse(response.data.contents);
 
         const place = {
@@ -148,18 +181,18 @@ const HomePopup = ({ onClose, setAddress, searchResults = [], setSearchResults, 
           address: data.result.formatted_address,
           imgSrc: data.result.photos
             ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${data.result.photos[0].photo_reference}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`
-            : '/img/default-image.png',
+            : "/img/default-image.png",
         };
 
         const updatedResults = [place, ...searchResults];
         setSearchResults(updatedResults);
-        setSearchInput('');
+        setSearchInput("");
         setSelectedSuggestion(null);
         setShowMap(false);
         setShowPlacesList(false);
         onClose(place.address, updatedResults);
       } catch (error) {
-        console.error('Error fetching place details:', error);
+        console.error("Error fetching place details:", error);
       }
     } else {
       onClose(searchInput, searchResults);
@@ -181,46 +214,54 @@ const HomePopup = ({ onClose, setAddress, searchResults = [], setSearchResults, 
             new window.google.maps.Marker({
               position: currentLocation,
               map: map,
-              title: '현재 위치',
+              title: "현재 위치",
             });
           } else {
             const mapOptions = {
               center: currentLocation,
               zoom: 15,
             };
-            const googleMap = new window.google.maps.Map(mapRef.current, mapOptions);
+            const googleMap = new window.google.maps.Map(
+              mapRef.current,
+              mapOptions
+            );
             new window.google.maps.Marker({
               position: currentLocation,
               map: googleMap,
-              title: '현재 위치',
+              title: "현재 위치",
             });
             setMap(googleMap);
           }
 
           try {
-            const proxyUrl = 'https://api.allorigins.win/get?url=';
+            const proxyUrl = "https://api.allorigins.win/get?url=";
             const targetUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&language=ko`;
-            const response = await axios.get(proxyUrl + encodeURIComponent(targetUrl));
+            const response = await axios.get(
+              proxyUrl + encodeURIComponent(targetUrl)
+            );
             const data = JSON.parse(response.data.contents);
 
             if (data.results && data.results.length > 0) {
               const currentAddress = data.results[0].formatted_address;
               setSearchInput(currentAddress);
-              setSelectedSuggestion({ description: currentAddress, place_id: data.results[0].place_id });
+              setSelectedSuggestion({
+                description: currentAddress,
+                place_id: data.results[0].place_id,
+              });
             } else {
-              alert('현재 위치의 주소를 찾을 수 없습니다.');
+              alert("현재 위치의 주소를 찾을 수 없습니다.");
             }
           } catch (error) {
-            console.error('Error fetching current location address:', error);
+            console.error("Error fetching current location address:", error);
           }
         },
         (error) => {
-          console.error('Error getting current position:', error);
-          alert('현재 위치를 사용할 수 없습니다.');
+          console.error("Error getting current position:", error);
+          alert("현재 위치를 사용할 수 없습니다.");
         }
       );
     } else {
-      alert('현재 위치를 사용할 수 없습니다.');
+      alert("현재 위치를 사용할 수 없습니다.");
     }
   };
 
@@ -234,7 +275,7 @@ const HomePopup = ({ onClose, setAddress, searchResults = [], setSearchResults, 
     if (place.addr) {
       setSearchInput(place.addr);
     } else {
-      alert('즐겨찾는 장소를 등록해주세요.');
+      alert("즐겨찾는 장소를 등록해주세요.");
     }
   };
 
@@ -258,7 +299,10 @@ const HomePopup = ({ onClose, setAddress, searchResults = [], setSearchResults, 
           <button onClick={handleSearch} style={commonStyles.popupButton}>
             검색
           </button>
-          <button onClick={() => onClose()} style={commonStyles.popupCloseButton}>
+          <button
+            onClick={() => onClose()}
+            style={commonStyles.popupCloseButton}
+          >
             X
           </button>
         </div>
@@ -276,9 +320,22 @@ const HomePopup = ({ onClose, setAddress, searchResults = [], setSearchResults, 
           </ul>
         )}
         <div style={commonStyles.popupContent}>
-          <div style={commonStyles.locationContainer} onClick={handleUseCurrentLocation}>
-            <img src="/img/location.png" alt="현재 위치 사용" style={commonStyles.locationIcon} />
-            <span style={{ fontSize: '1rem', fontFamily: 'Freesentation, sans-serif', fontWeight: '600' }}>
+          <div
+            style={commonStyles.locationContainer}
+            onClick={handleUseCurrentLocation}
+          >
+            <img
+              src="/img/location.png"
+              alt="현재 위치 사용"
+              style={commonStyles.locationIcon}
+            />
+            <span
+              style={{
+                fontSize: "1rem",
+                fontFamily: "Freesentation, sans-serif",
+                fontWeight: "600",
+              }}
+            >
               현재 위치 사용
             </span>
           </div>
@@ -287,13 +344,47 @@ const HomePopup = ({ onClose, setAddress, searchResults = [], setSearchResults, 
               <div style={commonStyles.popupSection1}>
                 <p style={commonStyles.popupSectionTitle}>즐겨찾는 장소</p>
                 <div style={commonStyles.favoritePlaces}>
-                  <button style={commonStyles.favoritePlace} onClick={() => handleFavoritePlaceClick(favoritePlaces.home)}>
-                    <img src="/img/home.png" alt="집" style={commonStyles.favoritePlaceImage} />
-                    <p style={{ fontSize: '1rem', fontFamily: 'Freesentation, sans-serif', fontWeight: '500' }}>집</p>
+                  <button
+                    style={commonStyles.favoritePlace}
+                    onClick={() =>
+                      handleFavoritePlaceClick(favoritePlaces.home)
+                    }
+                  >
+                    <img
+                      src="/img/home.png"
+                      alt="집"
+                      style={commonStyles.favoritePlaceImage}
+                    />
+                    <p
+                      style={{
+                        fontSize: "1rem",
+                        fontFamily: "Freesentation, sans-serif",
+                        fontWeight: "500",
+                      }}
+                    >
+                      집
+                    </p>
                   </button>
-                  <button style={commonStyles.favoritePlace} onClick={() => handleFavoritePlaceClick(favoritePlaces.work)}>
-                    <img src="/img/work.png" alt="직장/학교" style={commonStyles.favoritePlaceImage} />
-                    <p style={{ fontSize: '1rem', fontFamily: 'Freesentation, sans-serif', fontWeight: '500' }}>직장/학교</p>
+                  <button
+                    style={commonStyles.favoritePlace}
+                    onClick={() =>
+                      handleFavoritePlaceClick(favoritePlaces.work)
+                    }
+                  >
+                    <img
+                      src="/img/work.png"
+                      alt="직장/학교"
+                      style={commonStyles.favoritePlaceImage}
+                    />
+                    <p
+                      style={{
+                        fontSize: "1rem",
+                        fontFamily: "Freesentation, sans-serif",
+                        fontWeight: "500",
+                      }}
+                    >
+                      직장/학교
+                    </p>
                   </button>
                 </div>
               </div>
@@ -314,7 +405,9 @@ const HomePopup = ({ onClose, setAddress, searchResults = [], setSearchResults, 
                 <p style={commonStyles.popupSectionTitle}>즐겨찾는 친구</p>
                 <div style={commonStyles.favoriteFriends}>
                   {favoriteFriends.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '20px' }}> </div>
+                    <div style={{ textAlign: "center", padding: "20px" }}>
+                      {" "}
+                    </div>
                   ) : (
                     favoriteFriends.map((friend) => (
                       <button
@@ -322,8 +415,18 @@ const HomePopup = ({ onClose, setAddress, searchResults = [], setSearchResults, 
                         style={commonStyles.favoriteFriend}
                         onClick={() => handleFriendClick(friend)}
                       >
-                        <img src="/img/pprofile.png" alt={friend.name} style={commonStyles.favoriteFriendImage} />
-                        <p style={{ fontSize: '1rem', fontFamily: 'Freesentation, sans-serif', fontWeight: '500' }}>
+                        <img
+                          src="/img/pprofile.png"
+                          alt={friend.name}
+                          style={commonStyles.favoriteFriendImage}
+                        />
+                        <p
+                          style={{
+                            fontSize: "1rem",
+                            fontFamily: "Freesentation, sans-serif",
+                            fontWeight: "500",
+                          }}
+                        >
                           {friend.name}
                         </p>
                       </button>
@@ -337,22 +440,33 @@ const HomePopup = ({ onClose, setAddress, searchResults = [], setSearchResults, 
             <div style={commonStyles.placesListContainer}>
               <p style={commonStyles.currentLocationText}>검색 목록</p>
               <SearchList>
-                {(Array.isArray(searchResults) ? searchResults : []).map((place, index) => (
-                  <SearchItem key={index} onClick={() => handleSearchItemClick(place)}>
-                    <img src={place.imgSrc || '/img/default-image.png'} alt={place.name} />
-                    <div>
-                      <h3>{place.name}</h3>
-                      <p>{place.address}</p>
-                    </div>
-                  </SearchItem>
-                ))}
+                {(Array.isArray(searchResults) ? searchResults : []).map(
+                  (place, index) => (
+                    <SearchItem
+                      key={index}
+                      onClick={() => handleSearchItemClick(place)}
+                    >
+                      <img
+                        src={place.imgSrc || "/img/default-image.png"}
+                        alt={place.name}
+                      />
+                      <div>
+                        <h3>{place.name}</h3>
+                        <p>{place.address}</p>
+                      </div>
+                    </SearchItem>
+                  )
+                )}
               </SearchList>
             </div>
           )}
           {showMap && (
-            <div style={{ width: '100%', marginTop: '1rem' }}>
+            <div style={{ width: "100%", marginTop: "1rem" }}>
               <div style={commonStyles.currentLocationText}>현재 위치</div>
-              <div ref={mapRef} style={{ width: '100%', height: '245px', marginTop: '0.5rem' }} />
+              <div
+                ref={mapRef}
+                style={{ width: "100%", height: "245px", marginTop: "0.5rem" }}
+              />
             </div>
           )}
         </div>

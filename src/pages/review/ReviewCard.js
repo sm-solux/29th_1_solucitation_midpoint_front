@@ -1,19 +1,17 @@
-import React from 'react';
-import { reviewStyles } from '../../styles/reviewStyles';
-import LikeButton, { useToggleLike } from '../../components/LikeButtonComponents';
+import React from "react";
+import { reviewStyles } from "../../styles/reviewStyles";
+import LikeButton from "../../components/LikeButtonComponents";
 
 const ReviewCard = ({ review, onReviewClick, onLikeToggle }) => {
-  const { firstImageUrl, hashtags, title, postId, likes, likeCnt } = review;
-  const { liked, likeCount, toggleLike, error } = useToggleLike(postId, likes, likeCnt);
+  const { firstImageUrl, hashtags, title, postId, likes } = review;
 
   const handleClick = () => {
     onReviewClick(postId);
   };
 
-  const handleLike = async (e) => {
+  const handleLike = (e) => {
     e.stopPropagation();
-    await toggleLike();
-    onLikeToggle(postId, !liked);
+    onLikeToggle(postId, likes);
   };
 
   const truncatedTitle = title.length > 20 ? `${title.slice(0, 20)}...` : title;
@@ -33,7 +31,7 @@ const ReviewCard = ({ review, onReviewClick, onLikeToggle }) => {
             </span>
           ))}
         </div>
-        <LikeButton liked={liked} toggleLike={handleLike} likeCount={likeCount} />
+        <LikeButton liked={likes} toggleLike={handleLike} />
       </div>
       <div style={reviewStyles.placeName}>{truncatedTitle}</div>
     </div>
