@@ -11,7 +11,11 @@ function Logo({ exist = true, bgColor = "transparent" }) {
   const navigate = useNavigate();
 
   const onClick = () => {
-    navigate("/home");
+    if (location.pathname === "/home") {
+      window.location.reload();
+    } else {
+      navigate("/home");
+    }
   };
 
   const loggedInLinks = [
