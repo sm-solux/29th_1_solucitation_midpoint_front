@@ -16,8 +16,8 @@
 
 
 ## 폴더구조
-├─assets
-│  └─fonts
+├─assets                                             
+│  └─fonts                                       
 │          
 ├─components
 │      CommonComponents.js
