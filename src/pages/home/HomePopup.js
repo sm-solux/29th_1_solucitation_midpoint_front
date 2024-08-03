@@ -157,7 +157,7 @@ const HomePopup = ({ onClose, setAddress, searchResults = [], setSearchResults, 
         setSelectedSuggestion(null);
         setShowMap(false);
         setShowPlacesList(false);
-        onClose(place.address, updatedResults); // 추가된 부분
+        onClose(place.address, updatedResults);
       } catch (error) {
         console.error('Error fetching place details:', error);
       }
@@ -300,12 +300,15 @@ const HomePopup = ({ onClose, setAddress, searchResults = [], setSearchResults, 
               <div
                 style={{
                   ...commonStyles.popupSection2,
-                  height: favoriteFriends.length === 0 ? '118px' : '125px',
-                  width: favoriteFriends.length === 0 ? '280px' : '280px',
-                  border: favoriteFriends.length === 0 ? 'none' : 'none',
-                  display: favoriteFriends.length === 0 ? 'flex' : 'block',
-                  justifyContent: favoriteFriends.length === 0 ? 'flex-start' : 'flex-start',
-                  alignItems: favoriteFriends.length === 0 ? 'flex-start' : 'flex-start',
+                  height: '140px',  // 높이를 고정
+                  width: '280px',  // 필요한 너비로 설정
+                  border: 'none',  // 경계선 추가
+                  display: 'block',  // block으로 설정
+                  justifyContent: 'flex-start',
+                  alignItems: 'flex-start',
+                  overflowX: 'auto',  // X축 스크롤 추가
+                  overflowY: "hidden",  // Y축 스크롤 숨기기
+                  whiteSpace: 'nowrap',  // 한 줄로 표시
                 }}
               >
                 <p style={commonStyles.popupSectionTitle}>즐겨찾는 친구</p>

@@ -324,7 +324,7 @@ export const commonStyles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: "2rem",
+    paddingTop: "1.5rem",
     paddingRight: "1rem",
     paddingLeft: "1rem",
     width: "75%",
@@ -362,7 +362,7 @@ export const commonStyles = {
     right: "10px",
   },
   popupContent: {
-    paddingTop: "1rem",
+    paddingTop: "0.7rem",
     paddingBottom: "1rem",
     paddingRight: "4.7rem",
     paddingLeft: "4.7rem",
@@ -376,7 +376,7 @@ export const commonStyles = {
     borderRadius: "10px",
     alignItems: "center",
     width: "33%",
-    height: "15%",
+    height: '140px',
     marginBottom: "0.5rem",
   },
   popupSection2: {
@@ -413,7 +413,8 @@ export const commonStyles = {
   favoriteFriends: {
     display: "flex",
     paddingLeft: "1.2rem",
-    flexWrap: "wrap",
+    overflowX: "auto",  // X축 스크롤 추가
+    whiteSpace: "nowrap",  // 한 줄로 표시
   },
   favoriteFriend: {
     display: "flex",
@@ -423,7 +424,8 @@ export const commonStyles = {
     backgroundColor: "transparent",
     border: "none",
     cursor: "pointer",
-  },
+    flexShrink: 0,  // 요소가 줄어들지 않도록 설정
+  },  
   favoriteFriendImage: {
     width: "23px",
     height: "23px",
