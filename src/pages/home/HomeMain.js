@@ -63,7 +63,7 @@ const Home = () => {
           ...userInfo,
           nickname: response.data.nickname || "나",
           profileImage:
-            response.data.profileImage || "/img/default-profile.png",
+            response.data.profileImageUrl || "/img/default-profile.png",
           address: userAddress,
         });
         setInitialAddress(userAddress); // 프로필에서 주소를 가져와 초기 주소 설정
