@@ -433,6 +433,8 @@ const MyPageProfile = () => {
           "X-Refresh-Token": `Bearer ${refreshToken}`,
         },
       });
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
       alert("탈퇴 됐습니다.");
       navigate("/");
     } catch (error) {
